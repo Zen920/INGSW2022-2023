@@ -1,0 +1,673 @@
+\chapter[Analisi dei]{requisiti}(midpoint-3)<In questo capitolo verranno discussi i dettagli implementativi rilevati dopo un'attenta analisi e opportuni incontri con il committente del progetto, affinché questi siano di facile interpretazione ed implementazione per il software richiesto.>
+
+\section*{Glossario}+\Alfiadoreport+
+Qui di seguito riportato uno schema riepilogativo, contenente vocaboli di uso comune, ai fini di disambiguare e chiarirne definitivamente il significato, in quanto possibili oggetti di discussione e/o incomprensione nel testo a seguire.
+
+\begin{center}
+	\setddtblrcolor{orange!80!white}
+	\fontsize{8}{8}\selectfont
+	\begin{adphorizontal}[
+		% Resize cols
+		colspec = {X[1,c]X[0.75,r]*{\thecolcount-2}{X[2, l]}},
+		% Header
+		% LIMITATION: Cannot really un-set vline for one row atm
+		row{1} = {bg=\getddtblrcolor!85!white, fg=white, halign=c},
+		% Join left side
+		cell{2}{1}={r=6}{c},
+		cell{8}{1}={r=3}{c},
+		cell{11}{1}={r=4}{c},
+	]< headsep = 2cm >
+		Macrocategoria & Vocabolo & Significato e/o Osservazioni\\
+		Personale-dipendente e ruoli & Gerarchia & La struttura logica-sociale dei dipendenti è identificabile in una gerarchia top-down, dove più si è in alto, maggiori saranno le responsabilità.\\
+		& Amministrazione & Per amministrazione s'intende l'insieme composto dalle figure di \textbf{administrator} e \textbf{supervisor}.\\
+		& Administrator & Un amministratore è un individuo che, oltre alle solite mansioni di amministrazione del sistema, è incaricato di gestire il personale-dipendente.\\
+		& Supervisor & Un supervisore è un individuo incaricato di mansioni di amministrazione del sistema.\\
+		& Addetto alla Sala & L'addetto alla sala è una delle figure \emdashme{dipendenti} riconosciute nel sistema, la cui controparte nel mondo reale è riconducibile alla figura professionale del \textbf{cameriere informatizzato} cui scopo è la raccolta delle ordinazioni, quindi l'inserimento a sistema. \\
+		& Addetto alla Cucina & L'addetto alla cucina è una delle figure \emdashme{dipendenti} riconosciute nel sistema, la cui controparte professionale nel mondo reale è riconducibile alla figura del \textbf{cuoco informatizzato} cui scopo è la preparazione delle pietanze trasmesse via ordinazioni presenti nel sistema; le prestazioni del cuoco potranno esserne verificate attraverso l'elaborazione dei dati raccolti tramite figure amministrative.\\
+
+		Developer & API & Le \textbf{Application Programming Interface} sono insiemi di definizioni e protocolli. Designa l'insieme di librerie messe a diposizione del developer che intende fare uso di una determinata tecnologie, un livello di astrazione che permette al programmatore di evitare di conoscerne i dettagli implementativi di basso livello e facendo sì che egli si orienti esclusivamente all'integrazione delle funzionalità.\\
+		& Standard & Uno standard è un insieme di regole, approvate da una collettività (\textbf{technical committees}, comitati tecnici), il cui scopo è quello di produrre codice ben definito, ad alta manutenibilità.\\
+		& OpenFoodFacts & Progetto collaborativo non-profit allo scopo di elencare proprietà, ingredienti, allergeni e informazioni sul cibo: l'API esposta permette di effettuare query.\\
+
+		Autorizzazioni & User \textbf{Account} & Un \textbf{account} è un insieme di funzionalità attribuite ad una determinata persona in un sistema informatico; prende il nome da \textit{conto} dall'ambito bancario, ed è in grado di verificare e riconoscere l'identità del titolare, nonché le sue preferenze.\\
+		& Autenticazione & Per autenticazione s'intende la procedura che certifica l'identità di un determinato dipendente nel sistema, affinché questi possa essere indirizzato alle funzionalità, esclusive per ruolo, attribuitegli durante la registrazione. Tale processo, avviene tramite l'inserimento di \textbf{credenziali d'accesso}.\\
+		& Credenziali d'accesso & Le credenziali d'accesso consistono di un \textbf{username} e di una \textbf{password}, generate dall'amministratore al momento della creazione dell'account. \\
+		& Primo accesso & La password, inizialmente pseudo-casualmente generata dal sistema, è da ritenersi personale, pertanto, ne verrà richiesta la riconfigurazione al primo accesso. \\
+	\end{adphorizontal}
+
+	\newpage
+	\begin{adphorizontal}[
+		% Resize cols
+		colspec = {X[1,c]X[0.75,r]*{\thecolcount-2}{X[2, l]}},
+		% Header
+		% LIMITATION: Cannot really un-set vline for one row atm
+		row{1} = {bg=\getddtblrcolor!85!white, fg=white, halign=c},
+		% Join left side
+		cell{2}{1}={r=\therowcount-1}{c},
+	]< headsep = 2cm >
+		Macrocategoria & Vocabolo & Significato e/o Osservazioni\\
+		Gergo tecnico & Carrello & Termine tipico dell'e-commerce che sta ad indicare tipicamente una lista
+		di oggetti (item) da acquistare; nel caso specifico indicherà l'insieme degli alimenti che
+		compongono una porzione della \textit{transazione} d'acquisto.\\
+		& Transazione & Un cliente può effettuare un numero illimitato di ordini; utilizzeremo il termine
+		transazione per definire l'insieme degli ordini avvenuti da un determinato cliente (identificato
+		attraverso il tavolo).\\
+		& Popup & Un'interfaccia a comparsa; solitamente invocata da un evento o da un'azione. Può
+		essere più o meno complessa, contenendo a sua volta interfacce, azioni od eventi.\\
+		& Snackbar & Un'interfaccia a comparsa; solitamente invocata da un evento o da un'azione.
+		Piuttosto minimal, si presenta con poche ma significative linee di testo. Verrà spesso
+		utilizzata per comunicare avvisi, confermare determinati eventi o segnalare errori.
+	\end{adphorizontal}
+\end{center}
+\newpage
+
+\section{Requisiti}
+\subsection{Requisiti funzionali}
+\label{subsec:reqfr}
+Di seguito riportati, nel dettaglio, tutti i requisiti funzionali, ovvero le funzionalità offerte dal sistema: le funzionalità sono \textit{color-coded} per ruolo, per semplificarne la lettura.
+
+\begingroup
+	\makeatletter
+		\setcounter{reqsf}{0}
+		% Redefine for functional reqs
+		\def\thereqsf{RATATO\_FR\ifnum\value{reqsf}<10 0\fi\arabic{reqsf}}
+		\def\thereq@sflbl#1{reqsf:#1}
+		
+		% #1 Name
+		% #2 Description
+		\NewDocumentEnvironment{reqfr}{mm +b}{
+			\refstepcounter{reqsf}\label{\thereq@sflbl{#2}}
+			\expandafter\xdef\csname reqfrcolor#2\endcsname{\i@tblr@color}
+			\xglobal\colorlet{reqfr#2}{\i@tblr@color}
+
+			\begin{center}
+				\begin{adphorizontal}[
+					colspec = {X[0.5, r]*{\thecolcount-2}{X[3, l]}},
+					cell{1}{2} = {font=\small},
+				]
+					ID & \thereqsf \\
+					Nome & #1 \\
+					Descrizione & #3 \\
+				\end{adphorizontal}
+			\end{center}
+		}
+	\makeatother
+
+	\setddtblrcolor{red}
+	\begin{reqfr}{Registrazione dipendente}{register}
+		Il sistema deve consentire all'amministratore all'abilitazione di nuovi dipendenti, indicandone l'username e il ruolo (administrator, supervisor, cuoco, cameriere).
+	\end{reqfr}
+
+	\begin{reqfr}{Disattivazione dei dipendenti}{unregister}
+		Il sistema deve consentire all'amministratore di disattivare i dipendenti del sistema informatico, selezionandoli da un'apposita lista.
+	\end{reqfr}
+
+	\begin{reqfr}{Visualizzazione del rendimento}{stats}
+		Il sistema deve consentire all'amministratore di ispezionare il rendimento degli addetti alla cucina tramite interfacce dedicate.
+	\end{reqfr}
+
+	\setddtblrcolor{orange}
+	\begin{reqfr}{Inserimento di pietanze nel menù culinario}{addmenu}
+		Il sistema deve permettere all'amministratore di aggiungere nuove pietanze al menù culinario del sistema informatico, indicandone: nome, una breve descrizione, eventuali allergeni, il costo della pietanza e la categoria.
+	\end{reqfr}
+
+	\begin{reqfr}{Rimozione pietanze dal menù culinario}{delmenu}
+		Il sistema deve permettere all'amministrazione di poter rimuovere, quindi \textit{disabilitare}, le pietanze dal menù culinario.
+	\end{reqfr}
+
+	\begin{reqfr}{Aggiornamento del menù culinario}{chgmenu}
+		Il sistema deve permettere all'amministrazione di poter visionare e quindi modificare
+		le informazioni riguardanti le pietanze presenti nel menù culinario, come ad esempio aggiornarne
+		il prezzo, la descrizione o cambiarne l'ordine.
+	\end{reqfr}
+
+	\begin{reqfr}{Inserimento di nuove categorie alimentari}{addcat}
+		Il sistema deve permettere all'amministrazione di aggiungere nuove categorie alimentari
+		all'interno del sistema.
+	\end{reqfr}
+
+	\begin{reqfr}{Cancellazione delle categorie alimentari esistenti}{delcat}
+		Il sistema deve permettere all'amministrazione la cancellazione di categorie alimentari dal sistema.
+	\end{reqfr}
+
+	\begin{reqfr}{Aggiornamento delle categorie alimentari}{chgcat}
+		Il sistema deve permettere all'amministrazione di poter visionare e quindi modificare
+		le categorie alimentari già presenti all'interno del sistema, aggiornandone ad esempio
+		il nome o riordinarne la posizione nel catalogo culinario.
+	\end{reqfr}
+
+	\begin{reqfr}{Aggiunta dei tavoli}{addtbl}
+		Il sistema deve consentire all'amministrazione di poter aggiungere postazioni per la clientela.
+	\end{reqfr}
+
+	\begin{reqfr}{Rimozione dei tavoli}{deltbl}
+		Il sistema deve consentire all'amministrazione di poter rimuovere postazioni per la clientela.
+	\end{reqfr}
+
+	\begin{reqfr}{Inserimento avvisi nel sistema}{addntf}
+		Il sistema deve permettere alle figure amministrative quali l'amministratore e il supervisore di poter aggiungere avvisi, caratterizzati da un messaggio.
+	\end{reqfr}
+
+	\setddtblrcolor{gray}
+	\begin{reqfr}{Autenticazione}{authlogin}
+		Il sistema deve consentire al dipendente registrato precedentemente da un amministratore di poter effettuare l'autenticazione al sistema, tramite username e password, per accedere alle funzionalità disponibili.
+	\end{reqfr}
+
+	\begin{reqfr}{Aggiornamento delle credenziali d'accesso alla prima autenticazione}{authupdate}
+		Il sistema deve obbligare a cambiare la password, al primo accesso, 
+		all'utente appena registrato da un amministratore, tramite un'apposita interfaccia che ne richiede l'inserimento di una nuova.
+	\end{reqfr}
+
+	\begin{reqfr}{Nascondere avvisi}{hidentf}
+		Il sistema deve permettere ai dipendenti tutti di nascondere un particolare avviso, 
+		dopo averlo visualizzato.
+	\end{reqfr}
+
+	\setddtblrcolor{turquoise}
+	\begin{reqfr}{Registrare nuovi ordini}{addorder}
+		Il sistema deve consentire agli addetti di sala di aggiungere nuovi ordini, 
+		caratterizzate da delle pietanze, dalla loro quantità e dal numero identificativo di un tavolo.
+	\end{reqfr}
+
+	\begin{reqfr}{Completa transazione}{termorder}
+		Il sistema deve consentire agli addetti di sala di concludere le transazioni, 
+		caratterizzate da almeno un ordine e dal numero di tavolo.
+	\end{reqfr}
+
+	\setddtblrcolor{blue}
+	\begin{reqfr}{Accetta ordine}{acptorder}
+		Il sistema deve consentire agli addetti alla cucina di accettare nuove ordinazioni, le quali, una volta accettate, necessariamente devono essere completate (o nuovamente rilasciate).
+	\end{reqfr}
+
+	\begin{reqfr}{Completa l'ordine}{cmporder}
+		Il sistema deve consentire agli addetti alla cucina di completare l'ordine, quindi notificare il sistema dell'avvenuto completamento.
+	\end{reqfr}
+
+	\begin{reqfr}{Rilascia ordine}{abrtorder}
+		Il sistema deve consentire agli addetti alla cucina di rilasciare l'ordine in stato di attesa (pending), quindi notificare il sistema dell'avvenuto rilascio.
+	\end{reqfr}
+\endgroup
+
+\subsection{Requisiti non funzionali}
+Di seguito riportati, nel dettaglio, tutti i requisiti non funzionali, ossia i requisiti di qualità richiesti riguardo prestazioni, sicurezza e manutenibilità.
+
+\begingroup
+	\makeatletter
+		\setcounter{reqsf}{0}
+		\def\thereqsf{RATATO\_NFR\ifnum\value{reqsf}<10 0\fi\arabic{reqsf}}
+		\def\thereq@sflbl#1{reqnsf:#1}
+		
+		% #1 Name
+		% #2 Description
+		\NewDocumentEnvironment{reqnfr}{mo +b}{
+			\stepcounter{reqsf}\IfValueT{#2}{\label{\thereq@sflbl{#2}}}
+			\begin{center}
+				\begin{adphorizontal}[
+					colspec = {X[0.5, r]*{\thecolcount-2}{X[3, l]}},
+					cell{1}{2} = {font=\small},
+				]
+					ID & \thereqsf \\
+					Nome & #1 \\
+					Descrizione & #3 \\
+				\end{adphorizontal}
+			\end{center}
+		}
+	\makeatother
+
+	\setddtblrcolor{gold}
+	\begin{reqnfr}{Containerizzato}
+		Ogni componente del sistema dev'essere containerizzato, così da garantire una
+		maggiore sicurezza e permetterne il deployment in tempi brevi.
+	\end{reqnfr}
+
+	\begin{reqnfr}{Scalabile}
+		Il sistema deve risultare adatto alle necessità di crescita delle attività di ristorazione.
+	\end{reqnfr}
+
+	\begin{reqnfr}{Multipiattaforma}
+		Il sistema deve risultare adatto ad una moltitudine di dispositivi, così da accomodare
+		le necessità delle diverse figure presenti nello staff dipendenti.
+	\end{reqnfr}
+	
+	\begin{reqnfr}{Facilità di utilizzo}
+		Il sistema deve risultare semplice da utilizzare per i dipendenti tutti, in particolare
+		per lo staff dedito alle attività di ristorazione (addetti di sala, addetti alla cucina).\newline
+		Si prospetta che, un nuovo dipendente possa acquisire le nozioni principali di funzionamento
+		entro circa un'ora di utilizzo.
+	\end{reqnfr}
+
+	\begin{reqnfr}{Real-time}
+		Il sistema deve garantire basse latenze di aggiornamento, 
+		permettendo agli addetti alla cucina di procedere quanto prima alla preparazione di alimenti.
+	\end{reqnfr}
+
+	Il sistema deve gestire il processo di registrazione nonché autenticazione dei dipendenti.\newline
+	\begin{reqnfr}{Policy utente}
+		\begin{enumerate}
+			\item Il nome utente da utilizzare saranno case \textbf{insensitive}\footnotemark\ e con lunghezza compresa
+			tra i 4 e i 20 caratteri.
+			\item Le password da utilizzare dovranno avere lunghezza compresa tra i 7 e i 20 caratteri e devono
+			essere composte da almeno un numero, un minuscola, una maiuscola e un carattere speciale (?!.*).
+		\end{enumerate}
+	\end{reqnfr}
+
+	\footnotetext{Che, cioè non tiene conto della differenza tra minuscole-maiuscole}
+\endgroup
+
+\subsection{Requisiti di dominio}
+Di seguito riportati, nel dettaglio, tutti i requisiti di dominio, ovvero i vincoli e le forzature derivanti dal dominio di appartenenza del sistema.
+
+\begingroup
+	\makeatletter
+		\setcounter{reqsf}{0}
+		\def\thereqsf{RATATO\_DR\ifnum\value{reqsf}<10 0\fi\arabic{reqsf}}
+		
+		% #1 Name
+		% #2 Description
+		\NewDocumentEnvironment{reqdom}{m +b}{
+			\stepcounter{reqsf}
+			\begin{center}
+				\begin{adphorizontal}[
+					colspec = {X[0.5, r]*{\thecolcount-2}{X[3, l]}},
+					cell{1}{2} = {font=\small},
+				]
+					ID & \thereqsf \\
+					Nome & #1 \\
+					Descrizione & #2 \\
+				\end{adphorizontal}
+			\end{center}
+		}
+	\makeatother
+
+	\setddtblrcolor{gray}
+	\begin{reqdom}{UTF-8}
+		Il sistema deve supportare l'encoding standard UTF-8 per la rappresentazione dei caratteri Unicode.
+	\end{reqdom}
+\endgroup
+
+\section{Casi d'uso}
+\subsection{Amministrazione}[Amministratori e Supervisori]
+	L'amministrazione è caratterizzata dal maggior numero di casi d'uso. Le due figure-attori presenti
+	all'interno del diagramma che segue condividono parte degli use-case, in particolare si noti
+	come il \textbf{supervisor} sia caratterizzato come un \textit{subset} del \textbf{administrator}.
+
+	\begin{ddusecase}{Amministrazione}[orange]
+		+	{login/Effettua autenticazione (login)/green},
+			{add-user/Abilita nuovo dipendente (crea)/naplesyellow},
+			{del-user/Disabilita dipendente (rimuovi)/naplesyellow},
+			{add-menu/Aggiungi al menù culinario/orange},
+			{del-menu/Rimuovi dal menù culinario/orange},
+			{add-table/Aggiungi postazione (tavolo)/orange},
+			{del-table/Rimuovi postazione (tavolo)/orange},
+			{mod-menu/Modifica il menù culinario/orange},
+			{vis-user/Visualizza rendimento: addetti in cucina/violet},
+			{add-ntf/Aggiungi nuovo avviso/pink},
+			{show-ntf/Visualizza avviso/pink},
+			{hide-ntf/Nascondi avviso/pink/show-ntf}+
+		<	{Administrator/red/login;add-user;del-user;vis-user;add-menu;del-menu;add-table;del-table;mod-menu;add-ntf;hide-ntf},
+			{Supervisor/orange/login;add-menu;del-menu;add-table;del-table;mod-menu;add-ntf;hide-ntf}<
+		> {Internal API/gray/login/login},
+			{OpenFoodFacts/gold/add-menu/add-menu}>
+		In Ratatouille23, l'amministrazione è compito svolto dalle figure amministrative quali l'\textbf{administrator} e il \textbf{supervisor}, figure responsabili della gestione del sistema:
+		\begin{itemize}
+			\item Gestione dei dipendenti, più precisamente l'\textbf{inserimento} e la \textbf{rimozione} degli utenti cui possono accedere al sistema.
+			\item \textbf{Visualizzare} il rendimento dei dipendenti \textit{addetti alla cucina}. In particolare, verranno rese note quanti ordini sono stati evasi e in quanto tempo.
+			\item \textbf{Inserimento di avvisi}, rivolti a tutti i dipendenti (amministratori e supervisori compresi), nel sistema.
+			\item \textbf{Aggiunta} o \textbf{rimozione} di postazioni (tavoli) per i clienti.
+			\item Gestione del menù culinario, caratterizzato dall'\textbf{inserimento}, la \textbf{cancellazione} e la \textbf{modifica} di alimenti e categorie alimentari nel menù del sistema.
+		\end{itemize}
+
+		L'autenticazione è uno step obbligatorio per tutti i dipendenti.
+
+		Tutti i dipendenti possono visualizzare gli avvisi, quindi nasconderli. 
+	\end{ddusecase}
+
+\newpage
+\subsection{Gestione della Sala}[Addetti alla Sala]
+	La gestione della sala, quindi l'immissione di nuove ordinazioni all'interno del sistema, è gestito dagli \textbf{addetti alla sala}.
+	\begin{ddusecase}{Gestione sala}[seagreen]
+	+ {login/Effettua autenticazione (login)/green},
+		{regorder/Registra nuovo ordine/seagreen},
+		{termorder/Completa transazione/seagreen/regorder},
+		{show-ntf/Visualizza avviso/pink},
+		{hide-ntf/Nascondi avviso/pink/show-ntf}+
+	<	{Addetto alla Sala/seagreen/login;regorder;termorder;hide-ntf}<
+	> {Internal API/gray/login/login}>
+		Il loro ruolo è la registrazione di ordini all'interno del sistema; un ordine è caratterizzato fondamentalmente 
+		da una \textbf{lista di alimenti} dal menù, dalle quantità degli stessi e dal numero del \textbf{tavolo}.
+
+		Più ordini possono essere registrati per un determinato tavolo; l'insieme degli ordini, identificati dal tavolo,
+		prende il nome di \textbf{transazione}.
+
+		L'addetto alla sala detiene anche il compito di \textbf{concludere} la transazione di un determinato tavolo.
+
+		L'autenticazione è uno step obbligatorio per tutti i dipendenti.
+
+		Tutti i dipendenti possono visualizzare gli avvisi, quindi nasconderli. 
+	\end{ddusecase}
+
+\subsection{Gestione della Cucina}[Addetti alla cucina]
+	La gestione della cucina, quindi l'accettazione e quindi la preparazione degli alimenti, è a carico
+	degli \textbf{addetti alla cucina}.
+	\begin{ddusecase}{Gestione sala}[blue]
+	+ {login/Effettua autenticazione (login)/green},
+		{accept/Accetta nuovo ordine/blue},
+		{done/Completa ordine/blue/accept},
+		{abort/Rilascia ordine/blue},
+		{show-ntf/Visualizza avviso/pink},
+		{hide-ntf/Nascondi avviso/pink/show-ntf}+
+	<	{Addetto alla Cucina/blue/login;done;abort;hide-ntf}<
+	> {Internal API/gray/login/login}>{
+		\umlHVHinclude[blue!75!black, font=\scriptsize, anchor1=east, anchor2=east, arm1=6mm, arm2=6mm, pos stereo=1.5]{abort}{accept}
+	}
+		L'addetto alla cucina può:
+		\begin{itemize}
+			\item \textbf{Accettare} un nuovo \textbf{ordine} dalla lista delle ordinazioni in sospeso.
+			\item Una volta completato l'ordine accettato precedentemente, deve \textbf{segnalarne il completamento} o \textbf{rilasciarlo} nel sistema.
+		\end{itemize}
+		
+		L'autenticazione è uno step obbligatorio per tutti i dipendenti.
+
+		Tutti i dipendenti possono visualizzare gli avvisi, quindi nasconderli. 
+	\end{ddusecase}
+
+\section{Descrizioni strutturate}
+Di seguito riportate le descrizioni strutturate per alcuni degli use-case descritti precedentemente, in particolare verranno prodotte delle \textit{tabelle di cockburn} che ne descrivono la procedura in maniera più o meno approfondita.
+
+\begingroup
+	\DeclareDocumentEnvironment{cockburn}{ssG{gray}+b}{
+		\setddtblrcolor{ddchaptercolor}%
+		\begin{figure}[!h]\centering\vspace*{\topskip}
+			\fontsize{10}{6}\selectfont%
+			#4%
+			\caption{\IfBooleanTF{#1}{Extensions\IfBooleanTF{#2}{\ e Sub-variations di}{\ di}}{Main Scenario,}%
+				\begingroup\color{#3!80!black}\texttt{\ \thesubsectionnamely}\endgroup}
+		\end{figure}\newpage%
+	}
+
+	\DeclareDocumentEnvironment{cockburn*}{G{gray}+b}{\begin{cockburn}*{#1}#2\end{cockburn}}{}
+	\DeclareDocumentEnvironment{cockburn**}{G{gray}+b}{\begin{cockburn}**{#1}#2\end{cockburn}}{}
+
+\hypersetup{allcolors=reqfrregister}
+\subsection{Creazione di nuovi dipendenti}[Inerente al requisito funzionale \ref{reqsf:register}]
+
+\begin{cockburn}{reqfrregister}
+	\begin{adphorizontal}[
+		% Resize cols
+		colspec = {X[2, r]X[0.5, l]*{\thecolcount-2}{X[3, l]}},
+		% Set fields
+		cell{1-7}{2}{c=3}, 
+		% Set inner table
+		cell{8}{2-4}={halign=c},
+		cell{8}{1}={r=9}{r},
+		% Number field
+		cell{9-16}{2}={font=\AldotheApache\small, halign=r},
+	]
+		Use-case \#1 & Abilita nuovo dipendente.\\
+		Goal in Context & L'administrator vuole aggiungere un nuovo dipendente al sistema.\\
+		Preconditions & L'utente administrator dev'essersi autenticato tramite il front-end dell'applicazione Ratatouille23. \\
+		Success end-condition & L'administrator crea un nuovo dipendente nel sistema con successo.\\
+		Failed end-condition & L'administrator fallisce nella creazione del nuovo dipendente e viene quindi invitato a riprovare.\\
+		Primary Actor & Administrator.\\
+		Trigger & Navigazione verso l'interfaccia dedicata alla registrazione presente nel pannello d'amministrazione.\\
+		Description & Step n° & Administrator & Sistema \\
+		& 1 & Accede all'interfaccia dedicata alla creazione di nuovi dipendenti.\\
+		& 2 & & Mostra interfaccia per la creazione di nuovi dipendenti.\\
+		& 3 & Nell'interfaccia, inserisce tutti i dati relativi al dipendente che si vuol creare: \begin{itemize}
+			\item Nome account del dipendente (\textbf{username});
+			\item \textbf{Ruolo} del dipendente tra quelli disponibili (addetto alla cucina, addetto alla sala, supervisor, administrator);
+		\end{itemize}
+		Non sarà necessario, però, inserire una password, la quale verrà generata automaticamente dal sistema.\\
+		& 4 & Richiede la creazione del nuovo dipendente cliccando sul pulsante \textbf{crea dipendente}.\\
+		& 5 & & Il sistema richiede la conferma della creazione del nuovo dipendente tramite un popup ``Conferma crea dipendente``.\\
+		& 6 & L'amministratore clicca sul pulsante di conferma del popup. \\
+		& 7 & & Il sistema conferma la creazione del nuovo dipendente.\\
+		& 8 & & L'interfaccia viene resettata e preparata alla creazione di un nuovo dipendente.\\
+	\end{adphorizontal}
+\end{cockburn}
+
+\begin{cockburn*}{reqfrregister}
+	\begin{adphorizontal}[
+		% Resize cols
+		colspec = {X[2, r]X[0.5, l]*{\thecolcount-2}{X[3, l]}},
+		% Extensions
+		cell{1}{2-4}={halign=c},
+		cell{2-3,5-6,8}{2}={font=\AldotheApache\small, halign=r},
+		cell{2,5,8}{1}={font=\AlteG\scriptsize, halign=j},
+		cell{2,5}{1}={r=3}{c},
+		cell{8}{1}={r=2}{c},
+		cell{4,7,9}{2}={c=3}{font=\AlteG\scriptsize, halign=c}
+	]
+		Extensions & Step n° & Administrator & Sistema \\
+		``Il sistema non riesce a creare l'account in quanto il nome utente scelto risulta esistente``. & 6.1.a & & Notifica l'esistenza di un dipendente con questo stesso nome utente e quindi l'impossibilità alla crezione del nuovo account tramite un popup ``Utente già esistente``.\\
+		& 6.2.a & Clicca sul pulsante di chiusura del popup.\\ 
+		& Si ricollega allo step 4 del Main Scenario.\\
+		``Il sistema non riesce a creare l'account a causa di un errore di tipo sconosciuto`` & 6.1.b & & Segnala la presenza di un errore sulla piattaforma all'amministratore e quindi l'impossibilità alla crezione del nuovo account tramite un popup di ``Errore Generico del Server`` che lo invita a riprovare la procedura e/o a verificare la presenza di problemi lato back-end.\\
+		& 6.2.b & Clicca sul pulsante di chiusura del popup\\ 
+		& Si ricollega allo step 4 del Main Scenario.\\
+		``L'amministratore annulla la creazione del nuovo dipendente`` & 6.1.c & L'amministratore preme sul pulsante annulla nel popup presentatogli.\\
+		& Si ricollega allo step 4 del Main Scenario.\\
+	\end{adphorizontal}
+\end{cockburn*}
+
+\hypersetup{allcolors=reqfrcmporder}
+\subsection{Gestione completamento dell'ordine}[Inerente ai requisiti funzionale \ref{reqsf:cmporder}, \ref{reqsf:abrtorder}]
+\begin{cockburn}{reqfrcmporder}
+	\begin{adphorizontal}[
+		% Resize cols
+		colspec = {X[2, r]X[0.5, l]*{\thecolcount-2}{X[3, l]}},
+		% Set fields
+		cell{1-7}{2}{c=3}, 
+		% Set inner table
+		cell{8}{2-4}={halign=c},
+		% Number field
+		cell{8}{1}={r=8}{r},
+		cell{9-15}{2}={font=\AldotheApache\small, halign=r},
+	]
+		Use-case \#2 & Notifica il completamento di un'ordine\\
+		Goal in Context & Un addetto alla cucina accetta un ordine, completa l'ordine e quindi notifica il sistema dell'avvenuto completamento.\\
+		Preconditions & L'account dell'addetto alla cucina dev'essere attivo.\newline
+		Il dipendente dev'essersi autenticato e deve aver accettato almeno un ordine.\\
+		Success end-condition & L'ordine è segnato come \textbf{completo} nel sistema. \\
+		Failed end-condition & Nessuna.\\
+		Primary Actor & Addetto alla cucina.\\
+		Trigger & Navigazione verso l'interfaccia dedicata all'accettazione degli ordini.\newline
+		Almeno un ordine dev'essere stato precedentemente accettato e in stato d'attesa (accepted).\\
+		Description & Step n° & Addetto alla Cucina & Sistema \\
+		& 1 & Accede all'interfaccia dedicata all'accettazione delle ordinazioni disponibili.\\
+		& 2 & & Mostra interfaccia per l'accettazione degli ordini disponibili (pending) e riporta gli ordini accettati (accepted) in attesa di completamento: per ogni ordine vi è anche la lista di pietanze che lo compongono.\\
+		& 3 & Conferma il completamento di un ordine cliccando sull'apposito pulsante posizionato di fianco ad un ordine in attesa di completamento.\\
+		& 4 & & Il sistema richiede la conferma del completamento del nuovo ordine tramite un popup ``Conferma completamneto dell'ordine``.\\
+		& 5 & Clicca sul pulsante di conferma del popup.\\
+		& 6 & & Il sistema riceve e propaga la conferma del completamento dell'ordine selezionato, aggiornandone l'interfaccia e lo stato a completato (completed). \\
+		& 7 & & Si viene reindirizzati allo step 2 del Main Scenario.\\
+	\end{adphorizontal}
+\end{cockburn}
+
+\begin{cockburn**}{reqfrcmporder}
+	\begin{adphorizontal}[
+		% Resize cols
+		colspec = {X[2, r]X[0.5, l]*{\thecolcount-2}{X[3, l]}},
+		% Extensions
+		cell{1,4}{2-4}={halign=c},
+		cell{2,5-8}{2}={font=\AldotheApache\small, halign=r},
+		cell{2,5}{1}={font=\AlteG\scriptsize, halign=j},
+		cell{2}{1}={r=2}{c},
+		cell{5}{1}={r=5}{c},
+		cell{3,9}{2}={c=3}{font=\AlteG\scriptsize, halign=c}
+	]
+		Extensions & Step n° & Addetto alla cucina & Sistema \\
+		``L'addetto alla cucina annulla la conferma di completamento dell'ordine selezionato`` & 5.1.a & L'addetto alla cucina preme sul pulsante annulla nel popup presentatogli.\\
+		& Si ricollega allo step 4 del Main Scenario.\\
+		Sub-variations & Step n° & Addetto alla cucina & Sistema \\
+		``L'addetto alla cucina	\textit{rilascia} l'ordine, permettendo che sia qualcun altro ad occuparsene`` & 2.1.a & Preme su di un apposito pulsante posizionato
+		di fianco ad un ordine in attesa di completamento. \\
+		& 2.2.a & & Il sistema richiede la conferma di rilascio dell'ordine tramite un popup ``Conferma rilascio dell'ordine``.\\
+		& 2.3.a & Clicca su conferma del popup. \\
+		& 2.4.a & & Il sistema riceve e propaga la conferma di rilascio dell'ordine selezionato, aggiornandone l'interfaccia, quindi riportando esso allo stato di ordine disponibile (pending).\\
+		& Si ricollega allo step 4 del Main Scenario.\\
+	\end{adphorizontal}
+\end{cockburn**}
+
+\hypersetup{allcolors=reqfraddmenu}
+\subsection{Inserimento pietanze nel menu' culinario}[Inerente al requisito funzionale \ref{reqsf:addmenu}]
+
+\begin{cockburn}{reqfraddmenu}
+	\begin{adphorizontal}[
+		% Resize cols
+		colspec = {X[2, r]X[0.5, l]*{\thecolcount-2}{X[3, l]}},
+		% Set fields
+		cell{1-7}{2}{c=3}, 
+		% Set inner table
+		cell{8}{2-4}={halign=c},
+		% Number field
+		cell{8}{1}={r=7}{r},
+		cell{9-14}{2}={font=\AldotheApache\small, halign=r},
+	]
+		Use-case \#3 & Inserimento pietanza nel menù culinario\\
+		Goal in Context & Un membro dell'amministrazione (administrator, supervisor) aggiunge una pietanza
+		al menu' culinario.\\
+		Preconditions & L'account d'amministrazione dev'essere attivo.\newline
+		Il dipendente dev'essersi autenticato.\\
+		Success end-condition & La pietanza viene aggiunta al sistema.\\
+		Failed end-condition & Uno dei campi non rispetta il formato richiesto; il sistema evidenzia i campi non validi\newline
+		e invita il membro d'amministrazione ad aggiornare i campi richiesti e a riprovare.\\
+		Primary Actor & Membro dell'amministrazione (administrator, supervisor). \\
+		Trigger & Navigazione verso l'interfaccia dedicata all'inserimento delle pietanze.\\
+		Description & Step n° & Membro d'amministrazione & Sistema \\
+		& 1 & Accede all'interfaccia dedicata all'inserimento delle pietanze.\\
+		& 2 & & Mostra interfaccia per l'inserimento delle pietanze.\\
+		& 3 & Completa i campi obbligatori del form, quali:
+		\begin{itemize}
+			\item Nome della pietanza (di lunghezza >2).
+			\item Descrizione della pietanza (di lunghezza >5).
+			\item Prezzo della pietanza.
+			\item Categoria (tra quelle esistenti descritte nel sistema) della pietanza.
+		\end{itemize} \\
+		& 4 & Conferma la creazione della pietanza cliccando sull'apposito pulsante di conferma.\\
+		& 5 & & Il sistema conferma l'inserimento della nuova pietanza. \\
+		& 6 & & Il form di inserimento viene resettato e quindi preparato all'inserimento di una nuova pietanza. \\
+	\end{adphorizontal}
+\end{cockburn}
+
+\begin{cockburn**}{reqfraddmenu}
+	\begin{adphorizontal}[
+		% Resize cols
+		colspec = {X[2, r]X[0.5, l]*{\thecolcount-2}{X[3, l]}},
+		cell{1,9}{2-4}={halign=c},
+		% Extensions
+		cell{2,4,6-7,10}{2}={font=\AldotheApache\small, halign=r},
+		cell{2,4,6,10}{1}={font=\AlteG\scriptsize, halign=j},
+		cell{2,4,10}{1}={r=2}{c},
+		cell{6}{1}={r=3}{c},
+		cell{3,5,8,11}{2}={c=3}{font=\AlteG\scriptsize, halign=c}
+	]
+		Extensions & Step n° & Membro d'amministrazione & Sistema \\
+		``Il nome della pietanza non è sufficientemente lunga, avendo una lunghezza inferiore
+		ai 2 caratteri`` & 4.1.a & & Il sistema evidenza nel form il campo nome, indicandolo come non valido,
+		invitando il membro d'amministrazione a soddisfare la richiesta. \\
+		& Si ricollega allo step 4 del Main Scenario.\\
+		``La descrizione della pietanza non è sufficientemente lunga, avendo una lunghezza inferiore
+		ai 5 caratteri`` & 4.1.b & & Il sistema evidenza nel form il campo descrizione, indicandolo come non valido,
+		invitando il membro d'amministrazione a soddisfare la richiesta. \\
+		& Si ricollega allo step 4 del Main Scenario.\\
+		``Il sistema non riesce a creare l'account a causa di un errore di tipo sconosciuto`` & 5.1.b & & Segnala la presenza di un errore sulla piattaforma all'amministratore e quindi l'impossibilità alla crezione del nuovo account tramite un popup di ``Errore Generico del Server`` che lo invita a riprovare la procedura e/o a verificare la presenza di problemi lato back-end.\\
+		& 5.2.b & Clicca sul pulsante di chiusura del popup. \\ 
+		& Si ricollega allo step 4 del Main Scenario.\\
+		Sub-variations & Step n° & Membro d'amministrazione & Sistema \\
+		``Il membro d'amministrazione decide di compilare anche i campi facoltativi`` & 3.1.a & Completa i campi facoltativi del form, quali:
+		\begin{itemize}
+			\item Allergeni della pietanza.
+			\item Indice all'interno del menù.
+		\end{itemize}\\
+		& Si ricollega allo step 4 del Main Scenario.\\
+	\end{adphorizontal}
+\end{cockburn**}
+
+\hypersetup{allcolors=reqfraddorder}
+\subsection{Aggiungere ordinazioni}[Inerente ai requisiti funzionali \ref{reqsf:addorder}, \ref{reqsf:termorder}]
+\begin{cockburn}{reqfraddorder}
+	\begin{adphorizontal}[
+		% Resize cols
+		colspec = {X[2, r]X[0.5, l]*{\thecolcount-2}{X[3, l]}},
+		cell{1,7}{2-4}={halign=c},
+		% Set fields
+		cell{1-7}{2}{c=3}, 
+		% Set inner table
+		cell{8}{2-4}={halign=c},
+		% Number field
+		cell{8}{1}={r=\therowcount-7}{r},
+		cell{9-Z}{2}={font=\AldotheApache\small, halign=r},
+	]
+		Use-case \#4 & Inserimento di nuovo ordine all'interno del menù. \\
+		Goal in Context & Un addetto alla sala registra un nuovo ordine nel sistema. \\
+		Preconditions & L'account dell'addetto alla sala dev'essere attivo.\newline
+		Il dipendente dev'essersi autenticato.\newline
+		Almeno una categoria di pietanze e una pietanza devono essere presenti nel sistema.\newline
+		Almeno un tavolo dev'essere stato precedentemente registrato nel sistema come disponibile.\\
+		Success end-condition & Il nuovo ordine viene registrato, pronti per essere preparati. \\
+		Failed end-condition & Nessuna. \\
+		Primary Actor & Addetto alla sala. \\
+		Trigger & Navigazione verso l'interfaccia dedicata alla registrazione di nuovi ordini.\\
+		Description & Step n° & Addetto alla Sala & Sistema \\
+		& 1 & Accede all'interfaccia che visualizza i tavoli disponibili nel sistema. \\
+		& 2 & Seleziona uno dei tavoli disponibili cliccando su uno degli appositi controlli visualizzati.\\
+		& 3 & & Visualizza un popup in cui vi sono visualizzate diverse voci di possibili operazioni. \\
+		& 4 & Clicca sulla voce di menù \textbf{Nuovo Ordine}. \\
+		& 5 & & Visualizza un'interfaccia per la creazione di un nuovo ordine. \\
+		& 6 & Clicca una dalle pietanze visualizzate a video. \\
+		& 7 & & Visualizza un'interfaccia popup per specificarne la quantità o aggiugerne delle note. \\
+		& 8 & Compila l'interfaccia popup, specificandone la quantità.\\
+		& 9 & Clicca sul pulsante per confermare l'inserimento della pietanza al \textit{carrello}.\\
+		& 10 & & Il sistema popola e aggiorna il carrello. \\
+		& 11 & Conferma l'ordine, cliccando su \textbf{Invia} nell'apposita sezione del carrello. \\
+		& 12 & & Il sistema conferma la creazione di una nuove transazione, quindi l'inserimento del 
+		nuovo ordine all'interno del sistema tramite uno SnackBar che ne segnala l'esito positivo. \\
+		& 13 & & Il carrello viene svuotato, l'interfaccia quindi predisposta all'inserimento di un nuovo
+		ordine.\\
+	\end{adphorizontal}
+\end{cockburn}
+
+\begin{cockburn**}{reqfraddorder}
+	\begin{adphorizontal}[
+		% Resize cols
+		colspec = {X[2, r]X[0.5, l]*{\thecolcount-2}{X[3, l]}},
+		cell{1,11}{2-4}={halign=c},
+		% Extensions and sub-variations
+		cell{2-3,5,7,9,12-14}{2}={font=\AldotheApache\small, halign=r},
+		cell{2,5,7,9,12}{1}={font=\AlteG\scriptsize, halign=j},
+		cell{2}{1}={r=3}{c},
+		cell{5,7,9}{1}={r=2}{c},
+		cell{12}{1}={r=4}{c},
+		cell{4,6,8,10,15}{2}={c=3}{font=\AlteG\scriptsize, halign=c}
+	]
+		Extensions & Step n° & Addetto alla sala & Sistema \\
+		``Il tavolo selezionato si presenta come già occupato; l'addetto alla sala decide di continuare
+		l'ordine. `` & 3.1.a & & Il sistema presenta una versione
+		alterata del popup che non consente di iniziare un nuova transazione, piuttosto permette di continuare
+		quella attualmente presente al tavolo aggiungendo nuovi ordini o terminare la transazione. \\
+		& 3.2.a & Clicca sulla voce di menù \textbf{Continua Transazione}. \\
+		& Si ricollega allo step 5 del Main Scenario.\\
+		``L'addetto alla sala decide di inserire una \textit{nota aggiuntiva} alla pietanza selezionata.`` 
+			& 8.1.a & Aggiunge una nota alla pietanza scelta. \\
+		& Si ricollega allo step 9 del Main Scenario.\\
+		``L'addetto alla sala vuole inserire altri alimenti all'interno del carrello`` 
+			& 10.1.a & Clicca nuovamente su una delle pietanze visualizzate a video. \\
+		& Si ricollega allo step 6 del Main Scenario. \\
+		``L'addetto alla sala vuole alterare la quantità selezionata di una determinata pietanza presente
+		all'interno del carrello.`` & 10.1.a & Incrementa, decrementa le quantità o elimina una determinata
+		pietanza dal carrello visualizzato e aggiornato. \\
+		& Si ricollega allo step 10 del Main Scenario. \\
+		Sub-variations & Step n° & Addetto alla sala & Sistema \\
+		``L'addetto alla sala vuole concludere la transazione ad un determinato tavolo, quindi, lo libera.`` 
+			& 3.1.a & & Il sistema presenta una versione
+			alterata del popup che non consente di iniziare un nuova transazione, piuttosto permette di continuare
+			quella attualmente presente al tavolo aggiungendo nuovi ordini o terminare la transazione. \\
+		& 3.2.a & Clicca sulla voce di menù \textbf{Completa Transazione}. \\
+		& 3.3.a & & Il sistema completa la transazione, quindi libera il tavolo e visualizza uno Snackbar
+		che segnala l'esito positivo dell'operazione. \\
+		& Si ricollega allo step 1 del Main Scenario. \\
+	\end{adphorizontal}
+\end{cockburn**}
+\endgroup
+

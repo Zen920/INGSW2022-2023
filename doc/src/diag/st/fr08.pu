@@ -1,0 +1,29 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state form as "Form Selezione\nCategoria Alimentare" #Gold
+form: entry/VisualizzaFormSelezioneCategorieAlimentari
+state val as "Validazione" #LightGreen
+
+state failhnd as "Error Handling" #LightPink 
+
+[*]		-[hidden]d-> failmsg
+[*]		--> form
+form	---> val: DisattivaCategoriaAlimentare()
+val		-r-> failhnd: [Error]
+val		--> [*]: [OK] / RimuoviCategoriePerAlimentiCoinvolti()\l\tDisattivaAlimentiCoinvolti()\l\tCancellaCategoriaAlimentare()
+failhnd -u> form
+
+note left of val
+	La cancellazione di una categoria
+	farà si che tutti gli alimenti,
+	appartenenti a tale categoria,
+	vengano disattivati, risultando, dunque,
+	inaccessibili, fintanto che non vengano
+	assegnati ad una nuova categoria
+end note
+
+@enduml
+

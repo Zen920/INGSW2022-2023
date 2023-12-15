@@ -1,0 +1,359 @@
+\makeatletter
+	\DeclareDocumentCommand{\desktopmockup}{smmO{\thesubsectionnamely}s}{
+		\begin{tikzsetheight}[\dimexpr\measurepage-1cm\relax]%
+			\node[nosep, outer sep=1mm, anchor=north west] at(0.05,0.95) (upleft)
+				{\includegraphics[width=0.8\textwidth, keepaspectratio, max height=0.4\measurepage]{src/imgs/mockups/#2}};
+
+			\node[nosep, outer sep=1mm, anchor=south east] at(0.95,0.05) (downright)
+				{\includegraphics[width=0.8\textwidth, keepaspectratio, max height=0.4\measurepage]{src/imgs/mockups/#3}};
+
+			\begin{pgfonlayer}{background}
+				\path[opacity=0.65, draw=ddchaptercolor!60!black, line width=2pt]
+					(upleft.north west) rectangle (upleft.south east);
+
+				\IfBooleanF{#1}{\path[fill=ddchaptercolor!45!white]%
+					(0.15,0.498) rectangle (0.85,0.502); }
+
+				\path[opacity=0.65, draw=ddchaptercolor!60!black, line width=2pt]
+					(downright.north west) rectangle (downright.south east);
+			\end{pgfonlayer}
+		\end{tikzsetheight}%
+		\captionof{figure}{\begingroup\color{ddchaptercolor!80!black}\texttt{#4}\endgroup}%
+		\IfBooleanF{#5}{\clearpage\mbox{}}
+	}
+
+	\DeclareDocumentCommand{\mobilemockup}{smmO{\thesubsectionnamely}s}{
+		\begin{tikzsetheight}[\dimexpr\measurepage-1cm\relax]
+			\node[nosep, outer sep=1mm, anchor=north west] at(0.05,0.95) (upleft)
+				{\includegraphics[height=0.70\measurepage, max width=0.35\pagewidth, keepaspectratio]{src/imgs/mockups/#2}};
+			\node[nosep, outer sep=1mm, anchor=south east] at(0.95,0.05) (downright)
+				{\includegraphics[height=0.70\measurepage, max width=0.35\pagewidth, keepaspectratio]{src/imgs/mockups/#3}};
+
+			\begin{pgfonlayer}{background}
+				\path[opacity=0.65, line width=2pt, draw=ddchaptercolor!60!black]
+					(upleft.north west) rectangle (upleft.south east);
+
+				\IfBooleanF{#1}{\path[fill=ddchaptercolor!45!white]%
+					(0.498,0.15) rectangle (0.502,0.85); }
+
+				\path[opacity=0.65, line width=2pt, draw=ddchaptercolor!60!black]
+					(downright.north west) rectangle (downright.south east);
+			\end{pgfonlayer}
+
+		\end{tikzsetheight}
+		\captionof{figure}{\begingroup\color{ddchaptercolor!80!black}\texttt{#4}\endgroup}
+		\IfBooleanF{#5}{\clearpage\mbox{}}
+	}
+
+	\DeclareDocumentCommand{\mobilemockupelongated}{smmO{\thesubsectionnamely}}{
+		\begin{tikzsetheight}[\dimexpr\measurepage-1cm\relax]
+			\node[nosep, outer sep=1mm, anchor=north west] at(0.15,0.95) (upleft)
+				{\includegraphics[height=0.825\measurepage, max width=0.45\pagewidth, keepaspectratio]{src/imgs/mockups/#2}};
+			\node[nosep, outer sep=1mm, anchor=south east] at(0.85,0.05) (downright)
+				{\includegraphics[height=0.825\measurepage, max width=0.45\pagewidth, keepaspectratio]{src/imgs/mockups/#3}};
+
+			\begin{pgfonlayer}{background}
+				\path[opacity=0.65, line width=2pt, draw=ddchaptercolor!60!black]
+					(upleft.north west) rectangle (upleft.south east);
+
+				\IfBooleanF{#1}{\path[fill=ddchaptercolor!45!white]%
+					(0.498,0.15) rectangle (0.502,0.85); }
+
+				\path[opacity=0.65, line width=2pt, draw=ddchaptercolor!60!black]
+					(downright.north west) rectangle (downright.south east);
+			\end{pgfonlayer}
+
+		\end{tikzsetheight}
+		\captionof{figure}{\begingroup\color{ddchaptercolor!80!black}\texttt{#4}\endgroup}
+		\clearpage\mbox{}%
+	}
+
+\makeatother
+
+\chapter{Mock-up}(midpoint-4)
+<Di seguito riportati una serie di mock-up dell'interfaccia front-end prevista; in quanto si prevede
+che l'applicazione debba poter essere utilizzata sia su dispositivi mobile che widescreen, verranno prodotti
+mock-up che ne visualizzano i viewport\footnote{Viewport: porzione di una schermata \textit{a vista} per l'utente; ci si sta riferendo alla quantità di contenuto visibile
+per una determinata interfaccia.} per entrambe le versioni.>
+
+\section*{Criteri di design}+\Materialforum+
+\subsection*{Adaptive design}+\Materialrotateright+[Viewport(s)]
+Per motivi di utilizzabilità dell'applicazione, in quanto non vi è un dispositivo-target
+specifico per essa, verranno presentati mockup che rappresentano, in modo più o meno significativo,
+la disposizione delle componenti per i due diversi viewport \textit{estremi}\footnote{i dispositivi desktop, 
+non-mobile, presentano schermi di grosse dimensioni su cui possono figurare più elementi; i dispositivi
+mobile si presentano con le caratteristiche opposte, per l'appunto \textit{estremi}.} di utilizzo.
+\begin{description}
+	\item[Widescreen] Per dispositivi i cui display presentano superfici di discrete dimensioni
+		che non presentano quindi limiti.
+	\begingroup\color{ddchaptercolor}\vspace{6pt}\hrule height 0.6pt depth 0pt width \textwidth\relax\vspace{6pt}\endgroup
+	\item[Mobile] Per dispositivi con schermi di dimensioni ridotte, che quindi concentrano
+		una miriade di componenti su di una superfice piccola.
+		\par\vspace{3mm}
+		Stiamo ovviamente parlando di dispositivi tascabili hand-held\footnote{Hand-held: \textit{tenuto in mano},
+		ad esempio palmari, tablet di piccole dimensioni.} e dispositivi cellulari d'uso comune.
+\end{description}
+
+\subsection*{Selezione dei colori}+\Materialcolorlens+[Palette]
+La scelta della palette\footnote{Palette: termine di orgine francese, la cui traduzione è \textit{tavolozza}, prende
+il nome dall'omonimo strumento artistico; presenta la gamma di colori utilizzata per il design e lo styling dell'applicazione.} 
+per quanto concerne l'applicazione è avvenuta con i seguenti criteri
+\begin{enumerate}
+	\item Il testo deve avere un buon contrasto, garantendone la leggibilità in qualsiasi condizione
+		di luminosità ambientale.
+	\item In condizioni di scarsa luminosità, ad esempio durante un periodo d'attività notturno
+		del locale, l'interfaccia non deve risultare troppo \textit{accesa} tanto da infastidirne
+		l'operatore-dipendente.
+\end{enumerate}
+
+\begin{tikzsetheight}{white}
+	\coordinate (cc) at (0.5, 0.5);
+	\def\phaseatangle{18}
+	\def\phase{6mm}
+	\coordinate (lightcc) at ([shift={(\phaseatangle:\phase)}] cc);
+	\coordinate (darkcc) at ([shift={(\phaseatangle:-\phase)}] cc);
+	\def\inner{4.5mm}
+	\def\outer{32mm}
+	\def\lightshades{e5e5e5, 656565, 040404, 39795d, 395d5d}
+	\def\darkshades{1c3132, 263b3b, 39795D, 39885d, e5e5e5}
+
+	\pgfmathsetmacro{\totalradius}{115}
+	\pgfmathsetmacro{\labelatangle}{330}
+	\foreach \i [count=\n from 1] in \lightshades {\global\let\nshades=\n}
+	\pgfmathsetmacro{\amountpercolor}{\totalradius/\nshades}
+
+	% Light shades
+	% \path[fill=white, draw=green, line width=2pt] (lightcc) circle(\outer);
+	\path[fill=white, draw=green, line width=1pt] (lightcc) circle(\inner);
+	\foreach \shade[count=\ix from 0, 
+		evaluate=\ix as \sangle using {\amountpercolor*\ix}] in \lightshades{
+			\definecolor{tmpshade}{HTML}{\shade}
+			\path[draw=green, fill=tmpshade, line width=1pt] ([shift={(\sangle:\inner)}] lightcc)
+				-- ([shift={(\sangle:\outer)}] lightcc)
+				arc[start angle=\sangle, delta angle=\amountpercolor, radius=\outer]
+				-- ([shift={(\sangle+\amountpercolor:\inner)}] lightcc)
+				arc[start angle=\sangle+\amountpercolor, delta angle=-\amountpercolor, radius=\inner]
+				-- cycle;
+	}
+
+	% Label
+	\node[nosep, anchor=north west] (lightcclbl) at ([shift={(\labelatangle:20mm)}] lightcc)
+		{\Lato\fontsize{8}{0}\selectfont Light palette};
+	\draw[-stealth, line width=0.5pt, green] ([xshift=3pt, yshift=-2pt] lightcclbl.south east)
+		-- ([xshift=-2pt, yshift=-2pt] lightcclbl.south west)
+		-- ([xshift=-2pt] lightcclbl.north west)
+		-- ([shift={(\labelatangle:\inner+2pt)}] lightcc);
+
+	% Dark shades
+	% \path[fill=white, draw=green, line width=2pt] (darkcc) circle(\outer);
+	\path[fill=black!90!white, draw=black, line width=1pt] (darkcc) circle(\inner);
+	\foreach \shade[count=\ix from 0, 
+		evaluate=\ix as \sangle using {\amountpercolor*\ix+180}] in \darkshades{
+			\definecolor{tmpshade}{HTML}{\shade}
+			\path[draw=black, fill=tmpshade, line width=1pt] ([shift={(\sangle:\inner)}] darkcc)
+				-- ([shift={(\sangle:\outer)}] darkcc)
+				arc[start angle=\sangle, delta angle=\amountpercolor, radius=\outer]
+				-- ([shift={(\sangle+\amountpercolor:\inner)}] darkcc)
+				arc[start angle=\sangle+\amountpercolor, delta angle=-\amountpercolor, radius=\inner]
+				-- cycle;
+	}
+
+	\node[nosep, anchor=south east] (darkcclbl) at ([shift={(\labelatangle:-20mm)}] darkcc)
+		{\Lato\fontsize{8}{0}\selectfont Dark palette};
+	\draw[-stealth, line width=0.5pt, green] ([xshift=-3pt, yshift=2pt] darkcclbl.north west)
+		-- ([xshift=2pt, yshift=2pt] darkcclbl.north east)
+		-- ([xshift=2pt] darkcclbl.south east)
+		-- ([shift={(\labelatangle:-\inner-2pt)}] darkcc);
+\end{tikzsetheight}
+
+\section*{Widescreen Viewport}+\Materialpanoramahorizontal+<Widescreen>
+
+\subsection{Autenticazione}[Inerente al requisito funzionale \ref{reqsf:authlogin}]
+\desktopmockup*{Desktop/Desktop_login_dark}{Desktop/Desktop_login_light}
+
+\subsection{Pannello amministrativo}
+% \desktopmockup{Desktop/Admin_panel_empty_closed_drawer_dark}{Desktop/Admin_panel_empty_closed_drawer_light}
+% 	[Pannello amministrativo (home, pannello laterale chiuso)]
+
+\desktopmockup{Desktop/Admin_panel_empty_opened_drawer_dark}{Desktop/Admin_panel_empty_opened_drawer_light}
+	[Pannello amministrativo (home, pannello laterale aperto)]
+
+\subsection{Registrazione, disattivazione dei dipendenti}[Inerente ai requisiti funzionale \ref{reqsf:register}, \ref{reqsf:unregister}]
+\desktopmockup{Desktop/Admin_panel_registration_no_data_dark}{Desktop/Admin_panel_registration_no_data_light}
+	[Registrazione dipendente]
+
+\desktopmockup{Desktop/Admin_panel_registration_dark}{Desktop/Admin_panel_registration_light}
+	[Registrazione dipendente con esempio di completamento del form]
+
+\desktopmockup{Desktop/Admin_panel_account_management_dark}{Desktop/Admin_panel_account_management_light}
+	[Gestione account dipendenti]
+
+\subsection{Visualizzazione del rendimento}[Inerente al requisito funzionale \ref{reqsf:stats}]
+\desktopmockup{Desktop/Admin_panel_statistics_no_data_dark}{Desktop/Admin_panel_statistics_no_data_light}
+	[Visualizzazione rendimento (nessun profilo selezionato)]
+
+\desktopmockup{Desktop/Admin_panel_statistics_dark}{Desktop/Admin_panel_statistics_light}
+	[Visualizzazione rendimento (comparazione tra due chef fittizi)]
+
+\subsection{Visualizzazione, accettazione e notifica completamento ordini}[Inerente al requisito funzionale \ref{reqsf:acptorder}, \ref{reqsf:cmporder}]
+\desktopmockup{Desktop/Cook_panel_main_menu_dark}{Desktop/Cook_panel_main_menu_light}
+	[Pannello del cuoco (home)]
+
+\desktopmockup{Desktop/Cook_panel_main_menu_filled_waiting_orders_dark}{Desktop/Cook_panel_main_menu_filled_waiting_orders_light}
+	[Visualizzazione ed accettazione degli ordini in attesa]
+
+\desktopmockup{Desktop/Cook_panel_main_menu_filled_accepted_orders_dark}{Desktop/Cook_panel_main_menu_filled_accepted_orders_light}
+	[Visualizzazione e possibilità di notifica completamento degli ordini accettati]
+
+\desktopmockup{Desktop/Cook_panel_filled_completed_orders_dark}{Desktop/Cook_panel_filled_completed_orders_light}
+	[Visualizzazione ordini evasi]
+
+\subsection{Creazione degli ordini}[Inerente al requisito funzionale \ref{reqsf:addorder}]
+\desktopmockup{Desktop/Waiter_panel_table_dashboard_dark}{Desktop/Waiter_panel_table_dashboard_light}
+	[Dashboard del cameriere (con selezione dei tavoli)]
+
+\desktopmockup{Desktop/Waiter_panel_table_dashboard_menu_open_dark}{Desktop/Waiter_panel_table_dashboard_menu_open_light}
+	[Dashboard del cameriere (con menù a tendina aperto)]
+
+\desktopmockup{Desktop/Waiter_panel_menu_dark}{Desktop/Waiter_panel_menu_light}
+	[Menù degli alimenti (creazione di un ordine)]
+
+\desktopmockup{Desktop/Waiter_panel_menu_open_item_dark}{Desktop/Waiter_panel_menu_open_item_light}
+	[Inserimento di un alimento per il tavolo]
+
+\desktopmockup{Desktop/Waiter_panel_menu_order_sent_dark}{Desktop/Waiter_panel_menu_order_sent_light}
+	[Conferma di invio avvenuto dell'ordine]
+
+\subsection{Aggiornamento della cucina}[\ref{reqsf:addmenu}, \ref{reqsf:delmenu}, \ref{reqsf:chgmenu}, \ref{reqsf:addtbl}, \ref{reqsf:deltbl}, \dots]
+\desktopmockup{Desktop/Admin_panel_dish_and_tables_1tab_dark}{Desktop/Admin_panel_dish_and_tables_1tab_light}
+	[Inserimento tavoli, categorie e inserimento manuale pietanze]
+
+\desktopmockup{Desktop/Admin_panel_dish_and_tables_2tab_dark}{Desktop/Admin_panel_dish_and_tables_2tab_light}
+	[Aggiorna tavoli, categorie e inserimento automatizzato delle pietanze]
+
+\desktopmockup{Desktop/Admin_panel_dish_and_tables_2tab_OFF_dark}{Desktop/Admin_panel_dish_and_tables_2tab_OFF_light}
+	[Esempio di inserimento di pietanza tramite inserimento automatizzato]
+
+\desktopmockup{Desktop/Admin_panel_dish_and_tables_3tab_no_data_dark}{Desktop/Admin_panel_dish_and_tables_3tab_no_data_light}
+	[Aggiornamento delle categorie, delle pietanze]
+
+\desktopmockup{Desktop/Admin_panel_dish_and_tables_3tab_filled_dark}{Desktop/Admin_panel_dish_and_tables_3tab_filled_light}
+	[Aggiornamento delle categorie, delle pietanze (con esempio)]
+
+\desktopmockup{Desktop/Admin_panel_dish_and_tables_4tab_no_data_dark}{Desktop/Admin_panel_dish_and_tables_4tab_no_data_light}
+	[Cambio rapido delle categorie delle pietanze]
+
+\desktopmockup{Desktop/Admin_panel_dish_and_tables_4tab_filled_dark}{Desktop/Admin_panel_dish_and_tables_4tab_filled_light}
+	[Cambio rapido delle categorie delle pietanze (con esempio di selezione)]
+%
+\subsection{Aggiornamento delle credenziali d'accesso alla prima autenticazione}[Inerente al requisito funzionale \ref{reqsf:authupdate}]
+\desktopmockup{Desktop/Desktop_change_password_dark}{Desktop/Desktop_change_password_light}
+	[Aggiornamento delle credenziali]
+
+\desktopmockup{Desktop/Desktop_change_password_success_dark}{Desktop/Desktop_change_password_success_light}
+	[Aggiornamento delle credenziali con notifica]
+
+\subsection{Inserimento, visualizzazione e nascondimento avvisi}[Inerente ai requisiti funzionali \ref{reqsf:addntf},\ref{reqsf:hidentf}]
+\desktopmockup{Desktop/Admin_panel_notifications_dark}{Desktop/Admin_panel_notifications_light}
+	[Inserimento avvisi (accessibile dai soli admin, vuoto)]
+
+\desktopmockup{Desktop/Employee_menu_notifications_empty_dark}{Desktop/Employee_menu_notifications_empty_light}
+	[Visualizzazione avvisi (vuoto)]
+
+\desktopmockup{Desktop/Employee_menu_notifications_filled_dark}{Desktop/Employee_menu_notifications_filled_light}
+	[Visualizzazione avvisi (ad espansione avvenuta)]*
+
+\section*{Mobile Viewport}+\Materialpanoramavertical+<Mobile>
+\subsection{Autenticazione}[Inerente al requisito funzionale \ref{reqsf:authlogin}]
+\mobilemockup*{Mobile/Mobile_login_dark}{Mobile/Mobile_login_light}
+
+% \subsection{Pannello amministrativo}
+% \mobilemockup{Mobile/Mobile_admin_home_dark}{Mobile/Mobile_admin_home_light}
+% 	[Pannello amministrativo]
+
+\subsection{Registrazione, disattivazione dei dipendenti}[Inerente ai requisiti funzionale \ref{reqsf:register}, \ref{reqsf:unregister}]
+\mobilemockup{Mobile/Mobile_admin_registration_dark}{Mobile/Mobile_admin_registration_light}
+	[Registrazione dipendente]
+
+\mobilemockup{Mobile/Mobile_admin_edit_account_dark}{Mobile/Mobile_admin_edit_account_light}
+	[Gestione account dipendenti]
+
+\subsection{Visualizzazione del rendimento}[Inerente al requisito funzionale \ref{reqsf:stats}]
+\mobilemockup{Mobile/Mobile_statistics_empty_dark}{Mobile/Mobile_statistics_empty_light}
+	[Visualizzazione rendimento (nessun profilo selezionato)]
+
+\mobilemockup{Mobile/Mobile_statistics_no_data_dark}{Mobile/Mobile_statistics_no_data_light}
+	[Visualizzazione rendimento (nessun profilo trovato per l'utente selezionato)]
+
+\mobilemockupelongated{Mobile/Mobile_statistics_filled_dark}{Mobile/Mobile_statistics_filled_light}
+	[Visualizzazione rendimento (comparazione tra due chef fittizi)]
+
+\subsection{Visualizzazione, accettazione e notifica completamento ordini}[Inerente al requisito funzionale \ref{reqsf:acptorder}, \ref{reqsf:cmporder}]
+\mobilemockup{Mobile/Mobile_cook_main_dark}{Mobile/Mobile_cook_main_light}
+	[Pannello del cuoco (home)]
+
+\subsection{Creazione degli ordini}[Inerente al requisito funzionale \ref{reqsf:addorder}]
+\mobilemockup{Mobile/Mobile_waiter_dashboard_dark}{Mobile/Mobile_waiter_dashboard_light}
+	[Dashboard del cameriere (con selezione dei tavoli)]
+
+\mobilemockup{Mobile/main_waiter_order_component_dark}{Mobile/main_waiter_order_component_light}
+	[Menù degli alimenti (per la creazione di un ordine)]
+
+\mobilemockup{Mobile/main_waiter_order_component_expanded_dark}{Mobile/main_waiter_order_component_expanded_light}
+	[Menù degli alimenti (per la creazione di un ordine) esteso]
+
+\mobilemockup{Mobile/order_component_empty_cart_dark}{Mobile/order_component_empty_cart_light}
+	[Dialog Carrello per il tavolo selezionato (vuoto)]
+
+\mobilemockup{Mobile/order_component_cart_dark}{Mobile/order_component_cart_light}
+	[Dialog Carrello per il tavolo selezionato (con pietanze)]
+
+\mobilemockup{Mobile/order_component_dish_dialog_dark}{Mobile/order_component_dish_dialog_light}
+	[Dialog per l'inserimento di una pietanza nel carrello]
+
+\subsection{Aggiornamento della cucina}[\ref{reqsf:addmenu}, \ref{reqsf:delmenu}, \ref{reqsf:chgmenu}, \ref{reqsf:addtbl}, \ref{reqsf:deltbl}, \dots]
+\mobilemockupelongated{Mobile/Mobile_admin_tables_dishes_1_dark}{Mobile/Mobile_admin_tables_dishes_1_light}
+	[Inserimento tavoli, categorie e inserimento manuale pietanze]
+
+\mobilemockupelongated{Mobile/Mobile_admin_tables_dishes_2_dark}{Mobile/Mobile_admin_tables_dishes_2_light}
+	[Aggiorna tavoli, categorie e inserimento automatizzato delle pietanze]
+
+\mobilemockup{Mobile/Mobile_admin_tables_dishes_3_dark}{Mobile/Mobile_admin_tables_dishes_3_light}
+	[Aggiorna pietanze (nessuna pietanza selezionata)]
+
+\mobilemockupelongated{Mobile/Mobile_admin_tables_dishes_3_filled_dark}{Mobile/Mobile_admin_tables_dishes_3_filled_light}
+	[Esempio di modifica di una pietanza]
+
+\mobilemockup{Mobile/Mobile_admin_tables_dishes_4_dark}{Mobile/Mobile_admin_tables_dishes_4_light}
+	[Cambio rapido delle categorie delle pietanze]
+
+\subsection{Visualizzazione, accettazione e notifica completamento ordini}[Inerente al requisito funzionale \ref{reqsf:acptorder}, \ref{reqsf:cmporder}]
+
+\mobilemockup{Mobile/Mobile_cook_panel_filled_pending_orders_dark}{Mobile/Mobile_cook_panel_filled_pending_orders_light}
+	[Visualizzazione ed accettazione degli ordini in attesa]
+
+\mobilemockup{Mobile/Mobile_cook_panel_filled_pending_orders_success_dark}{Mobile/Mobile_cook_panel_filled_pending_orders_success_light}
+	[Visualizzazione ed accettazione degli ordini in attesa (con notifica di avvenuta accettazione)]
+
+\mobilemockup{Mobile/Mobile_cook_panel_filled_accepted_orders_dark}{Mobile/Mobile_cook_panel_filled_accepted_orders_light}
+	[Visualizzazione e possibilità di notifica completamento degli ordini accettati]
+
+\mobilemockup{Mobile/Mobile_cook_panel_filled_completed_orders_dark}{Mobile/Mobile_cook_panel_filled_completed_orders_light}
+	[Visualizzazione ordini evasi]
+
+\subsection{Aggiornamento delle credenziali d'accesso alla prima autenticazione}[Inerente al requisito funzionale \ref{reqsf:authupdate}]
+\mobilemockup{Mobile/Mobile_change_password_dark}{Mobile/Mobile_change_password_light}
+	[Aggiornamento delle credenziali]
+
+\mobilemockup{Mobile/Mobile_change_password_success_dark}{Mobile/Mobile_change_password_success_light}
+	[Aggiornamento delle credenziali con notifica]
+
+\subsection{Inserimento, visualizzazione e nascondimento avvisi}[Inerente ai requisiti funzionali \ref{reqsf:addntf},\ref{reqsf:hidentf}]
+\mobilemockup{Mobile/Mobile_admin_notifications_dark}{Mobile/Mobile_admin_notifications_light}
+	[Inserimento avvisi (accessibile ai soli admin, vuoto)]
+
+\mobilemockup{Mobile/Mobile_closed_notification_dark}{Mobile/Mobile_closed_notification_light}
+	[Visualizzazione avvisi (vuoto)]
+
+\mobilemockup{Mobile/Mobile_expanded_notification_dark}{Mobile/Mobile_expanded_notification_light}
+	[Visualizzazione avvisi (ad espansione avvenuta)]*\mbox{}

@@ -1,0 +1,69 @@
+@startuml
+
+!include ../style.default.plantuml
+
+!include statestyle.plantuml
+
+state router as "GenericRouter" #Orange {
+	[*] -r-> [*]: [AuthContext, L'utente autenticato non è autorizzato] / NavigateToErrorLandingPage()
+	[*] -r-> [*]: [AuthContext, Richiesto password reset] / NavigateToPasswordReset()
+	[*] -r-> [*]: [AuthContext, L'utente non è autenticato] / NavigateToLoginPage()
+	[*] -r-> [*]: [AuthContext, OK] / NavigateToRequestedPath()
+}
+
+note top of router
+	L'applicazione front-end, sviluppata in   **React-JS**
+	permette una gestione centralizzata delle richieste;
+	in particolare sarà sempre necessario che il
+	dipendente sia autenticato
+end note
+
+state route as "GenericRouter" #Orange
+state tableSelection as "Table Selection\nComponent" #Gold
+tableSelection: entry/OttieniTavoliDisponibili
+tableSelection: entry/VisualizzaSelezioneTavolo
+
+state tableActive as "Transaction\nTable control" #Gold
+state tableFree as "Available\nTable control" #Gold
+
+state tableForm as "NewOrder" #Orange {
+	state tableOrder as "TableOrderComponent" #Gold
+	tableOrder: entry/OttieniPietanzeDisponibili
+	tableOrder: entry/PopolaInterfacciaPietanzeDisponibili
+
+	state err   as "Error Handling" #LightPink
+	state Validate as "Validator" #LightGreen
+
+	[*] -r-> tableOrder: InitCart()
+	tableOrder -> tableOrder: AggiungiPietanzaAlCarrello()
+	tableOrder -d-> Validate: InviaOrdine()
+	Validate -l-> err: [Error]
+	err -u-> tableOrder
+	Validate -d-> [*]: [OK] / RecuperaOGeneraTransazione\l  AggiungiOrdine()
+}
+
+state availability <<choice>>
+
+[*] -[hidden]u-> router
+[*] -[hidden]u-> failmsg
+[*]		-d-> route
+route -d-> tableSelection
+tableSelection -d-> availability: selezionaTavolo()
+availability -l-> tableActive: [HasTransaction]
+availability -r-> tableFree: [No Transaction]
+
+tableActive -d-> [*]: EndTransaction()
+note on link
+	La terminazione della transazione consiste
+	della terminazione di qualisasi ordine in attesa 
+	corrispondente ad esso e alla liberazione del tavolo
+end note
+
+
+tableFree		-d-> tableForm: NewOrder()
+tableActive -d-> tableForm: NewOrder()
+tableForm		-l-> [*]
+
+@enduml
+
+

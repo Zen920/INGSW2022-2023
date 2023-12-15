@@ -1,0 +1,49 @@
+@startuml
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|sv| Addetto alla sala
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|sv|
+start
+Note left
+	L'addetto alla sala è **autenticato**
+end Note
+
+:Si collega al pannello di gestione della sala;
+
+|fe|
+:Restituisce il pannello di gestione della sala\nche indica quali tavoli sono disponibili;
+
+|sv|
+:Seleziona un tavolo tra quelli disponibili quindi\ninizia la registrazione di un nuovo ordine;
+
+|fe|
+:Inizializza il carrello per l'ordine;
+
+|sv|
+repeat
+	:Inserisce una pietanza (e la quantità) all'interno del carrello\nse necessario vi aggiunge anche una nota;
+
+|fe|
+repeat while (L'ordine è completo?) is (No) Not (Si)
+
+|sv|
+:Conferma e completa l'ordine;
+
+|be|
+:Tutte le pietanze presenti nel carrello vengono\ntrasformate in un vero e proprio ordine\nquindi inserite sulla lista delle pietanze\nin attesa di essere preparate;
+
+|fe|
+:Conferma l'inserimento dell'ordine tramite messaggio\nl'addetto alla sala viene quindi reindirizzato al\npannello di gestione della sala;
+
+
+
+
+
+
+
+stop
+@enduml

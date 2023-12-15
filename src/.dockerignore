@@ -1,0 +1,12 @@
+# DNU in Dockerfile
+gradlew
+gradlew.bat
+.gitignore
+.gitattributes
+.dockerignore
+gradle
+frontend
+build
+.settings
+.idea
+.gradle

@@ -1,0 +1,143 @@
+@startuml
+
+!include ../style.default.plantuml
+!include set-designstyle.plantuml
+
+' Entities
+actor "Waiter:Employee" as wai #orange
+box "Frontend Layer" #E6EFE6
+	control "DashboardComponent" as dash
+	control "OrderComponent" as ord
+	control "DishDialog" as card
+	control "CartComponent" as cart
+	control "ReactJS-Validator" as val
+end box
+box "Backend Layer" #Lightgreen
+	entity "Spring-Router" as be
+
+	control "TableController" as tc
+	entity "TableService" as ts
+
+	control "CategoryController" as cc
+	entity "CategoryService" as cs
+
+	control "DishController" as dc
+	entity "DishService" as ds
+
+	control "WaiterController" as wc
+	entity "ClientOrderService" as ws
+
+	database "PostgresDB" as db
+end box
+
+== Popolamento dei tavoli disponibili ==
+
+activate dash
+
+dash -> be ++: fetchTables
+note left
+	Si presuppone che l'utente abbia già effetuato
+	l'accesso e che il suo account sia attivo:
+	il diagramma darà una panoramica del procedimento
+	a partire dalla dashboard dedicata alla creazione ordini.
+end note
+
+be -> tc ++: getTables
+tc -> ts ++: findAllByUsableAndOrderInProgress
+ts -> db ++: findAllByUsableAndOrderInProgress
+
+db -> ts --: return List<ClientTables>
+ts --> tc --: return ResponseEntity.ok { List<ClientTables> }
+tc --> be --: return getTables
+be --> dash --: return fetchTables
+
+dash --> dash: setTables
+
+== Inizializzazione dell'ordine e popolamento di categorie e pietanze disponibil ==
+
+wai -> dash: Seleziona un tavolo tra quelli disponibili
+dash -> val ++: isTableValid
+val --> dash --: return isTableValid
+dash -> ord ++: redirectTo(table)
+ord -> be ++: fetchCategories
+be -> cc ++: getCategories
+cc -> cs ++: getCategoriesDishes
+cs -> db ++: findAllByDishesNotNullOrderByIndex
+
+db --> cs --: return List<Category>
+cs --> cc --: return ResponseEntity.ok { List<Category> }
+cc --> be --: return getCategories
+be --> ord --: return fetchCategories
+ord --> ord: setCategories
+
+note left
+	Con il fetch delle categorie
+	verranno prelevate anche le pietanze 
+end note
+
+group#Gold #LightBlue Popolamento del carrello
+	ord -> cart ++: initCart
+
+	group#Gold #LightYellow Loop inserimento
+		wai -> ord: Seleziona una pietanza\ntra quelle disponibili
+		ord -> card ++: openDialog
+		wai -> card: Seleziona quantità
+		card -> val ++: isQuantityValid
+		val --> card --: return isQuantityValid
+
+		wai -> card: (opzionale)\nAggiunge descrizione alla pietanza
+		card -> val ++: isDescriptionValid
+		val --> card --: return isDescriptionValid
+
+		wai -> card: Conferma l'aggiunta al carrello
+		card -> cart: addToCart(count, dish, notes)
+		cart --> cart: setCart(quantity, dish.price, dish, notes)
+		note right
+			Se la stessa pietanza è stata riselezionata
+			le quantità saranno sommate
+		end note
+		cart --> card: 
+		card --> wai --: closeDialog
+	end
+end
+
+== Invio e conferma dell'ordine ==
+
+wai -> ord: Conferma ordine
+ord -> cart: sendData(order)
+cart -> be ++: postNewOrder(order)
+be -> wc ++: registerOrderParam(order)
+wc -> ws ++: registerOrder(order)
+ws --> ws: validate
+ws -> db ++: makeNewOrderList(order)
+
+alt#Gold #Lightblue Inserimento avvenuto con successo
+	db --> ws --: return SUCCESS_MESSAGE
+	ws --> wc --: return ResponseEntity.ok { SUCCESS_MESSAGE }
+	wc --> be --: return true
+	be --> cart --:
+	cart --> cart: cleanup
+	cart --> ord --:
+	ord --> dash --: redirectTo
+	dash --> wai --:
+
+else #Pink Errore generico nell'inserimento
+	db-[hidden]->db
+	activate db
+	activate ws
+	activate wc
+	activate be
+	activate cart
+	activate ord
+	
+	db --> ws --: return exception
+	ws --> wc --: return ResponseEntity.except { exception } 
+	wc --> be --: return exception
+	be --> cart --: toast(exception)
+	cart --> cart: cleanup
+	cart --> ord--: redirectTo
+	ord --> wai --:
+end
+
+
+@enduml

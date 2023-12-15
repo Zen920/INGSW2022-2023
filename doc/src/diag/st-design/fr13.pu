@@ -1,0 +1,45 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+
+state router as "LoginRouter" #Orange {
+	[*] -r-> [*]: [AuthContext, L'utente è già autenticato] / NavigateToLandingPage()
+	[*] -r-> [*]: [AuthContext, L'utente non è autenticato]
+}
+
+note top of router
+	Se l'utente è già autenticato, questi verrà reindirizzato
+	alla landing page ad hoc per il ruolo ricoperto
+	(amministrazione, cuoco, cameriere)
+end note
+
+state route as "LoginRouter" #Orange
+state err   as "Error Handling" #LightPink
+
+state LoginComponent as "LoginComponent" #Gold
+LoginComponent: entry/new LoginComponent
+
+state Auth as "Autentica" #LightGreen
+Auth: do/Controlla credenziali d'accesso
+
+[*] -[hidden]u-> router
+[*] -[hidden]u-> failmsg
+
+[*] -d-> route
+route -d-> LoginComponent
+LoginComponent -d-> Auth
+Auth -l-> err: [Error, Credenziali errate]
+Auth -l-> err: [Error, Generico]
+err -u-> LoginComponent
+Auth -d-> [*]: [OK] /	InitializeUserSession()\l  NavigateToLandingPage()
+
+note on link
+	L'inizializzazione della sessione utente
+	consiste nella creazione di un token   **jwt**
+	che verrà quindi validato ad ogni richiesta
+	tramite l'AuthContext
+end note
+
+@enduml

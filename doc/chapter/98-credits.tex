@@ -1,0 +1,68 @@
+\makeatletter\begingroup
+	\definecolor{p@color}{HTML}{0D95FD}
+	\definecolor{s@color}{HTML}{C31D39}
+
+	\newgeometry{margin=0pt}\noindent\begin{tikzpicture}[remember picture, overlay, shift=(current page.south west)]%
+			\begin{scope}[x={(current page.south east)},y={(current page.north west)}, overlay, mpath/.style={fill=#1,draw=#1,line width=0.2pt}, square/.style={regular polygon,regular polygon sides=4, inner sep=0pt, outer sep=0pt}]%
+				% Background
+				\path [mpath=p@color!15!white] (0,0.5) rectangle (1,1);
+				\path [mpath=s@color!15!white] (0,0) rectangle (1,0.5);
+
+				% Characterize Background
+				\path [mpath=p@color!15!white] (0,0.5) rectangle (0.15,0.4);
+				\path [mpath=s@color!15!white] (1,0.5) rectangle (0.85,0.6);
+				\path [mpath=s@color!35!white] (0,0) rectangle (1,0.025);
+				\path [mpath=p@color!35!white] (0,1) rectangle (1,0.975);
+
+				% Heading
+				\node (header) at ([xshift=0.5cm] 0, 0.975) [inner sep=0pt, outer sep=0pt, anchor=north west]
+					{\color{p@color}\fontsize{20}{20}\selectfont };
+
+				\path [draw=s@color, line width=3pt] (0, 0.75) -- ([xshift=2cm] 0.125, 0.75) -- ($([xshift=2cm] 0.125, 0.75)!0.5!([xshift=-2cm] 0.875, 0.25)$);
+				\path [draw=p@color, line width=3pt]  ($([xshift=2cm] 0.125, 0.75)!0.5!([xshift=-2cm] 0.875, 0.25)$) --  ([xshift=-2cm] 0.875, 0.25) -- (1, 0.25);
+
+				% Auth-Block-1
+				\hypersetup{allcolors=s@color}
+				\node (auth1-block-img) at (0.125, 0.75) [anchor=west, circle, minimum width=4cm,
+					path picture={\node at (path picture bounding box.center) [anchor=center] {\includegraphics[width=3cm]{./src/imgs/DrKGD.png}};}]{};
+				\node (auth1-block-name) at ([xshift=0.05cm, yshift=-0.6cm] auth1-block-img.north east) [anchor=north west]
+					{\color{s@color}\fontsize{20}{20}\selectfont\Gobold Ciro\hspace{3pt}Amato};
+				\node (auth1-block-matr-icon) at (auth1-block-name.south west) [anchor=north west, square]
+					{\color{s@color}\fontsize{16}{20}\selectfont\Alfiadotag};
+				\node (auth1-block-matr-text) at (auth1-block-matr-icon.east) [anchor=west, align=left]
+					{\color{s@color}\fontsize{14}{20}\selectfont N86002525};
+				\node (auth1-block-mail-icon) at ([xshift=0.45cm] auth1-block-matr-icon.south west) [anchor=north west, square]
+					{\color{s@color}\fontsize{16}{20}\selectfont\Alfiadosend};
+				\node (auth1-block-mail-text) at (auth1-block-mail-icon.east) [anchor=west, align=left]
+					{\color{s@color}\fontsize{14}{20}\selectfont cir.amato@studenti.unina.it};
+				\node (auth1-block-git-icon) at ([xshift=0.45cm] auth1-block-mail-icon.south west) [anchor=north west, square]
+					{\color{s@color}\fontsize{16}{20}\selectfont\Brandsgithub};
+				\node (auth1-block-git-text) at (auth1-block-git-icon.east) [anchor=west, align=left]
+					{\color{s@color}\fontsize{14}{20}\selectfont \url{https://github.com/DrKGD}};
+
+				% Auth-Block-2
+				\hypersetup{allcolors=p@color}
+				\node (auth2-block-img) at (0.875, 0.25) [anchor=east, circle, minimum width=4cm,
+					path picture={\node at (path picture bounding box.center) [anchor=center] {\includegraphics[width=3cm]{./src/imgs/Zen.png}};}]{};
+				\node (auth2-block-name) at ([xshift=-0.10cm, yshift=-0.6cm] auth2-block-img.north west) [anchor=north east]
+					{\color{p@color}\fontsize{20}{20}\selectfont\Gobold Vincenzo\hspace{3pt}Lombardi};
+				\node (auth2-block-matr-icon) at (auth2-block-name.north east) [anchor=south east, square]
+					{\color{p@color}\fontsize{16}{20}\selectfont\Alfiadotag};
+				\node (auth2-block-matr-text) at (auth2-block-matr-icon.west) [anchor=east, align=right]
+					{\color{p@color}\fontsize{14}{20}\selectfont N86002753};
+				\node (auth2-block-mail-icon) at ([xshift=-0.45cm] auth2-block-matr-icon.north east) [anchor=south east, square]
+					{\color{p@color}\fontsize{16}{20}\selectfont\Alfiadosend};
+				\node (auth2-block-mail-text) at (auth2-block-mail-icon.west) [anchor=east, align=right]
+					{\color{p@color}\fontsize{14}{20}\selectfont vincen.lombardi@studenti.unina.it};
+				\node (auth2-block-git-icon) at ([xshift=-0.45cm] auth2-block-mail-icon.north east) [anchor=south east, square]
+					{\color{p@color}\fontsize{16}{20}\selectfont\Brandsgithub};
+				\node (auth2-block-git-text) at (auth2-block-git-icon.west) [anchor=east, align=right]
+					{\color{p@color}\fontsize{14}{20}\selectfont \url{https://github.com/Zen920}};
+
+				% Group
+				\node[nosep, inner sep=7pt, line width=1.2pt, fill=white, opacity=0.8] 
+					(groupid) at (current page.center)
+					{\color{black}\fontsize{18}{20}\selectfont\ingswgroup};
+			\end{scope}
+	\end{tikzpicture}\restoregeometry\newpage
+\endgroup\makeatother

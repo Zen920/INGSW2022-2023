@@ -1,0 +1,21 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state form as "Form Creazione\nAvvisi" #Gold
+form: entry/VisualizzaFormCrezioneAvvisi
+
+state val as "Validazione" #LightGreen
+state failhnd as "Error Handling" #LightPink 
+
+[*]		-[hidden]d-> failmsg
+[*]		-d-> form
+form	-d-> val: InserisciAvviso()
+val		-d-> [*]: [OK] / GeneraAvviso()
+val		-l-> failhnd: [Error]
+failhnd -u-> form
+
+@enduml
+
+

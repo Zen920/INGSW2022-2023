@@ -1,0 +1,491 @@
+
+
+\chapter[Specifica dei]{requisiti}(midpoint-5)<Verrà fornita la descrizione completa del software da sviluppare, compresa di caratteristiche, prestazioni e comportamento.>
+
+\section{Classi, oggetti e relazioni di analisi}<C.O.r.A.>
+A seguire, i diagrammi delle classi di analisi inerenti ai requisiti funzionali, introdotti in \ref{subsec:reqfr}.
+
+\begin{warn}[Semplificazione]
+	I diagrammi a seguire risultano \textbf{semplificati}, isolati e/o raggruppati
+	rispetto al contesto funzionale di riferimento per
+	una migliore scorrevolezza di lettura: solo le \textbf{associazioni di riferimento}, quindi 
+	le view, i controller, \dots\ saranno presi in considerazione!\\[0.5cm]
+	Sarà espressamente indicato, laddove necessario, l'eventuale semplificazione
+	di uno (o più) componenti del diagramma.\\[0.5cm]
+\end{warn}
+
+\begingroup
+	\ifcsdef{reqfrcolorauthlogin}{}
+		{\xdef\reqfrcolorauthlogin{purple!70!yellow}}
+	\hypersetup{allcolors=\reqfrcolorauthlogin}
+	\subsection{Autenticazione}[Inerente al requisito funzionale \ref{reqsf:authlogin}]
+	\begin{ddclassdiagram}[0.75]
+		\ddview[x=0.42, y=0.8]{Login}
+		\ddview[x=0.42, y=0.5]{PageView}
+		\ddumlclass<View>[x=0.2, y=0.3]{PageEmbellishment}{welcomeImage: Image}
+
+		\ddview[x=0.12, y=0.7]{SnackBar}
+		\ddenum[above=2mm of SnackBar.north]{SnackSeverity}
+
+		\umlVHVinherit{Login}{PageView}
+		\umlVHVinherit{SnackBar}{PageView}
+		\umlHVHinherit{PageEmbellishment}{PageView}
+
+		\ddcontroller[x=0.78, y=0.8]{LoginController}
+		\umlassoc{PageView}{Login}
+		\umlassoc{LoginController}{Login}
+
+		\ddservice[x=0.78, y=0.5]{LoginService}
+		\umlassoc{LoginService}{LoginController}
+		\ddenum[below=2mm of LoginService.south]{AuthResult}
+	\end{ddclassdiagram}
+
+	\ifcsdef{reqfrcolorauthupdate}{}
+		{\xdef\reqfrcolorauthupdate{purple!70!yellow}}
+	\hypersetup{allcolors=\reqfrcolorauthupdate}
+	\subsection{Aggiornamento credenziali d'accesso}[Inerente al requisito funzionale \ref{reqsf:authupdate}]
+	\begin{ddclassdiagram}[0.80]
+		\ddview[x=0.20, y=0.6]{PageView}
+		\ddview[x=0.20, y=0.8]{AuthUpdate}
+		\umlVHVinherit{AuthUpdate}{PageView}
+		
+		\ddcontroller[x=0.68, y=0.8]{AuthUpdateController}
+		\ddservice[x=0.5, y=0.3]{AuthUpdateService}
+		\umlassoc{AuthUpdateController}{AuthUpdate}
+		\umlassoc[geometry=|-|]{AuthUpdateService}{AuthUpdateController}
+
+		\umlnote[below left=1cm and 0pt of AuthUpdateService.south east, width=4cm, geometry=|-|]
+			{AuthUpdateService}{L'oggetto \textbf{employee} è fornito dalla sessione configurata da un precedente login!}
+		\ddenum[below right=2mm and 0pt of AuthUpdateService.south west]{AuthUpdateResult}
+		\ddmodel[above left=5mm and -15mm of AuthUpdateService.north east]{Employee}
+	\end{ddclassdiagram}
+
+	\ifcsdef{reqfrcolorregister}{}
+		{\xdef\reqfrcolorregister{purple!70!yellow}}
+	\hypersetup{allcolors=\reqfrcolorregister}
+	\subsection{Gestione dipendenti}[Inerente ai requisiti funzionali \ref{reqsf:register}, \ref{reqsf:unregister}]
+	\begin{ddclassdiagram}[0.70]
+		\ddview[x=0.35, y=0.1]{PageView}
+		\ddview[above=15mm of PageView.north]{TabView}
+		\ddview[right=3mm of TabView.east]{NavBarView}
+		\ddview[right=3mm of NavBarView.east]{AdminSideBar}
+
+		\umlVHVinherit{TabView}{PageView}
+		\umlVHVinherit{NavBarView}{PageView}
+		\umlVHVinherit{AdminSideBar}{PageView}
+
+		\ddview[x=0.3, y=0.55]{RegisterEmployee}
+		\umlVHVinherit{RegisterEmployee}{TabView}
+		\ddview[x=0.7, y=0.45]{EditEmployee}
+		\ddenum[below right=0mm and 5mm of EditEmployee.north east]{Status}
+		\umlVHVinherit{EditEmployee}{TabView}
+
+		\ddservice[x=0.3,y=0.875]{RegisterEmployeeService}
+		\ddenum[below right=5mm and 0pt of RegisterEmployeeService.south west]{RegisterEmployeeResult}
+		\ddservice[x=0.7,y=0.95]{EditEmployeeService}
+
+		\ddcontroller[right=15mm of RegisterEmployeeResult.east]{RegisterEmployeeController}
+		\ddcontroller[above right=15mm and 0pt of EditEmployee.north west]{EditEmployeeController}
+		\umlassoc{EditEmployee}{EditEmployeeController}
+		\umlassoc[geometry=|-|]{RegisterEmployee}{RegisterEmployeeController}
+		\umlassoc[geometry=|-|]{EditEmployeeService}{EditEmployeeController}
+		\umlassoc[geometry=|-|]{RegisterEmployeeService}{RegisterEmployeeController}
+
+		\ddenum[below left=5mm and 0pt of RegisterEmployee.south west]{EmployeeRole}
+		\ddmodel[below=5mm of EmployeeRole.south]{Employee}
+	\end{ddclassdiagram}
+
+	\ifcsdef{reqfrcoloraddtbl}{}
+		{\xdef\reqfrcoloraddtbl{purple!70!yellow}}
+	\hypersetup{allcolors=\reqfrcoloraddtbl}
+	\subsection{Gestione tavoli}[Inerenti ai requisiti funzionali \ref{reqsf:addtbl}, \ref{reqsf:deltbl}]
+	\begin{ddclassdiagram}[0.75]
+		\ddview[x=0.25, y=0.1]{PageView}
+		\ddview[above=15mm of PageView.north]{TabView}
+		\ddview[right=3mm of TabView.east]{NavBarView}
+		\ddview[right=3mm of NavBarView.east]{AdminSideBar}
+
+		\umlnote[right=1cm of PageView.east, width=8cm]
+			{PageView}{La \textit{Pagina} incorpora anche altre componenti del sistema, risulta quindi
+			semplificata per una migliore esposizione del contenuto!}
+
+		\umlVHVinherit{TabView}{PageView}
+		\umlVHVinherit{NavBarView}{PageView}
+		\umlVHVinherit{AdminSideBar}{PageView}
+
+		\ddview[x=0.20, y=0.55]{AddTable}
+		\ddview[x=0.65, y=0.55]{UpdateTableAvailability}
+
+		\ddmodel[below right=2mm and 2mm of UpdateTableAvailability.east]{Table}
+		\ddenum[above=3mm of Table.north]{Availability}
+		\umlVHVinherit{AddTable}{TabView}
+		\umlVHVinherit{UpdateTableAvailability}{TabView}
+
+		\ddcontroller[above=15mm of AddTable.north]{AddTableController}
+		\ddcontroller[above=15mm of UpdateTableAvailability.north]{UpdateTableAvailabilityController}
+		\umlassoc[geometry=|-|]{AddTable}{AddTableController}
+		\umlassoc[geometry=|-|]{UpdateTableAvailability}{UpdateTableAvailabilityController}
+
+		\ddservice[above=15mm of AddTableController.north]{AddTableService}
+		\ddservice[above=15mm of UpdateTableAvailabilityController.north]{UpdateTableAvailabilityService}
+		\umlassoc[geometry=|-|]{AddTableController}{AddTableService}
+		\umlassoc[geometry=|-|]{UpdateTableAvailabilityController}{UpdateTableAvailabilityService}
+		\ddenum[above right=3mm and 0mm of AddTableService.north west]{AddTableResult}
+	\end{ddclassdiagram}
+
+	\ifcsdef{reqfrcoloraddmenu}{}
+		{\xdef\reqfrcoloraddmenu{purple!70!yellow}}
+	\hypersetup{allcolors=\reqfrcoloraddmenu}
+	\subsection{Amministrazione del menu' culinario}[Inerenti ai requisiti funzionali \ref{reqsf:addmenu}, \ref{reqsf:delmenu}, \ref{reqsf:chgmenu}]
+	\begin{ddclassdiagram}[0.65]
+		\ddview[x=0.25, y=0.05]{PageView}
+		\ddview[above=15mm of PageView.north]{TabView}
+		\ddview[right=3mm of TabView.east]{NavBarView}
+		\ddview[right=3mm of NavBarView.east]{AdminSideBar}
+
+		\umlnote[right=1cm of PageView.east, width=8cm]
+			{PageView}{La \textit{Pagina} incorpora anche altre componenti del sistema, risulta quindi
+			semplificata per una migliore esposizione del contenuto!}
+
+		\umlVHVinherit{TabView}{PageView}
+		\umlVHVinherit{NavBarView}{PageView}
+		\umlVHVinherit{AdminSideBar}{PageView}
+
+		\ddview[x=0.20, y=0.55]{AddDishManual}
+		\ddview[x=0.50, y=0.45]{AddDishOpenFoodFacts}
+		\ddview[x=0.85, y=0.45]{EditDish}
+
+		\umlVHVinherit{AddDishManual}{TabView}
+		\umlVHVinherit{EditDish}{TabView}
+		\umlVHVinherit{AddDishOpenFoodFacts}{TabView}
+
+		\ddmodel[below right=8mm and -4mm of AddDishManual.south west]{Dish}
+
+		\ddcontroller[x=0.3, y=0.75]{AddDishController}
+		\ddservice[x=0.3, y=0.9]{AddDishService}
+
+		\umlassoc[geometry=|-|]{AddDishManual}{AddDishController}
+		\umlassoc[geometry=-|-]{AddDishOpenFoodFacts}{AddDishController}
+		\umlassoc{AddDishController}{AddDishService}
+
+		\ddcontroller[x=0.85, y=0.75]{EditDishController}
+		\ddservice[x=0.85, y=0.9]{EditDishService}
+
+		\umlassoc{EditDish}{EditDishController}
+		\umlassoc{EditDishController}{EditDishService}
+		\ddenum[right=2mm of AddDishController.east]{AddDishResult}
+	\end{ddclassdiagram}
+
+	\ifcsdef{reqfrcoloraddntf}{}
+		{\xdef\reqfrcoloraddntf{purple!70!yellow}}
+	\hypersetup{allcolors=\reqfrcoloraddntf}
+	\subsection{Inserimento avvisi utenti nel sistema}[Inerente al requisito funzionale \ref{reqsf:addntf}]
+	\begin{ddclassdiagram}[0.85]
+		\ddview[x=0.20, y=0.15]{PageView}
+		\ddview[above=25mm of PageView.north]{TabView}
+		\ddview[right=3mm of TabView.east]{NavBarView}
+		\ddview[right=3mm of NavBarView.east]{AdminSideBar}
+
+		\umlVHVinherit{TabView}{PageView}
+		\umlVHVinherit{NavBarView}{PageView}
+		\umlVHVinherit{AdminSideBar}{PageView}
+
+		\ddview[x=0.4,y=0.6]{AddNotification}
+		\ddmodel[right=4mm of AddNotification.east]{Notification}
+
+		\ddcontroller[above=15mm of AddNotification]{AddNotificationController}
+		\ddservice[above=15mm of AddNotificationController.north]{AddNotificationService}S
+
+		\umlVHVinherit{AddNotification}{TabView}
+		\umlassoc{AddNotification}{AddNotificationController}
+		\umlassoc{AddNotificationController}{AddNotificationService}
+	\end{ddclassdiagram}
+
+	\ifcsdef{reqfrcolorhidentf}{}
+		{\xdef\reqfrcolorhidentf{purple!70!yellow}}
+	\hypersetup{allcolors=\reqfrcolorhidentf}
+	\subsection{Soppressione degli avvisi utente nel sistema}[Inerente al requisito funzionale \ref{reqsf:hidentf}]
+	\begin{ddclassdiagram}[0.85]
+		\ddview[x=0.35, y=0.10]{PageView}
+		\ddview[above=15mm of PageView.north]{ListView}
+		\ddview[above right=5mm and 5mm of ListView.east]{NavBarView}
+
+		\umlVHVinherit{ListView}{PageView}
+		\umlVHVinherit{NavBarView}{PageView}
+
+		\ddview[x=0.2, y=0.55]{NotificationItem}
+		\ddcontroller[above right=15mm and 0pt of NotificationItem.north west]{NotificationController}
+		\ddservice[above right=25mm and 0pt of NotificationController.north west]{NotificationService}
+		\ddmodel[right=5mm of NotificationController.east]{Notification}
+		\ddmodel[below right=5mm and 0mm of Notification.south west]{NotificationStatus}
+
+		\umlassoc[geometry=|-|]{NotificationItem}{NotificationController}
+		\umlassoc[geometry=|-|]{NotificationController}{NotificationService}
+		\umlVHVinherit{NotificationItem}{ListView}
+		\umlnote[right=15mm of NotificationService.east, width=6cm]
+			{NotificationService}{L'oggetto \textbf{employee} è fornito dalla sessione configurata da un precedente login!}
+	\end{ddclassdiagram}
+
+	\ifcsdef{reqfrcoloracptorder}{}
+		{\xdef\reqfrcoloracptorder{purple!70!yellow}}
+	\hypersetup{allcolors=\reqfrcoloracptorder}
+	\subsection{Accettazione, rilascio e completamento ordini}[Inerenti ai requisiti funzionali \ref{reqsf:acptorder}, \ref{reqsf:cmporder}, \ref{reqsf:abrtorder}]
+	\begin{ddclassdiagram}[0.7]
+		\ddview[x=0.15, y=0.05]{PageView}
+		\ddview[above right=15mm and 0 of PageView.north west]{TabView}
+		\ddview[right=8mm of TabView.east]{NavBarView}
+
+		\umlVHVinherit{TabView}{PageView}
+		\umlVHVinherit{NavBarView}{PageView}
+
+		\ddview[above=20mm of TabView.north]{PendingOrdersTab}
+		\ddview[above=8mm of PendingOrdersTab.north]{PendingOrdersTable}
+		\ddview[above=8mm of PendingOrdersTable.north]{PendingOrdersItem}
+		
+		\umlinherit{PendingOrdersTab}{TabView}
+		\umlinherit{PendingOrdersTable}{PendingOrdersTab}
+		\umlinherit{PendingOrdersItem}{PendingOrdersTable}
+		\ddenum[below right=0mm and 3mm  of PendingOrdersTable.north east]{OrderStatus}
+
+		\ddview[right=30mm of PendingOrdersTab.east]{AcceptedOrdersTab}
+		\ddview[above=8mm of AcceptedOrdersTab.north]{AcceptedOrdersTable}
+		\ddview[above=8mm of AcceptedOrdersTable.north]{AcceptedOrdersItem}
+
+		\umlVHVinherit{AcceptedOrdersTab}{TabView}
+		\umlinherit{AcceptedOrdersTable}{AcceptedOrdersTab}
+		\umlinherit{AcceptedOrdersItem}{AcceptedOrdersTable}
+
+		\ddview[above right=0mm and 30mm of AcceptedOrdersTab.north east]{CompletedOrdersTab}
+		\ddview[above=8mm of CompletedOrdersTab.north]{CompletedOrdersTable}
+		\ddview[above=8mm of CompletedOrdersTable.north]{CompletedOrdersItem}
+
+		\umlVHVinherit{CompletedOrdersTab}{TabView}
+		\umlinherit{CompletedOrdersTable}{CompletedOrdersTab}
+		\umlinherit{CompletedOrdersItem}{CompletedOrdersTable}
+
+		\ddcontroller[above left=8mm and 5mm of AcceptedOrdersItem.north]{OrdersController}
+		\ddservice[above right=8mm and 0mm of OrdersController.north east]{OrdersService}
+		\umlassoc[geometry=|-|]{OrdersController}{OrdersService}
+
+		\umlnote[left=15mm of OrdersService.west, width=6cm]
+			{OrdersService}{L'oggetto \textbf{employee} è fornito dalla sessione configurata da un precedente login!}
+
+		\umlassoc[geometry=|-|]{PendingOrdersItem}{OrdersController}
+		\umlassoc[geometry=|-|]{AcceptedOrdersItem}{OrdersController}
+		\umlassoc[geometry=|-|]{CompletedOrdersItem}{OrdersController}
+
+		\ddmodel[x=0.8, y=0.15]{ItemOrderList}
+	\end{ddclassdiagram}
+
+	\ifcsdef{reqfrcoloraddcat}{}
+		{\xdef\reqfrcoloraddcat{purple!70!yellow}}
+	\hypersetup{allcolors=\reqfrcoloraddcat}
+	\subsection{Amministrazione delle categorie alimentari}[Inerente ai requisiti funzionali \ref{reqsf:addcat}, \ref{reqsf:delcat}, \ref{reqsf:chgcat}]
+	\begin{ddclassdiagram}[0.8]
+		\ddview[x=0.25, y=0.05]{PageView}
+		\ddview[above=15mm of PageView.north]{TabView}
+		\ddview[right=3mm of TabView.east]{NavBarView}
+		\ddview[right=3mm of NavBarView.east]{AdminSideBar}
+
+		\umlnote[right=1cm of PageView.east, width=8cm]
+			{PageView}{La \textit{Pagina} incorpora anche altre componenti del sistema, risulta quindi
+			semplificata per una migliore esposizione del contenuto!}
+
+		\umlVHVinherit{TabView}{PageView}
+		\umlVHVinherit{NavBarView}{PageView}
+		\umlVHVinherit{AdminSideBar}{PageView}
+
+		\ddview[above=30mm of TabView.north]{AddCategoryView}
+		\ddview[below right=0mm and 3mm of AddCategoryView.north east]{RemoveCategoryView}
+		\ddview[above right=3mm and -20mm of RemoveCategoryView.north east]{UpdateCategoryView}
+
+		\umlVHVinherit{AddCategoryView}{TabView}
+		\umlVHVinherit{RemoveCategoryView}{TabView}
+		\umlVHVinherit[arm1=-73mm]{UpdateCategoryView}{TabView}
+
+		\ddmodel[above left=3mm and 0mm of AdminSideBar.north east]{Category}
+
+		\ddcontroller[above left=7mm and 0mm of UpdateCategoryView.north east]{CategoryController}
+		\ddservice[above=7mm of CategoryController.north]{CategoryService}
+
+		\umlassoc{CategoryService}{CategoryController}
+		\umlassoc[geometry=|-]{AddCategoryView}{CategoryController}
+		\umlassoc[geometry=|-]{RemoveCategoryView}{CategoryController}
+		\umlassoc{UpdateCategoryView}{CategoryController}
+
+		\ddenum[above=3mm of Category.north]{NewCategoryResult}
+	\end{ddclassdiagram}
+
+	\ifcsdef{reqfrcolorstats}{}
+		{\xdef\reqfrcolorstats{purple!70!yellow}}
+	\hypersetup{allcolors=\reqfrcolorstats}
+	\subsection{Visualizzazione delle statistiche}[Inerente al requisito funzionale \ref{reqsf:stats}]
+	\begin{ddclassdiagram}[0.8]
+		\ddview[x=0.25, y=0.05]{PageView}
+		\ddview[above right=25mm and 3mm of PageView.east]{NavBarView}
+		\ddview[right=3mm of NavBarView.east]{AdminSideBar}
+
+		\umlVHVinherit{NavBarView}{PageView}
+		\umlVHVinherit{AdminSideBar}{PageView}
+
+		\ddview[above=20mm of AdminSideBar.north]{GetCookStatistics}
+		\ddview[below left=0mm and 3mm of GetCookStatistics.north west]{CookStatistics}
+
+		\umlVHVinherit[arm1=-3cm]{GetCookStatistics}{PageView}
+		\umlVHVinherit[arm1=-3cm]{CookStatistics}{PageView}
+
+		\ddcontroller[above=20mm of CookStatistics.north]{CookStatisticsController}
+		\ddservice[above right=10mm and 0mm of CookStatisticsController.north west]{CookStatisticsService}
+
+		\umlassoc[geometry=|-|]{CookStatisticsController}{GetCookStatistics}
+		\umlassoc{CookStatisticsController}{CookStatistics}
+		\umlassoc{CookStatisticsService}{CookStatisticsController}
+
+		\umlnote[above right=1cm and 0pt of CookStatisticsService.north west, width=8cm, geometry=|-|]
+			{CookStatisticsService}{Nel caso non vi siano statistiche per il dipendente o i dipendenti
+			selezionati, il metodo non ritorna alcuna statistica!}
+
+		\ddmodel[left=5mm of CookStatistics.west]{StatisticalModel}
+		\ddmodel[below right=5mm and 5pt of StatisticalModel.south west]{Employee}
+	\end{ddclassdiagram}
+
+	\ifcsdef{reqfrcoloraddorder}{}
+		{\xdef\reqfrcoloraddorder{purple!70!yellow}}
+	\hypersetup{allcolors=\reqfrcoloraddorder}
+	\subsection{Inserimento nuovi ordini, ultimamento delle transazioni}[Inerente ai requisiti funzionale \ref{reqsf:addorder}, \ref{reqsf:termorder}]
+	\begin{ddclassdiagram}[0.55]
+		\ddview[x=0.075, y=0.05]{PageView}
+		\ddview[above right=25mm and 27.5mm of PageView.east]{NavBarView}
+		\ddview[right=3mm of NavBarView.east]{AdminSideBar}
+
+		\umlVHVinherit{NavBarView}{PageView}
+		\umlVHVinherit{AdminSideBar}{PageView}
+
+		\ddview[above=20mm of AdminSideBar.north]{RestaurantTables}
+		\ddview[below left=0mm and 3mm of RestaurantTables.north west]{WaiterOrderManager}
+
+		\umlVHVinherit[arm1=-18mm]{RestaurantTables}{PageView}
+		\umlVHVinherit[arm1=-13mm]{WaiterOrderManager}{PageView}
+
+		\ddview[below right=0mm and 5mm of RestaurantTables.north east]{RestaurantTablesItem}
+		\umlinherit{RestaurantTablesItem}{RestaurantTables}
+
+		\ddview[above left=8mm and -12mm of RestaurantTablesItem.north east]{RTItemContextualMenu}
+		\umlVHVinherit{RTItemContextualMenu}{RestaurantTablesItem}
+
+		\ddcontroller[above left=8mm and -3mm of RTItemContextualMenu.north east]{RTItemContextualMenuController}
+		\ddservice[above=10mm of RTItemContextualMenuController.north]{RTItemContextualMenuService}
+
+		\umlassoc[geometry=-|]{RTItemContextualMenuController}{RTItemContextualMenu}
+		\umlassoc{RTItemContextualMenuController}{RTItemContextualMenuService}
+
+		\umlnote[geometry=-|, above left=4mm and 0pt of RTItemContextualMenuService.north east, width=6cm]
+			{RTItemContextualMenuService}{newOrder, continueTransaction sono funzionalità
+			correlate alla sola interfaccia front-end; \textbf{non} effettuano, cioè,
+			chiamate al back-end e, piuttosto, configurano correttamente 
+			l'interfaccia per l'inserimento di un nuovo ordine.}
+
+		\ddview[above=20mm of WaiterOrderManager.north]{MenuContents}
+		\ddview[below left=0mm and 3mm of MenuContents.north west]{MenuTableOfContents}
+		\ddview[below right=0mm and 3mm of MenuContents.north east]{Cart}
+
+		\umlinherit{MenuContents}{WaiterOrderManager}
+		\umlVHVinherit{MenuTableOfContents}{WaiterOrderManager}
+		\umlVHVinherit{Cart}{WaiterOrderManager}
+
+		\ddview[above left=10mm and 0mm of Cart.north east]{CartItem}
+		\umlVHVinherit{CartItem}{Cart}
+
+		\ddview[above=20mm of MenuContents.north]{MenuContentsItem}
+		\ddview[left=5mm of MenuContentsItem.west]{MenuContentsPopup}
+		\umlinherit{MenuContentsItem}{MenuContents}
+		\umlinherit[anchor1=330, geometry=-|]{MenuContentsPopup}{MenuContents}
+
+		\ddview[below=20mm of MenuTableOfContents.south west]{MenuTableOfContentsItem}
+		\umlinherit[anchor1=120, geometry=|-]{MenuTableOfContentsItem}{MenuTableOfContents}
+
+		\ddcontroller[above=15mm of MenuContentsItem.north]{CartController}
+		\umlassoc[geometry=|-]{MenuContentsPopup}{CartController}
+		\umlassoc[geometry=|-]{CartItem}{CartController}
+
+		\ddservice[above right=3mm and 3mm of CartController.north east]{CartService}
+		\umlassoc[geometry=|-]{CartService}{CartController}
+		\ddmodel[x=0.1,y=0.9]{Dish}
+		\ddmodel[below right=0mm and 3mm of Dish.north east]{OrderTransaction}
+		\ddmodel[below right=0mm and 3mm of OrderTransaction.north east]{ItemOrderList}
+	\end{ddclassdiagram}
+
+	\section{Analysis Sequence Diagrams}
+	\subsection{Inserimento dipendenti nel sistema}[Inerente al requisito funzionale \ref{reqsf:register}]
+	\svg[0.7\measurepage]{./src/diag/seq/fr01}
+
+	\subsection{Inserimento pietanze nel menu' culinario}[Inerente al requisito funzionale \ref{reqsf:addmenu}]
+	\svg[0.7\measurepage]{./src/diag/seq/fr04}
+
+	\subsection{Registrazione nuovi ordini}[Inerente al requisito funzionale \ref{reqsf:addorder}]
+	\svg[0.7\measurepage]{./src/diag/seq/fr16}
+
+	\subsection{Completamento e Rilasciamento degli ordini}[Inerente ai requisiti funzionali \ref{reqsf:cmporder}, \ref{reqsf:abrtorder}]
+	\svg[0.7\measurepage]{./src/diag/seq/fr19-20}
+
+	\section{State Analysis Diagrams}
+	\subsection{Registrazione dipendente}[Inerente al requisito funzionale \ref{reqsf:register}]
+	\svg[0.7\measurepage]{./src/diag/st/fr01}
+
+	\newpage\subsection{Disattivazione dei dipendenti}[Inerente al requisito funzionale \ref{reqsf:unregister}]
+	\svg[0.7\measurepage]{./src/diag/st/fr02}
+
+	\newpage\subsection{Visualizzazione del rendimento}[Inerente al requisito funzionale \ref{reqsf:stats}]
+	\svg[0.7\measurepage]{./src/diag/st/fr03}
+
+	\newpage\subsection{Inserimento pietanze nel menù culinario}[Inerente al requisito funzionale \ref{reqsf:addmenu}]
+	\svg[0.7\measurepage]{./src/diag/st/fr04}
+
+	\newpage\subsection{Rimozione pietanze dal menù culinario}[Inerente al requisito funzionale \ref{reqsf:delmenu}]
+	\svg[0.7\measurepage]{./src/diag/st/fr05}
+
+	\newpage\subsection{Aggiornamento del menù culinario}[Inerente al requisito funzionale \ref{reqsf:chgmenu}]
+	\svg[0.7\measurepage]{./src/diag/st/fr06}
+
+	\newpage\subsection{Inserimento di nuove categorie alimentari}[Inerente al requisito funzionale \ref{reqsf:addcat}]
+	\svg[0.7\measurepage]{./src/diag/st/fr07}
+
+	\newpage\subsection{Cancellazione delle categorie alimentari esistenti}[Inerente al requisito funzionale \ref{reqsf:delcat}]
+	\svg[0.7\measurepage]{./src/diag/st/fr08}
+
+	\newpage\subsection{Aggiornamento delle categorie alimentari}[Inerente al requisito funzionale \ref{reqsf:chgcat}]
+	\svg[0.7\measurepage]{./src/diag/st/fr09}
+
+	\newpage\subsection{Aggiunta dei tavoli}[Inerente al requisito funzionale \ref{reqsf:addtbl}]
+	\svg[0.7\measurepage]{./src/diag/st/fr10}
+
+	\newpage\subsection{Rimozione dei tavoli}[Inerente al requisito funzionale \ref{reqsf:deltbl}]
+	\svg[0.7\measurepage]{./src/diag/st/fr11}
+
+	\newpage\subsection{Rimozione dei Inserimento avvisi nel sistema}[Inerente al requisito funzionale \ref{reqsf:addntf}]
+	\svg[0.7\measurepage]{./src/diag/st/fr12}
+
+	\newpage\subsection{Autenticazione}[Inerente al requisito funzionale \ref{reqsf:authlogin}]
+	\svg[0.7\measurepage]{./src/diag/st/fr13}
+
+	\newpage\subsection{Aggiornamento delle credenziali d'accesso alla prima autenticazione}[Inerente al requisito funzionale \ref{reqsf:authupdate}]
+	\svg[0.7\measurepage]{./src/diag/st/fr14}
+
+	\newpage\subsection{Nascondere avvisi}[Inerente al requisito funzionale \ref{reqsf:hidentf}]
+	\svg[0.7\measurepage]{./src/diag/st/fr15}
+
+	\newpage\subsection{Registrare ordini}[Inerente al requisito funzionale \ref{reqsf:addorder}]
+	\svg[0.7\measurepage]{./src/diag/st/fr16}
+
+	\newpage\subsection{Completa transazione}[Inerente al requisito funzionale \ref{reqsf:termorder}]
+	\svg[0.5\measurepage]{./src/diag/st/fr17}
+
+	\newpage\subsection{Accetta ordine}[Inerente al requisito funzionale \ref{reqsf:acptorder}]
+	\svg[0.5\measurepage]{./src/diag/st/fr18}
+
+	\newpage\subsection{Completa ordine}[Inerente al requisito funzionale \ref{reqsf:cmporder}]
+	\svg[0.5\measurepage]{./src/diag/st/fr19}
+
+	\newpage\subsection{Rilascia ordine}[Inerente al requisito funzionale \ref{reqsf:abrtorder}]
+	\svg[0.5\measurepage]{./src/diag/st/fr20}*
+\endgroup

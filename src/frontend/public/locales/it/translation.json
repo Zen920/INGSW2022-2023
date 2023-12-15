@@ -1,0 +1,360 @@
+{
+  "main": {
+    "loading": {
+      "title": "Caricamento..."
+    },
+    "changePassword": {
+      "title": "Cambia la tua password",
+      "form": {
+        "password": "Password",
+        "newPassword": "Nuova password",
+        "newPasswordAgain": "Reinserisci nuovamente la tua nuova password"
+      }
+    },
+    "employeeNotifications": {
+      "empty": "Non ci sono notifiche da mostrare.",
+      "hide": "Nascondi"
+    },
+    "dishesCategory": {
+      "form": {
+        "selectField": {
+          "placeholder": "Scegli una o più pietanze"
+        },
+        "multiSelectField": {
+          "label": "Pietanze da modificare"
+        }
+      }
+    },
+    "categories": "Categorie",
+    "dialog": {
+      "warning": "Attenzione!",
+      "completeOrder": {
+        "title": "Completa ordine",
+        "description": "Vuoi completare l'ordine?"
+      },
+      "buttons": {
+        "confirm": "Conferma",
+        "deny": "Declina"
+      },
+      "content": {
+        "unarrived": "Non tutti i piatti che sono stati ordinati sono arrivati al tavolo. Procedere lo stesso?"
+      }
+    },
+    "form": {
+      "reset": "Pulisci form",
+      "delete": "Elimina",
+      "submit": "Invia",
+      "search": "Cerca pietanza",
+      "dish": {
+        "id": "Identificativo pietanza",
+        "name": "Nome",
+        "description": "Descrizione",
+        "allergens": "Allergeni",
+        "index": "Indice",
+        "price": "Prezzo",
+        "category": "Categoria",
+        "onSale": "In vendita"
+      },
+      "table": {
+        "toAdd": "Numero di tavoli da aggiungere"
+      },
+      "booleanOptions": ["Vero", "Falso"],
+      "control": {
+        "required": "Questo campo è obbligatorio",
+        "minLength": "L'input richiede almeno {{count}} caratteri",
+        "maxLength": "L'input accetta un massimo di {{count}} caratteri",
+        "minDate": "L'input richiede una data non precedente a quella posta nel compo 'Da'",
+        "passwordPattern": "La password richiede almeno 7 caratteri, tra cui almeno una maiuscola e un numero!"
+      }
+    },
+    "employeeForm": {
+      "role": "Ruolo"
+    },
+    "navbar": {
+      "pages": {
+        "waiter": ["Pannello camerieri"],
+        "cook": ["Pannello cuochi"],
+        "admin": ["Pannello amministratori"],
+        "settings": ["Notifiche", "Cambia password", "Logout"]
+      }
+    },
+    "adminsidebar": {
+      "pages": ["Statistiche", "Gestione dipendenti"]
+    },
+    "supervisorsidebar": {
+      "pages": ["Piatti e tavoli", "Notifiche"]
+    },
+    "login": {
+      "title": "welcomeLogin",
+      "description": {
+        "part1": "Bentornato",
+        "part2": "Effettua l'accesso al tuo account"
+      }
+    },
+    "waiter": {
+      "tableMenu": {
+        "new": "Nuovo ordine",
+        "continue": "Continua ordine",
+        "complete": "Completa ordine"
+      },
+      "cart": {
+        "transaction": "Transazione",
+        "empty": "Non ci sono ordini",
+        "title": "Carrello",
+        "table": "Tavolo"
+      }
+    },
+    "cook": {
+      "tabs": {
+        "pending": "Ordini in attesa",
+        "accepted": "Ordini accettati",
+        "completed": "Ordini evasi"
+      },
+      "collapsibleTable": {
+        "idOrder": "Numero ordine",
+        "idTransaction": "Numero transazione",
+        "idTable": "Numero tavolo"
+      },
+      "table": {
+        "idItem": "Identificativo ordine",
+        "dishName": "Pietanza",
+        "price": "Prezzo",
+        "quantity": "Quantità",
+        "additionalNotes": "Note aggiuntive",
+        "status": "Status",
+        "confirm": "Accetta ordine",
+        "release": "Rilascia ordine",
+        "subTitle": "Ordinazioni",
+        "buttons": {
+          "release": "Rilascia",
+          "pending": "Accetta",
+          "accepted": "Completa"
+        }
+      },
+      "statuses": {
+        "waiting": "In attesa",
+        "inProgress": "In preparazione",
+        "ready": "Completato ed evaso"
+      }
+    },
+    "admin": {
+      "statistics": {
+        "fromField": "Da",
+        "toField": "Al",
+        "selectField": {
+          "placeholder": "Scegli uno o due dipendenti"
+        },
+        "charts": {
+          "bar": {
+            "legendLabel": "Piatti preparati da {{cook}} ",
+            "bottomLabel": "Data"
+          },
+          "line": {
+            "legendLabel": "Piatti preparati da {{cook}} e {{cook2}}"
+          }
+        }
+      },
+      "tables": {
+        "tabs": {
+          "add": "Aggiungi tavolo/i",
+          "update": "Aggiorna disponibilità"
+        },
+        "form": {
+          "radio": {
+            "title": "Disponibilità tavolo/i",
+            "options": ["Disponibile", "Non disponibile"]
+          },
+          "selectField": {
+            "placeholder": "Scegli uno o più tavoli"
+          }
+        }
+      },
+      "categories": {
+        "tabs": {
+          "add": "Aggiungi categoria",
+          "delete": "Elimina categoria",
+          "update": "Modifica categoria"
+        }
+      },
+
+      "dishes": {
+        "tabs": {
+          "manual": "Inserimento manuale",
+          "off": "Inserimento automatico",
+          "update": "Modifica pietanza",
+          "batchCategories": "Modifica categoria di più pietanze"
+        },
+        "off": {
+          "form": {
+            "resultsLabel": "Numero di risultati",
+            "resultsPlaceholder": "Numero massimo di risultati da ritornare dalla ricerca"
+          },
+          "table": {
+            "dishName": "Pietanza",
+            "description": "Descrizione",
+            "allergens" : "Allergeni"
+          }
+        }
+      },
+      "employees": {
+        "tabs": {
+          "registration": "Registrazione",
+          "edit": "Modifica"
+        },
+        "registration": {
+          "title": "Registra un nuovo dipendente",
+          "dialog": {
+            "description": "Desideri procedere con la registrazione?"
+          }
+        },
+        "edit": {
+          "title": "Gestisci gli account dei tuoi dipendenti",
+          "form": {
+            "selectField": {
+              "placeholder": "Scegli uno o più dipendenti"
+            },
+
+            "title": "Blocca o Sblocca account",
+            "options": ["Blocca", "Sblocca"]
+          }
+        },
+        "reset": {
+          "title": "Resetta password dipendente",
+          "form": {
+            "title": "Resetta password",
+            "selectField": {
+              "placeholder": "Scegli il dipendente la cui password deve essere resettata"
+            }
+          }
+        }
+      },
+      "notifications": {
+        "title": "Invia una notifica ai tuoi dipendenti",
+        "form": {
+          "title": "Titolo",
+          "body": "Corpo della notifica"
+        }
+      }
+    }
+  },
+  "warnings": {
+    "dishes": {
+      "updates": "Un amministratore/supervisore ha modificato/aggiunto un piatto. Aggiornare la pagina per ottenere i nuovi dati",
+      "correctUpdate": {
+        "category": {
+          "update": "Un amministratore/supervisore ha aggiornato la categoria {{updated}}. Aggiorna la pagina per ottenere i nuovi dati",
+          "add": "Un amministratore/supervisore ha aggiunto la categoria{{updated}}. Aggiorna la pagina per ottenere i nuovi dati",
+          "delete": "Un amministratore/supervisore ha eliminato la categoria {{updated}}. Aggiorna la pagina per ottenere i nuovi dati"
+        },
+        "dish": {
+          "update": "Un amministratore/supervisore ha aggiornato la/e pietanza/e {{updated}}. Aggiorna la pagina per ottenere i nuovi dati",
+          "add": "Un amministratore/supervisore ha aggiunto la pietanza {{updated}}. Aggiorna la pagina per ottenere i nuovi dati",
+          "delete": "Un amministratore/supervisore ha eliminato la pietanza {{updated}}. Aggiorna la pagina per ottenere i nuovi dati"
+        }
+      }
+    }
+  },
+  "errors": {
+    "category": {
+      "alreadyExists": "Questo categoria è già presente.",
+      "nameIsNull": "Il nome della categoria non può essere vuoto",
+      "nameIsBlank": "Il nome della categoria prevede almeno un carattere che non sia uno spazio"
+    },
+    "employee": {
+      "alreadyExists": "Questo username è già in uso.",
+      "accountDisabled": "Questo account è stato disabilitato. Contatta un amministratore per ulteriori informazioni.",
+      "notFound": "Non esiste alcun account con questo username",
+      "passwordMatch": "La password coincide con quell'attuale",
+      "passwordMismatch": "Le nuove password non combaciano tra loro",
+      "usernameIsNull": "Lo username non può essere vuoto",
+      "usernameLength": "Lo username necessita un numero di caratteri da {{n1}} a {{n2}}",
+      "passwordIsNull": "La password non può essere vuota",
+      "passwordLength": "La password necessita un numero di caratteri da {{n1}} a {{n2}}",
+      "pattern": "La password richiede almeno una lettera maiuscola e un numero",
+      "roleIsNull": "Il ruolo non può essere vuoto",
+      "passwordNotValid": "La password inserita non è corretta"
+    },
+    "transaction": {
+      "alreadyExists": "",
+      "notFound": "La transazione inserita non esiste",
+      "isCompletedIsNull": "Il parametro completato non può essere vuoto",
+      "dateIsNull": "La data non può essere vuota"
+    },
+    "role": {
+      "alreadyExists": "",
+      "notFound": "Il ruolo inserito non esiste",
+      "employeeRoleIsNull": "La tipologia di ruolo non può essere vuota"
+    },
+    "dish": {
+      "alreadyExists": "Una pietanza con questo nome è già presente",
+      "notFound": "La pietanza non è stata trovata",
+      "nameIsNull": "Il nome della pietanza non può essere vuoto",
+      "nameLength": "Il nome della pietanza necessita un numero di caratteri da {{n1}} a {{n2}}",
+      "allergensLength": "Il campo allergeni della pietanza necessita un numero di caratteri da {{n1}} a {{n2}}",
+      "descriptionLength": "La descrizione necessita un numero di caratteri da {{n1}} a {{n2}}",
+      "descriptionIsNull": "La descrizione non può essere vuota",
+      "indexIsNull": "L'indice non può essere vuoto",
+      "indexPositive": "L'indice deve essere maggiore di 0",
+      "priceIsNull": "Il prezzo non può essere vuoto",
+      "pricePositive": "Il prezzo deve essere maggiore di 0"
+    },
+    "externalAPI": {
+      "tiemout": "Open Food Facts non è al momento disponibile, riprovare più tardi",
+      "mismatch": "Open Food Facsts non è in grado di restituire un risultato con il termine inserito"
+    },
+    "itemOrderList": {
+      "cancelled": "La transazione associata a questo ordine è stata completata. L'ordine è stato cancellato",
+      "notFound": "L'elemento non è stato trovato",
+      "quantityIsNull": "La quantità non può essere vuota",
+      "quantityPositive": "La quantità deve essere maggiore di 0",
+      "statusIsNull": "Lo status non può essere vuoto"
+    },
+    "clientTable": {
+      "notFound": "Il tavolo non è stato trovato",
+      "indexIsNull": "L'indice non può essere vuoto",
+      "indexPositive": "L'indice deve essere maggiore di 0",
+      "isOccupiedIsNull": "Il parametro completato non può essere vuoto"
+    },
+    "notification": {
+      "titleIsNull": "Il corpo delle notifica non può essere vuoto",
+      "titleLength": "Il titolo delle notifica necessita un numero di caratteri da {{n1}} a {{n2}}",
+      "bodyLength": "Il corpo delle notifica necessita un numero di caratteri da {{n1}} a {{n2}}",
+      "bodyIsNull": "Il corpo della notifica non può essere vuota"
+    },
+    "notificationStatus": {
+      "employeeIsNull": "Il dipendente non può essere vuoto",
+      "notificationIsNull": "La notifica non può essere vuota"
+    }
+  },
+  "successMessages": {
+    "category": "Categoria aggiunta con successo",
+    "deleteCategory": "Categoria rimossa con successo",
+    "order": "Il tuo ordine è stato registrato e reso disponibile a tutti i cuochi!",
+    "registration": "Utente registrato con successo",
+    "dish": "Pietanza aggiunta con successo",
+    "categoryUpdate": "Categoria aggiornata con successo",
+    "dishUpdate": "Pietanza aggiornata con successo",
+    "changePassword": "Password cambiata con successo. Dopo 3 secondi sarai ricondotto al login.",
+    "notification": "Notifica inviata con successo",
+    "accountUpdate": "Informazioni aggiornate con successo",
+    "batchTables": "Tavoli aggiunti con successo",
+    "table": "Tavolo aggiunto con successo",
+    "tableUpdate": "Stato del tavolo aggiornato con successo",
+    "tablesUpdate": "Stato dei tavoli aggiornato con successo",
+    "completeTransaction": "Transazione conclusa con successo",
+    "dishesUpdate": "Pietanze aggiornate con successo",
+    "acceptOrder": "Ordine accettato con successo",
+    "completeOrder": "Ordine completato con successo",
+    "releaseOrder": "L'ordine è stato rilasciato con successo"
+  },
+  "failureMessages": {
+    "registration": "Si è verificato un errore durante la registrazione del nuovo utente",
+    "login": "Credenziali sbagliate",
+    "dish": "Qualcosa è andato storto durante l'inserimento di un nuovo piatto",
+    "category": "Qualcosa è andato storto durante l'inserimento di una nuova categoria",
+    "generic": "La tua richiesta non può essere soddisfatta a causa di errori"
+  },
+  "warningMessages": {
+    "missingCookData": "Non ci sono dati per il dipendente {{n1}}"
+  }
+}

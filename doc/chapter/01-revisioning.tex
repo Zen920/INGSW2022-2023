@@ -1,0 +1,93 @@
+\chapter*{Revisioni}(midpoint-1)<%
+	A seguire, una tabella contenente lo storico delle modifiche apportate al progetto.\\[0.5cm]
+	Le modifiche riportate riguarderanno applicativo (back,front-end), documentazione (il documento corrente) e deployment.\\[0.5cm]
+	Nello specifico, ogni voce qui di seguito riportata è da considerarsi soltanto riepilogativa delle modifiche apportate.>
+
+\begin{center}
+	\begin{longadphorizontal}[
+		% Resize cols
+		colspec = {X[0.75, m, r]X[0.75, m, r]X[1.25, m, l]X[2, t, j]},
+		row{1} = {bg=\getddtblrcolor!85!white, fg=white, halign=c},
+	]
+		Tracker & Data & Autori & Descrizione\\ 
+		dev-0.1				& 28 Marzo, 2023			& Ciro Amato, Vincenzo Lombardi				& Commit iniziale del progetto, scrittura del README.md, strutturazione e impostazione generale del progetto, discussione interna tra i progettisti allo scopo di individuare le tecnologie necessarie allo sviluppo dell'applicativo; prima suddivisione interna dei principali task assegnati.\\
+		dev-0.2				& 05 Aprile, 2023			& Vincenzo Lombardi											& Inizializzato progetto per il backend in Java, con framework Spring Boot, via tecnologia gradle.\\
+		dev-0.3				& 05 Aprile, 2023			& Ciro Amato													& Inizio di stesura nella documentazione di progetto con tecnologie LuaLaTeX.\\
+		dev-0.5				& 16 Aprile, 2023			& Ciro Amato													& Prima versione stilistica delle componenti per il documento di progetto, con elementi visivi ad hoc per alcune delle sezioni.\\
+		dev-0.6				& 21 Aprile, 2023			& Ciro Amato, Vincenzo Lombardi				& Completata l'analisi dei requsiti, indicati quindi i requisiti funzionali e non, nonché i casi d'uso significativi.\\
+		dev-0.7				& 24 Aprile, 2023			& Vincenzo Lombardi										& Implementazione delle funzionalità backend necessarie affinché la REST API possa almeno rispondere a richieste tramite strumenti terzi quale Postman; scrittura delle prime query Postman di test.\\
+		dev-0.8				& 25 Aprile, 2023			& Ciro Amato, Vincenzo Lombardi				& Completata una prima versione del Database, utilizzando tecnologie DBMS PostgreSQL, non verranno notificate nello strumento di revisioni successive modifiche in quanto studiate ed applicate superata la fase di mockup con strumenti Spring Boot ad hoc per una rapida prototipazione; primi test di utilizzo delle due tecnologie.\\
+		dev-0.9				& 27 Aprile, 2023			& Ciro Amato													& Descritti sul documento di progetto alcune sezioni, quali introduzione, e analisi dei requisiti\\
+		dev-1.1				& 27 Aprile, 2023			& Vincenzo Lombardi										& Aggiunte funzionalità di registrazione, login dei dipendenti. \\
+		dev-1.2				& 27 Aprile, 2023			& Ciro Amato													& La password dipendenti è adesso generata automaticamente e allegata al responso fornito dalla REST API durante la registrazione.\\
+		dev-1.3				& 27 Aprile, 2023			& Ciro Amato													& Apportate alcune modifiche stilistiche al documento di progetto; aggiunti quindi una pagina iniziale e la pagina finale di crediti.\\
+		dev-1.3				& 03 Maggio, 2023			& Ciro Amato, Vincenzo Lombardi				& Aggiunte la quasi totalità delle funzionalità richieste dai contraenti riguardanti il backend, tra cui l'inserimento di nuove pietanze, l'inserimento di nuovi ordini nel sistema e la generazione (report) delle statistiche dipendenti\\
+		dev-1.4				& 04 Maggio, 2023			& Ciro Amato													& Creazione del package riguardanti l'API OpenFoodsFact\\
+		dev-1.5				& 05 Maggio, 2023			& Vincenzo Lombardi										& Inizio frontend con tecnologie React JS\\
+		dev-1.5				& 09 Maggio, 2023	& Vincenzo Lombardi										& Completati i route di maggior interesse, quali login e registrazione, inserimento pietanze, creazione degli ordini.\\
+		dev-1.6				& 10 Maggio, 2023			& Ciro Amato, Vincenzo Lombardi				& Intergrazione dell'auto completamento per mezzo di chiamate REST API backend-frontend al package OpenFoodsFact.\\
+		dev-1.7				& 10 Maggio, 2023			& Ciro Amato, Vincenzo Lombardi 			& Rimozione del codice inutilizzato, pulizia generale del codice backend, frontend.\\
+		dev-1.8				& 13 Maggio, 2023			& Vincenzo Lombardi										& Adesso l'utente è automaticamente reindirizzato alla pagina di login qualora l'utente non risulti autenticato: l'autenticazione è obbligatoria per tutti i dipendenti.\\
+		dev-1.9				& 14 Maggio, 2023			& Ciro Amato													& Creazione, nonché aggiunta, dei diagrammi di analisi richiesti (di Sequenza, di Analisi) al documento di progetto per mezzo di strumenti terzi e non (plantuml, latex tikz).\\
+		dev-1.10			& 14 Maggio, 2023			& Ciro Amato, Vincenzo Lombardi					& Una prima versione di design del front-end del progetto.\\
+		dev-1.11			& 15 Maggio, 2023			& Vincenzo Lombardi											& Implementazione della struttura grafica per il front-end progetto adatto all'utilizzo Desktop.\\
+		dev-1.12			& 15 Maggio, 2023			& Ciro Amato														& Inserimento della sezione di Mock-up nel documento di progetto, la sezione è perlopiù vuota ma già pronta al contenuto.\\
+		dev-1.13			& 18 Maggio, 2023	& Ciro Amato, Vincenzo Lombardi			& Diverse migliorie nell'utilizzabilitàdel front-end desktop; modificate alcune sezioni grafiche del front-end, completo revamp del carrello e cambiate alcuni dei concetti fondamentali riguardanti l'inserimento di pietanze in uno stesso ordine, che risultava piuttosto problematica in situazioni limite.\\
+		dev-1.14			& 21 Maggio, 2023	& Vincenzo Lombardi									& I componenti si aggiornano in real-time tramite websockets; pulizia del codice.\\
+		dev-1.15			& 24 Maggio, 2023			& Vincenzo Lombardi											& Creazione interfaccia di amministrazione.\\
+		dev-1.16			& 24 Maggio, 2023			& Ciro Amato														& Limitazione nel rate delle richieste alla chiamata REST API OpenFoodsFact.\\
+		dev-1.17			& 25 Maggio, 2023			& Ciro Amato, Vincenzo Lombardi					& Inserimento di validazione per tutti i campi "aperti" lato front-end, diverse modifiche atti a risolvere problematiche riguardanti l'aggiornamento real-time dei websockets.\\
+		dev-1.18			& 26 Maggio, 2023			& Vincenzo Lombardi											& Varie modifiche all'interfaccia\\
+		dev-1.19			& 27 Maggio, 2023			& Vincenzo Lombardi											& Creazione interfaccia per la generazione, nonché la visualizzazione di statistiche di dipendenti (cuoco).\\
+		dev-1.20			& 29 Maggio, 2023			& Vincenzo Lombardi										& Rimozione del codice inutilizzato, prevenuto lo spam di richieste da parte della websocket per utenti non loggati, rimossi alcuni bug per cui il menu delle statistiche non ne produceva correttamente in alcuni casi limite.\\
+		dev-1.21			& 29 Maggio, 2023			& Ciro Amato, Vincenzo Lombardi					& Aggiunti alcuni semplici test di prova al back-end tramite Mockito e Junit.\\
+		dev-1.22			& 30 Maggio, 2023	 	 	& Vincenzo Lombardi											& Migliorato l'error handling del front-end nel caso di mancata connessione (per problemi al back-end)\\
+		dev-1.23			& 02 Giugno, 2023	 	 	& Ciro Amato														& Modifiche alla documentazione, inserimento della sezione e cura del contenuto per la "Specifica di Requisiti", creazione di diagrammi delle classi di analisi inerenti ai requisiti funzionali in funzione di back-end, front-end.\\
+		dev-1.24			& 04 Giugno, 2023	 	 	& Vincenzo Lombardi											& Ulteriori modifiche nell'utilizzabilità, revamp della grafica di login, implementata una prima versone di "Dark Mode" per il front-end.\\
+		dev-1.25			& 04 Giugno, 2023	 	 	& Ciro Amato														& Refactoring, il termine Worker è stato sostituito con il ben più adeguato Employee. \\
+		dev-1.26			& 05 Giugno, 2023	 	 	& Vincenzo Lombardi											& Localizzazione, adesso il sistema front-end può supportare più lingue, per il momento previsti almeno l'Italiano e la lingua Inglese.\\
+		dev-1.27			& 06 Giugno, 2023	 	 	& Vincenzo Lombardi											& Applicate alcune modifiche al websocket e alla sessione utente per cui il logout utente corrisponde alla terminazione immediata della sessione, con conseguente cancellamento di dati locali (local storage).\\
+		dev-1.28			& 06 Giugno, 2023	 	 	& Vincenzo Lombardi											& Risolto un problema per cui al login di un dipendente non veniva correttamente connesso alla websocket.\\
+		dev-1.29			& 10 Giugno, 2023	 	 	& Ciro Amato														& Completata la sezione inerente alla specifica dei requisiti e tutti i diagrammi ad esso corrispondenti.\\
+		dev-2.1				& 12 Giugno,	2023		& Ciro Amato, Vincenzo Lombardi				& Completati i temi (light mode, dark mode) e la localizzazione (italiano, inglese).\\
+		dev-2.2				& 15 Giugno, 2023			& Vincenzo Lombardi											& Svariate migliorie grafiche front-end ai componenti.\\
+		dev-2.3				& 18 Giugno,	2023		& Ciro Amato, Vincenzo Lombardi				& Completati gli unit-test ed aggiunta una sezione nella documentazione che ne descrive le modalità.\\
+		dev-2.4				& 24 Giugno,	2023		& Ciro Amato													& Completamento della sezione nel documento di progetto che ne descrive il piano di test.\\
+		dev-2.5				& 25 Giugno,	2023		& Ciro Amato													& Inserimento di una piccola sezione apposita nel progetto che riporta informazioni utili \\
+		dev-2.6				& 27 Giugno,	2023		& Vincenzo Lombardi										& Inizio sviluppo dell'interfaccia mobile\\
+		dev-2.7				& 02 Luglio,	2023		& Ciro Amato, Vincenzo Lombardi				& Mock-up mobile nonché il loro inserimento all'interno della documentazione.\\
+		dev-2.8				& 10 Luglio,	2023		& Ciro Amato, Vincenzo Lombardi				& Implementazione delle interfacce dell'applicativo front-end in ambito mobile (amministrazione, creazione pietanze).\\
+		dev-2.9				& 17 Luglio,	2023		& Vincenzo Lombardi										& Implementazione delle interfacce dell'applicativo front-end in ambito mobile (creazione delle statistiche)\\
+		dev-2.10			& 21 Luglio,	2023		& Vincenzo Lombardi										& Implementazione delle interfacce dell'applicativo front-end in ambito mobile (gestione delle transazioni, inserimento di nuovi ordini)\\
+		dev-2.11			& 23 Luglio,	2023		& Ciro Amato													& Cambiamenti stilistici alla documentazione: entrambi i temi disponibili per l'applicazioni saranno adesso visualizzati in una stessa pagina; aggiunti i mock-up mobile.\\
+		dev-2.23			& 02 Settembre, 2023	& Ciro Amato, Vincenzo Lombardi				& Diverse correzioni nella localizzazione inglese dell'applicativo; risolti diversi bug minori.\\
+		prealpha-0.1	& 03 Settembre, 2023	& Ciro Amato, Vincenzo Lombardi				& L'applicazione entra nella fase di pre-alpha, l'applicazione risulta utilizzabile, saranno necessari ulteriori controlli nell'usabilità.\\
+		prealpha-0.2	& 14 Settembre, 2023	& Vincenzo Lombardi										& Aggiunte diverse funzionalità non richieste che ne facilitano l'amministrazione, come la possibilità di reset delle password dipendenti (nel caso di password dimenticata) o la modifica in massa della categoria degli alimenti.\\
+		prealpha-0.3	& 16 Settembre, 2023	& Ciro Amato													& Aumentata la qualità delle numerose immagini e inserimento di immagini vettoriali, esportate ad hoc per la documentazione, affinché risultino più leggibili in formato pdf.\\
+		prealpha-0.4	& 18 Settembre, 2023	& Vincenzo Lombardi, Ciro Amato				& Cambiati leggermente le tonalità utilizzate nell'applicazione.\\
+		prealpha-0.5	& 19 Settembre, 2023	& Vincenzo Lombardi										& I messaggi "toast" di popup su schermo risultano assai più significativi.\\
+		prealpha-0.6	& 22 Settembre, 2023	& Ciro Amato													& Correzione di errore di battitura presenti sul front-end.\\
+		prealpha-0.7	& 02 Ottobre, 2023		& Ciro Amato, Vincenzo Lombardi				& Rework grafico di alcune delle componenti: si è preferito semplificare l'interfaccia di evasione degli ordini.\\
+		prealpha-0.8	& 04 Ottobre, 2023		& Vincenzo Lombardi										& È adesso possibile comparare le statistiche di due dipendenti-cuochi.\\
+		prealpha-0.9	& 06 Ottobre, 2023		& Ciro Amato													& Completata la sezione, nel documento di progetto, inerente al design del sistema, che ne illustra architettura, tecnologie. Aggiunta una prima bozza dei diagrammi richiesti da traccia.\\
+		prealpha-0.10	& 10 Ottobre, 2023		& Vincenzo Lombardi										& Clean-up di parte del codice inutilizzato nel progetto, stesura del glossario da usare nella documentazione.\\
+		prealpha-0.11	& 13 Ottobre, 2023		& Ciro Amato													& Rivisitazione di tutti i diagrammi richiesti da progetto\\
+		prealpha-0.12 & 16 Ottobre, 2023		& Ciro Amato, Vincenzo Lombardi				& Aggiunte note a piè di pagine laddove necessario.\\
+		prealpha-0.13 & 21 Ottobre, 2023		& Ciro Amato													& Inserimento di numerosi link ipertestuali all'interno del documento di progetto; creazione e formattazione di stile dell'indice nel documento di progetto.\\
+		prealpha-0.14	& 26 Ottobre, 2023		& Ciro Amato, Vincenzo Lombardi				& Preparazione al deployment dell'applicativo.\\
+		prealpha-0.15	& 29 Ottobre, 2023		& Ciro Amato													& Inserita una sezione, piuttosto descrittiva, inerente alle strumentazioni necessarie allo sviluppo, nonché al deployment dell'applicattivo nel documento di progetto.\\
+		prealpha-0.16 & 2 Novembre,	2023		& Ciro Amato, Vincenzo Lombardi				& Containerizzati, tramite tecnologia docker, i primi componenti del progetto (database, backend, adminer).\\
+		prealpha-0.17 & 4 Novembre, 2023		& Ciro Amato													& Containerizzato, tramite tecnologia docker, il front-end del progetto, utilizzando yarn: le websockets non funzionano correttamente, probabilmente npm non è adatto al deployment.\\
+		prealpha-0.18	& 12 Novembre, 2023		& Vincenzo Lombardi										& Revamp grafico per alcune delle componenti (employee: waiter).\\
+		prealpha-0.19 & 16 Novembre, 2023		& Ciro Amato													& Rimpiazziato il container del front-end, utilizzante npm, con nginx: permetterà configurazioni assai più complesse.\\
+		prealpha-0.19a & 20 Novembre, 2023	& Ciro Amato													& La configurazione con nginx necessitava di alcuni tweaks per funzionare correttamente ambiente docker.\\
+		prealpha-0.19b & 21 Novembre, 2023	& Ciro Amato, Vincenzo Lombardi				& I vari container docker sono adesso raccolgono e deployano direttamente dal codice sorgente.\\
+		prealpha-0.20	& 28 Novembre, 2023		& Ciro Amato, Vincenzo Lombardi				& Le websockets react funzionano adesso correttamente: il problema sorgeva nel momento in cui si combinavano le tecnologie docker, react e nginx; leggi di più sull'argomento sulla \href{https://create-react-app.dev/docs/proxying-api-requests-in-development/}{documentazione di React}.\\
+		prealpha-0.21	& 01 Dicembre, 2023		& Ciro Amato, Vincenzo Lombardi				& Aggiunto una sezione "Codice Sorgente" sul documento di progetto; migliorie al documento di progetto; ultimi passaggi prima del deployment.\\
+		alpha-0.1			& 02 Dicembre, 2023		& Ciro Amato, Vincenzo Lombardi				& Creata repository anche su github per pubblicare, con stato visiblità "pubblico", il codice sorgente della repository. \\
+		alpha-0.2			& 03 Dicembre, 2023		& Ciro Amato, Vincenzo Lombardi				& Applicazione deployata con successo su macchina remota Google Cloud, si proceda con testing delle funzionalita.\\ 
+		alpha-0.3			& 10 Dicembre, 2023		& Ciro Amato													& Aggiornati i mockup che presentavano alcune inconsistenze.\\
+		alpha-0.4			& 11 Dicembre, 2023		& Vincenzo Lombardi										& Risolti alcuni problemi di affidabilità.\\
+		alpha=0.5			& 14 Dicembre, 2023		& Ciro Amato, Vincenzo Lombardi				& Corrette alcune discrepanze nella documentazione, descritto un sql\_insert completo di alimenti \textit{tipici}; corretti alcuni edge-cases sul frontend.\\
+	\end{longadphorizontal}
+\end{center}

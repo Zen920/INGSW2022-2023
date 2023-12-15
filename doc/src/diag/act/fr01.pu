@@ -1,0 +1,68 @@
+@startuml
+
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|adm| Amministratore
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|fe|
+partition #LightPink/White Messaggio di **errore** {
+	#Pink:(E)
+	:Visualizza un messaggio di errore inerente\nalla problematica che vi si è presentata;
+	stop
+}
+
+|adm|
+start
+Note left
+	L'amministratore è **autenticato**
+end Note
+
+:Si collega al pannello di amministrazione\nquindi richiede la pagina per la creazione\ndi un nuovo dipendente;
+
+|fe|
+:Restituisce il pannello di amministrazione\ndi creazione di nuovi dipendenti;
+
+|adm|
+repeat
+	:Inserisce i dati richiesti alla creazione\ndel dipendente quali username e ruolo;
+
+|fe|
+	:Controllo preliminare dei dati inseriti;
+
+	if (I campi obbligatori sono compilati?) then (No)
+		#Pink:(E)
+	endif
+
+	if (I campi compilati rispettano il dominio e le policy?) then (No)
+		#Pink:(E)
+	endif
+
+|be|
+	:Validazione username dipendente e ruolo;
+
+	if (I campi obbligatori sono tutti stati compilati?) then (No)
+		#Pink:(E)
+	endif
+
+	if (L'username inserito risulta già in uso?) then (Si)
+		#Pink:(E)
+	endif
+
+	if (Il ruolo indicato esiste ed e valido?) then (No)
+		#Pink:(E)
+	endif
+
+repeat while (La validazione ha riportato esito positivo?) is (No) Not (Si)
+
+
+|be|
+:Inserisce nuovo dipendente nel Sistema;
+
+|fe|
+:Segnala avvenuto inserimento del dipendente;
+
+stop
+@enduml

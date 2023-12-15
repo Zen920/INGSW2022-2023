@@ -1,0 +1,20 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state form as "Form Inserimento\nRegistra Nuovo Utente" #Gold
+form: entry/VisualizzaFormInserimento
+state val as "Validazione" #LightGreen
+
+state failhnd as "Error Handling" #LightPink 
+
+[*]		-[hidden]d-> failmsg
+[*]		-d-> form
+form	-d-> val: CliccaPulsanteCrea()
+val --> [*]:  [OK] / RegistraNuovoUtente()
+val -r-> failhnd: [Error] 
+failhnd -l-> form
+
+
+@enduml

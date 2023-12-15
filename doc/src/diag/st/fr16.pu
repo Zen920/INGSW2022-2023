@@ -1,0 +1,35 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+
+state formSel as "Form Selezione\nTavolo" #Gold
+formSel: entry/OttieniTavoliDisponibili
+formSel: entry/VisualizzaFormSelezioneTavolo
+
+state formIns as "Form Creazione\nNuovo Ordine" #Gold
+formIns: entry/OttieniPietanzeDisponibili
+formIns: entry/VisualizzaFormInserimentoPietanze
+
+state valSel as "Validazione Selezione" #LightGreen
+state valOrd as "Validazione Ordine" #LightGreen
+
+state failhnd1 as "Error Handling" #LightPink 
+state failhnd2 as "Error Handling" #LightPink 
+
+' [*]		-[hidden]d-> failmsg
+[*]				-r-> formSel
+formSel 	-d-> valSel
+valSel		-d-> formIns
+valSel		-l-> failhnd1: [Error]
+formIns		-r-> formIns: AggiungiPietanza()
+formIns		-d-> valOrd: InviaOrdine()
+failhnd1 -u-> formSel
+
+valOrd		-d--> [*]: [OK] / RecuperaOGeneraTransazione()\l  AggiungiOrdine()
+valOrd		-l--> failhnd2: [Error]
+failhnd2 -u-> formIns
+
+
+@enduml

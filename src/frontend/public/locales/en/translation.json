@@ -1,0 +1,354 @@
+{
+  "main": {
+    "loading": {
+      "title": "Loading..."
+    },
+    "changePassword": {
+      "title": "Change your password",
+      "form": {
+        "password": "Password",
+        "newPassword": "New password",
+        "newPasswordAgain": "Retype your password once again"
+      }
+    },
+    "employeeNotifications": {
+      "empty": "No new notifications to show.",
+      "hide": "Hide"
+    },
+    "dishesCategory": {
+      "form": {
+        "selectField": {
+          "placeholder": "Choose one or more dishes"
+        },
+        "multiSelectField": {
+          "label": "Dishes to modify"
+        }
+      }
+    },
+    "categories": "Categories",
+    "dialog": {
+      "warning": "Attention!",
+      "completeOrder": {
+        "title": "Complete order",
+        "description": "Do you want to proceed with the order completition?"
+      },
+      "buttons": {
+        "confirm": "Confirm",
+        "deny": "Decline"
+      },
+      "content": {
+        "unarrived": "Not all dishes that were ordered made it to the table. Do you wish to continue anyway?"
+      }
+    },
+    "form": {
+      "reset": "Reset form",
+      "submit": "Submit",
+      "search": "Search for dish",
+      "dish": {
+        "id": "Dish identifier",
+        "name": "First name",
+        "description": "Description",
+        "allergens": "Allergens",
+        "index": "Index",
+        "price": "Price",
+        "category": "Category",
+        "onSale": "On sale"
+      },
+      "table": {
+        "toAdd": "Number of tables to add"
+      },
+      "booleanOptions": ["True", "False"],
+      "control": {
+        "required": "This field is required",
+        "minLength": "The input requires at least {{count}} characters",
+        "maxLength": "The input accepts a maximum of {{count}} characters",
+        "minDate": "Input must not be a previous date than 'From' field",
+        "passwordPattern": "Minimum password length is 7 characters, containing at least a capital letter and a number!"
+      }
+    },
+    "employeeForm": {
+      "role": "Role"
+    },
+    "navbar": {
+      "pages": {
+        "waiter": ["Waiters panel"],
+        "cook": ["Cook panel"],
+        "admin": ["Admin panel"],
+        "settings": ["Notifications", "Change password", "Logout"]
+      }
+    },
+    "adminsidebar": {
+      "pages": ["Statistics", "Employee management"]
+    },
+    "supervisorsidebar": {
+      "pages": ["Plates and tables", "Notifications"]
+    },
+    "login": {
+      "title": "welcomeLogin",
+      "description": {
+        "part1": "Welcome back",
+        "part2": "Log in to your account"
+      }
+    },
+    "waiter": {
+      "tableMenu": {
+        "new": "New order",
+        "continue": "Continue order",
+        "complete": "Complete order"
+      },
+      "cart": {
+        "transaction": "Transaction",
+        "empty": "There are no orders",
+        "title": "Cart",
+        "table": "Table"
+      }
+    },
+    "cook": {
+      "tabs": {
+        "pending": "Pending orders",
+        "accepted": "Accepted orders",
+        "completed": "Fulfilled orders"
+      },
+      "collapsibleTable": {
+        "idOrder": "Order Number",
+        "idTransaction": "Transaction number",
+        "idTable": "Table number"
+      },
+      "table": {
+        "idItem": "Order identifier",
+        "dishName": "Dish",
+        "price": "Price",
+        "quantity": "Amount",
+        "additionalNotes": "Additional notes",
+        "status": "Status",
+        "confirm": "Accept order",
+        "release": "Release order",
+        "subTitle": "Orders",
+
+        "buttons": {
+          "release": "Release",
+          "pending": "Accept",
+          "accepted": "Complete"
+        }
+      }
+    },
+    "admin": {
+      "statistics": {
+        "fromField": "From",
+        "toField": "To the",
+        "selectField": {
+          "placeholder": "Choose one or two employees"
+        },
+        "charts": {
+          "bar": {
+            "legendLabel": "Dishes prepared by {{cook}}",
+            "bottomLabel": "Day"
+          },
+          "line": {
+            "legendLabel": "Dishes prepared by {{cook}} and {{cook2}}"
+          }
+        }
+      },
+      "tables": {
+        "tabs": {
+          "add": "Add table(s)",
+          "update": "Update availability"
+        },
+        "form": {
+          "radio": {
+            "title": "Table(s) available",
+            "options": ["Available", "Not available"]
+          },
+          "selectField": {
+            "placeholder": "Choose one or more tables"
+          }
+        }
+      },
+      "categories": {
+        "tabs": {
+          "add": "Add category",
+          "delete": "Delete category",
+          "update": "Modify category"
+        }
+      },
+      "dishes": {
+        "tabs": {
+          "manual": "Manual entry",
+          "off": "Automatic entry",
+          "update": "Modify dish",
+          "batchCategories": "Modify category for a group of dishes"
+        },
+        "off": {
+          "form": {
+            "resultsLabel": "Number of results",
+            "resultsPlaceholder": "Maximum amount of results to return from the search"
+          },
+          "table": {
+            "dishName": "Dish",
+            "description": "Description",
+            "allergens" : "Allergens"
+          }
+        }
+      },
+      "employees": {
+        "tabs": {
+          "registration": "Registration",
+          "edit": "Edit"
+        },
+        "registration": {
+          "title": "Register a new employee",
+          "dialog": {
+            "description": "Do you want to proceed with the registration?"
+          }
+        },
+        "edit": {
+          "title": "Manage your employee accounts",
+          "form": {
+            "title": "Lock or Unlock account",
+            "selectField": {
+              "placeholder": "Choose one or more employees"
+            },
+
+            "options": ["Lock", "Unlock"]
+          }
+        },
+        "reset": {
+          "title": "Reset employee password",
+          "form": {
+            "title": "Reset password",
+            "selectField": {
+              "placeholder": "Choose employee whose password must be resetted"
+            }
+          }
+        }
+      },
+      "notifications": {
+        "title": "Notify your employees",
+        "form": {
+          "title": "Title",
+          "body": "Notification body"
+        }
+      }
+    }
+  },
+  "warnings": {
+    "dishes": {
+      "updates": "An administrator/supervisor has changed/added a dish. Refresh the page in order to get the updates",
+      "correctUpdate": {
+        "category": {
+          "update": "An administrator/supervisor has updated category {{updated}}. Refresh the page in order to get the updates",
+          "add": "An administrator/supervisor has added category {{updated}}. Refresh the page in order to get the updates",
+          "delete": "An administrator/supervisor has deleted category {{updated}}. Refresh the page in order to get the updates"
+        },
+        "dish": {
+          "update": "An administrator/supervisor has updated dish/es {{updated}}. Refresh the page in order to get the updates",
+          "add": "An administrator/supervisor has added dish {{updated}}. Refresh the page in order to get the updates",
+          "delete": "An administrator/supervisor has deleted dish {{updated}}. Refresh the page in order to get the updates"
+        }
+      }
+    }
+  },
+  "errors": {
+    "category": {
+      "alreadyExists": "This category already exists.",
+      "nameIsNull": "Category name cannot be empty.",
+      "nameIsBlank": "The category name has at least one non-space character."
+    },
+    "employee": {
+      "alreadyExists": "This username is already in use.",
+      "accountDisabled": "This account has been disabled. Contact and administrator for info.",
+      "notFound": "There is no account with this username",
+      "passwordMatch": "The password matches the current one",
+      "passwordMismatch": "The new passwords don't match each other",
+      "usernameIsNull": "Username cannot be empty",
+      "usernameLength": "The username requires a number of characters from {{n1}} to {{n2}}",
+      "passwordIsNull": "The password cannot be empty",
+      "passwordLength": "The password requires a number of characters from {{n1}} to {{n2}}",
+      "pattern": "The password requires at least a capital letter and a number",
+      "roleIsNull": "Role cannot be empty",
+      "passwordNotValid": "Password is not valid"
+    },
+    "transaction": {
+      "alreadyExists": "",
+      "notFound": "The entered transaction does not exist",
+      "isCompletedIsNull": "Completed parameter cannot be empty",
+      "dateIsNull": "The date cannot be empty"
+    },
+    "role": {
+      "alreadyExists": "",
+      "notFound": "The entered role does not exist",
+      "employeeRoleIsNull": "The role type cannot be empty"
+    },
+    "dish": {
+      "alreadyExists": "A dish with this name already exists",
+      "notFound": "The dish was not found",
+      "nameIsNull": "The dish name cannot be empty",
+      "nameLength": "The name of the dish requires a number of characters from {{n1}} to {{n2}}",
+      "descriptionLength": "The description requires a number of characters from {{n1}} to {{n2}}",
+      "descriptionIsNull": "The description cannot be empty",
+      "allergensLength": "The allergens field requires a number of characters from {{n1}} to {{n2}}",
+      "indexIsNull": "The index cannot be empty",
+      "indexPositive": "The index must be greater than 0",
+      "priceIsNull": "Price cannot be empty",
+      "pricePositive": "The price must be greater than 0"
+    },
+    "externalAPI": {
+      "tiemout": "Open Food Facts is currently unavailable, please try again later",
+      "mismatch": "Open Food Facsts is unable to return a result with the term entered"
+    },
+    "itemOrderList": {
+      "cancelled": "Transaction associated to this order has been completed. Order has been cancelled",
+      "notFound": "The item was not found",
+      "quantityIsNull": "Quantity cannot be empty",
+      "quantityPositive": "The quantity must be greater than 0",
+      "statusIsNull": "Status cannot be empty"
+    },
+    "clientTable": {
+      "notFound": "The table was not found",
+      "indexIsNull": "The index cannot be empty",
+      "indexPositive": "The index must be greater than 0",
+      "isOccupiedIsNull": "Completed parameter cannot be empty"
+    },
+    "notification": {
+      "titleIsNull": "The notification body cannot be empty",
+      "titleLength": "The title of the notification requires a number of characters from {{n1}} to {{n2}}",
+      "bodyLength": "The notification body requires a number of characters from {{n1}} to {{n2}}",
+      "bodyIsNull": "The notification body cannot be empty"
+    },
+    "notificationStatus": {
+      "employeeIsNull": "The employee cannot be empty",
+      "notificationIsNull": "The notification cannot be empty"
+    }
+  },
+  "successMessages": {
+    "category": "Category successfully added",
+    "deleteCategory": "Category successfully removed",
+    "order": "Your order has been registered and made available to all cooks!",
+    "registration": "User registered successfully!",
+    "dish": "Dish successfully added",
+    "categoryUpdate": "Category updated successfully",
+    "dishUpdate": "Dish successfully updated",
+    "changePassword": "Password successfully changed. After 3 seconds you will be logged out automatically.",
+    "notification": "Notification sent successfully",
+    "accountUpdate": "Information updated successfully",
+    "batchTables": "Tables successfully added",
+    "table": "Table successfully added",
+    "tableUpdate": "Table status updated successfully",
+    "tablesUpdate": "Table status successfully updated",
+    "completeTransaction": "Transaction completed successfully",
+    "dishesUpdate": "Dishes successfully updated",
+    "acceptOrder": "Order accepted successfully",
+    "completeOrder": "Order completed successfully",
+    "releaseOrder": "The order has been released successfully"
+  },
+  "failureMessages": {
+    "registration": "An error has been encountered while registering the new user: ",
+    "login": "Wrong credentials.",
+    "dish": "Something went wrong when inserting new dish: ",
+    "category": "Something went wrong when inserting new category: ",
+    "generic": "Your request could not be fullfilled due to errors: "
+  },
+  "warningMessages": {
+    "missingCookData": "There is no data for employee {{n1}}"
+  }
+}

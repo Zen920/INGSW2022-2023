@@ -1,0 +1,26 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state form as "Form Selezione\nPietanza" #Gold
+form: entry/VisualizzaFormSelezionePietanza
+
+state val as "Validazione" #LightGreen
+
+state failhnd as "Error Handling" #LightPink 
+
+[*]		-[hidden]d-> failmsg
+[*]							-d-> form
+form						-d-> val: CliccaPulsanteRimuovi()
+val							-d-> [*]: [OK] / RimuoviPietanza()
+val							-l-> failhnd: [Error]
+failhnd					-u-> form
+
+note right of val
+	La rimozione di una pietanza
+	consiste nella sua  __disattivazione__
+	che la rende, cioè,  **inacquistabile**
+end note
+
+@enduml

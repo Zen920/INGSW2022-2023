@@ -1,0 +1,55 @@
+@startuml
+
+!include ../style.default.plantuml
+!include seqstyle.plantuml
+
+' Entities
+actor "Waiter:Employee" as wai #orange
+control Frontend as fe
+box "Backend Layer" #Lightgreen
+	entity Backend as be
+	database Database as db
+end box
+
+== Indirizzamento dinamico ==
+
+wai -> fe ++: Richiedi controllo per la registrazione di nuovi ordini\nselezionando un determinato tavolo dall'apposita interfaccia
+fe --> wai --: Restituisce il form di inserimento pietanze\nVisualizzando l'insieme categorie-alimenti disponibili all'acquisto
+
+== Creazione dell'ordine ==
+
+group#Gold #LightBlue Popolamento del carrello
+	wai -> fe ++: Crea carrello
+
+	group#Gold #LightYellow Loop inserimento
+		wai -> fe ++: Seleziona pietanza
+		wai -> fe: Indica quantità
+		wai -> fe: (opzionale)\nAggiunge una descrizione alla pietanza
+		wai -> fe: Conferma l'aggiunta al carrello
+		fe --> fe: Validazione preliminare dei campi specificati
+		fe --> wai --: Inserimento al carrello 
+	end
+end
+
+wai -> fe: Conferma ordine
+fe -> be ++: Crea ordine
+be -> be: Validazione della richiesta
+be -> db ++: Creazione nuovo ordine 
+
+alt#Gold #Lightblue Inserimento avvenuto con successo
+	db --> be --: Inserimento avvenuto correttamente
+	be --> fe --: Riporta avvenuto inserimento
+	fe --> wai --: Segnala l'avvenuto creazione del nuovo ordine
+
+	fe-[hidden]->fe
+else #Pink Errore generico nell'inserimento
+	activate db
+	activate be
+	activate fe
+
+	db --> be --: Non è stato possibile completare l'operazione
+	be -> fe --: Riporta esito negativo nell'inserimento
+	fe --> wai --: Segnala il mancato inserimento
+end
+
+@enduml

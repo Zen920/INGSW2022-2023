@@ -1,0 +1,56 @@
+@startuml
+
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|adm| Amministratore
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|fe|
+partition #LightPink/White Messaggio di **errore** {
+	#Pink:(E)
+	:Visualizza un messaggio di errore inerente\nalla problematica che vi si è presentata;
+	stop
+}
+
+|adm|
+start
+Note left
+	L'amministratore è **autenticato**
+end Note
+
+:Si collega al pannello di amministrazione\nquindi richiede la pagina per la disattivazione\ndi un account dipendente;
+
+|fe|
+:Restituisce il pannello di amministrazione\nper la disattivazione di dipendenti;
+
+|adm|
+repeat
+	:Seleziona il dipendente da disattivare;
+
+	|fe|
+	:Richiede conferma al membro di amministrazione;
+
+	|adm|
+	if (L'amministratore conferma la disattivazione?) then (No)
+		stop
+	endif
+
+|be|
+	:Validazione sulla disponibilità del dipendente inserito;
+
+	if (Il dipendente selezionato è esiste ed è valido?) then (No)
+		#Pink:(E)
+	endif
+
+repeat while (La validazione ha riportato esito positivo?) is (No) Not (Si)
+
+|be|
+:Il dipendente è disattivato e non potrà\n usufruire delle funzionalità del sistema;
+
+|fe|
+:Segnala l'avvenuta disattivazione del dipendente;
+
+stop
+@enduml

@@ -1,0 +1,63 @@
+@startuml
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|dp| Dipendente
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|fe|
+partition #LightPink/White Messaggio di **errore** {
+	#Pink:(E)
+	:Visualizza un messaggio di errore inerente\nalla problematica che vi si è presentata;
+	stop
+}
+
+partition #LightYellow/White Autenticazione **fallita** {
+	#LightYellow:(F)
+	:Visualizza un messaggio di errore che invita\nil dipendente a ritentare il procedimento di login\nin quanto i dati inseriti non sono validi;
+	stop
+}
+
+|dp|
+start
+Note left
+	Il dipendente non è autenticato
+end Note
+
+:Si collega al sistema;
+
+|fe|
+:In quanto l'utente non è autenticato, restituisce la pagina di login\nche invita il dipendente ad effettuare l'autenticazione;
+
+|dp|
+repeat
+:Inserisce i campi obbligatori (username, password);
+
+	|fe|
+		:Controllo preliminare dei dati inseriti;
+
+		if (I campi compilati rispettano il dominio?) then (No)
+			#Pink:(E)
+		endif
+
+	|be|
+		:Validazione dei dati inseriti;
+
+		if (Lo username inserito esiste ed è valido?) then (No)
+			#LightYellow:(F)
+		endif
+
+		if (La password inserita corrisponde a quella dell'utente?) then (No)
+			#LightYellow:(F)
+		endif
+repeat while (La validazione ha riportato esito positivo?) is (No) Not (Si)
+
+|be|
+:Viene generato e restituito un token di autenticazione;
+
+|fe|
+:Il dipendente viene indirizzo alla homepage;
+stop
+
+@enduml

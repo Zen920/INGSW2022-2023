@@ -1,0 +1,70 @@
+@startuml
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|dp| Dipendente
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|fe|
+partition #LightPink/White Messaggio di **errore** {
+	#Pink:(E)
+	:Visualizza un messaggio di errore inerente\nalla problematica che vi si è presentata;
+	stop
+}
+
+partition #LightYellow/White Autenticazione **fallita** {
+	#LightYellow:(F)
+	:Visualizza un messaggio di errore che invita\nil dipendente a ritentare il procedimento di aggiornamento\npassword in quanto i dati inseriti non sono validi;
+	stop
+}
+
+|dp|
+start
+Note left
+	Si presuppone che il dipendente abbia 
+	appena effettuato l'accesso e che 
+	al suo account sia richiesto l'aggiornamento
+	dell'attuale password.
+end Note
+
+:Si collega al sistema;
+
+|fe|
+:Il dipendente è autenticato, ma il suo account\n ichiede l'aggiornamento dell'attuale password.\nVerra pertanto invitato ad aggiornare la password;
+
+|dp|
+repeat
+:Inserisce i campi obbligatori (password_attuale,\nnuova_password, conferma_password);
+
+	|fe|
+		:Controllo preliminare dei dati inseriti;
+
+		if (I campi compilati rispettano il dominio e la policy utente?) then (No)
+			#Pink:(E)
+		endif
+
+		if (I campi nuova_password e la conferma_password corrispondono?) then (No)
+			#Pink:(E)
+		endif
+
+	|be|
+		:Validazione dei dati inseriti;
+
+		if (La password_attuale inserita corrisponde a quella dell'utente?) then (No)
+			#LightYellow:(F)
+		endif
+
+		if (La nuova_password inserita rispetta la policty utente?) then (No)
+			#LightYellow:(F)
+		endif
+repeat while (La validazione ha riportato esito positivo?) is (No) Not (Si)
+
+|be|
+:La password dell'utente viene aggiornata nel sistema;
+
+|fe|
+:Il dipendente viene indirizzo alla homepage;
+stop
+
+@enduml

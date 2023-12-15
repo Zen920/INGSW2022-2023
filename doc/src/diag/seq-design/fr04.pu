@@ -1,0 +1,113 @@
+@startuml
+
+!include ../style.default.plantuml
+!include set-designstyle.plantuml
+
+' Entities
+actor "AdministrationMember:Employee" as adm #orange
+box "Frontend Layer" #E6EFE6
+	entity "ReactJS-Router" as fe
+	control "AdminDishComponent-Fragment" as form
+	control "ReactJS-Validator" as val
+end box
+box "Backend Layer" #Lightgreen
+	entity "Spring-Router" as be
+	control "CategoryController" as re
+	entity "CategoryService" as res
+
+	control "DishController" as dc
+	entity "DishService" as ds
+
+	database "PostgresDB" as db
+end box
+
+== Indirizzamento dinamico ==
+
+adm -> fe ++: http GET request host:port/admin/dish
+fe --> adm --: returns AdminRoute::RegistrationComponent
+
+== Compilazione del form ==
+
+group#Gold #LightYellow Inserimento dati
+	adm -> form ++: Inserisce nome pietanza
+	form -> val ++: isDishNameValid
+	val --> form --: return isDishNameValid
+	note right
+		La validazione è un rapido controllo
+		front-end che verifica la correttezza
+		dei campi seguendo le guidelines
+		descritte precedentemente
+	end note
+
+	adm -> form: Inserisce descrizione pietanza
+	form -> val ++: isDishDescriptionValid
+	val --> form --: return isDishDescriptionValid
+
+	adm -> form: Inserisce prezzo pietanza
+	form -> val ++: isDishPriceValid
+	val --> form --: return isDishPriceValid
+
+	adm -> form: Richiede le categorie alimentari
+	form -> be ++: fetchCategories
+	be -> re ++: getCategoryDishes
+	re -> res ++: getCategoryDishes
+	res -> db ++: fetchAllDishes
+	db --> res --: return Categories
+	res --> re --: return ResponseEntity.ok { Categories }
+	re --> be --
+	be --> form --: return Categories
+	form --> form: setCategories
+
+	adm -> form: Seleziona categoria pietanza
+	form -> val ++: isDishCategoryValid
+	val --> form --: return isDishCategoryValid
+end
+
+group#Gold #LightYellow Inserimento dati facoltativi
+	adm -> form: Inserisce allergeni pietanza
+	form -> val ++: isDishAllegensValid
+	val --> form --: return isDishAllergensValid
+
+	adm -> form: Inserisce posizione di indicizzazione della pietanza
+	form -> val ++: isDishOrderValid
+	val --> form --: return isDishOrderValid
+end
+
+== Richiesta e finalizzazione dell'inserimento ==
+adm -> form: Segnala la richiesta di inserimento della\npietanza con l'apposito controllo "submit"
+form -> be ++: postDish
+be -> dc ++: addNewEntry(newDishModel) 
+dc -> ds ++: addEntry(newDishModel)
+ds -> ds: validate
+ds -> db ++: trySave
+
+alt#Gold #Lightblue Successo
+	db --> ds --: return true
+	ds --> dc--: return Dish
+	dc --> be --: return ResponseEntity.ok { Dish }
+	be --> form --: 
+	form --> form: cleanup
+	form --> adm --
+
+else #Pink Errore generico
+	db-[hidden]->db
+	activate db
+	activate ds
+	activate dc
+	activate be
+	activate form
+
+
+	db --> ds --: return false
+	ds --> dc --: return exception
+	dc --> be --: return ResponseEntity.except { exception }
+	be --> form --: 
+	form --> form: toast(exception)
+	form --> adm --
+
+
+
+end
+
+
+@enduml

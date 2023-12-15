@@ -1,0 +1,68 @@
+@startuml
+
+!include ../style.default.plantuml
+!include seqstyle.plantuml
+
+' Entities
+actor "Cook:Employee" as cook #orange
+control Frontend as fe
+box "Backend Layer" #Lightgreen
+	entity Backend as be
+	database Database as db
+end box
+
+== Indirizzamento dinamico ==
+
+cook -> fe ++: Richiedi controllo per la\nvisualizzazione degli ordini accettati
+fe --> cook --: Restituisce il form di visualizzazione ordini accettati\ninerenti al cuoco che ne ha fatto richiesta
+
+== Selezione di un'ordine ==
+
+cook -> fe ++: Un ordine, tra quelli visualizzati\nè selezionato
+fe --> cook: Presenta la possibilità di completazione\no cancellazione della mansione
+
+alt#Gold #Lightblue Il cuoco conferma il completamento dell'ordine
+	cook -> fe: Segnala l'ordine come completo
+	fe -> be ++: Segnala al sistema l'aggiornamento
+	be -> be: Validazione richiesta
+	be -> db ++: Aggiorna stato relativo all'ordine\nda "in_progress" a "ready"
+
+	deactivate fe
+	deactivate be
+	deactivate db
+else #Pink Il cuoco richiede che l'ordine venga rilasciato al sistema
+	fe-[hidden]->fe
+
+	activate fe
+	cook -> fe: Richiede il rilascio dell'ordine
+	fe -> be ++: Segnala al sistema che\nl'ordine deve essere rilasciato
+	be -> be: Validazione richiesta
+	be -> db ++: Aggiorna stato relativo all'ordine\nda "in_progress" a "waiting"
+
+	deactivate fe
+	deactivate be
+	deactivate db
+end
+
+fe-[hidden]->fe
+activate fe
+activate be
+activate db
+
+alt#Gold #Lightblue Successo
+	db --> be --: Aggiornamento dell'ordine avvenuto con successo
+	be --> fe --: Riporta avvenuto aggiornamento
+	fe --> cook --: Segnala l'avvenuto aggiornamento dell'ordine
+
+	fe-[hidden]->fe
+else #Pink Errore generico
+	activate db
+	activate be
+	activate fe
+
+	db --> be --: Non è stato possibile completare l'operazione
+	be -> fe --: Riporta esito negativo con nell'aggiornamento
+	fe --> cook --: Segnala il mancato inserimento
+end
+
+@enduml

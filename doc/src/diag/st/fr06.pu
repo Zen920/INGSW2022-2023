@@ -1,0 +1,30 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state formSel as "Form Selezione\nPietanza" #Gold
+formSel: entry/VisualizzaFormSelezionePietanza
+
+state valExt as "Validazione\nEsistenza" #LightGreen
+state valOp  as "Validazione\nOperazione" #LightGreen
+
+state failhnd1 as "Error Handling" #LightPink 
+state failhnd2 as "Error Handling" #LightPink 
+
+state formUpd as "Form Aggiornamento\nPietanza" #Gold
+formUpd: entry/VisualizzaFormAggiornamentoPietanza
+
+[*]		-[hidden]d-> failmsg
+[*]				--> formSel
+formSel		--> valExt: SelezionaPietanza()
+valExt		-d-> formUpd: [OK] / CreaReportStatistiche()
+valExt		-l-> failhnd1: [Error]
+formUpd		-d-> valOp: AggiornaPietanza()
+failhnd1	-r-> formSel
+valOp 		-d-> [*]: [OK] / AggiornaInformazioniPietanza()
+valOp 		-l-> failhnd2: [Error]
+failhnd2	-r-> formUpd
+
+
+@enduml

@@ -1,0 +1,51 @@
+# Ignore everything
+*
+
+# Keep the main document in the "doc" folder
+!doc/
+!doc/main.tex
+!doc/src/
+!doc/src/**
+doc/src/imgs/*.shadow
+doc/src/imgs/*.colorized
+doc/src/diag/*/svg-inkscape
+doc/src/diag/**/*.svg
+doc/src/diag/**/*.png
+!doc/chapter/
+!doc/chapter/**
+
+
+# Keep the uml folder
+!uml/
+!uml/**
+
+# Keep the pycat folder
+!pycat/
+!pycat/**
+
+# Keep docker yaml
+!docker/
+!docker/**
+docker/*.tar.gz
+docker/postgres_data
+docker/.env
+
+# Keep the src folder
+!src/
+!src/**
+
+# Keep the sql folder
+!sql/
+!sql/sql_data.sql
+!sql/sql_insert.sql
+
+# Include these files from root
+!.gitignore
+!.todo
+!dockerize.sh
+!README.md
+!LICENSE
+
+# Exclude local related configuration
+sql/.vscode/
+

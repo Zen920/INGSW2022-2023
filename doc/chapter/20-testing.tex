@@ -1,0 +1,1293 @@
+\chapter[Documento di]{Testing del Sistema}(midpoint-8)<Il capitolo introdurrà teoria, concetti
+riguardanti l'assai importante fase di testing, necessaria al fine di garantire un software di buona qualità>
+\hypersetup{allcolors=\ddchaptercolor!60!black}
+
+\section*{Piano di Test}
+\subsection{Introduzione: Automatizzazione}
+Per validare l'efficienza, la stabilità nonché la correttezza del nostro applicativo, proveremo,
+quindi tramite dei test, alcuni metodi che consideriamo significativi; il testing avverrà automaticamente eseguito ad
+ogni ricompilazione del codice sorgente tramite lo strumento \href{https://gradle.org/}{Gradle}.
+
+\subsection{Framework(s)}[JUnit e Mockito]
+I testing sono stati effettati tramite l'utilizzo di framework Java specializzati quali
+\href{https://junit.org/junit5/}{JUnit 5} e \href{https://site.mockito.org}{Mockito}
+che ricoprono tutti gli use-case a noi necessari; fondamentalmente, segue un paragrafo
+che ne illustra le funzionalità offerte:
+\begin{description}[leftmargin=!,labelwidth=\widthof{\bfseries JUnit 5 Jupiter}, font=\color{ddchaptercolor!70!black}]
+	\item[JUnit 5] Forse il più popolare framework unit-testing\footnote{Unit-Testing: la più piccola parte testabile
+		di un software prende il nome di unit, quindi per unit-testing si fa riferimento al testing
+		delle singole unità.} che supporta 
+		una miriade di feature e di stili di testing diversi.
+		\par\vspace{3mm}
+		JUnit si compone a sua volta di diversi moduli, ognuno dei quali progettato per
+		le diverse necessità e modalità di testing: nel nostro caso abbiamo fatto ampio
+		uso di \textbf{JUnit Jupiter} cui mette a disposizione delle Java Annotation\footnote{In alcuni
+		linguaggi di programmazione sono presenti le così dette \textbf{annotations} che permettono
+		di definire, attraverso dei \textbf{label}, informazioni, comportamenti e funzionalità
+		aggiuntive che non fanno parte del programma stesso.} che
+		ne denotano il come, il perché e il quando questi saranno eseguiti.
+
+	\begingroup\color{ddchaptercolor}\vspace{6pt}\hrule height 0.4pt depth 0pt width \textwidth\relax\vspace{6pt}\endgroup
+	\item[Mockito] Framework secondario per la creazione di Mock\footnote{Mock: \textit{non autentico},
+		con lo scopo di sostituirsi all'oggetto reale}, Stub\footnote{Stub: indica solitamente
+		la presenza di codice che sostituisce funzionalità incomplete o in via di sviluppo 
+		che ne simula il reale comportamento e funzionamento.} 
+		da utilizzare in congiunzione con JUnit.
+		\par\vspace{3mm}
+		Permette di sviluppare codice di testing non solo più appetibile \textit{esteticamente}
+		parlando, introducendo una sintassi più human-readable\footnote{Human-readable: adatta alla lettura
+		da parte delle persone, tramite l'utilizzo di un linguaggio naturale, ossia un linguaggio
+		che più si avvicina al parlato.}, ma anche di sostituirsi alle dipendenze, producendo
+		un oggetto mock, con dati già inizializzati a valori di default, che permette
+		quindi di analizzare i metodi reali singolarmente.
+		\par\vspace{3mm}
+		In particolare, permette di testare direttamente le funzionalità descritte
+		\textbf{senza} applicare alcun cambiamento permanente al database, lavorando in sandbox\footnote{Sandbox: ambiente
+		di sviluppo limitato alle sole funzionalità necessarie, negando l'eventualità di modifiche catastrofiche
+		al sistema}, come vedremo più avanti.
+\end{description}
+
+\section{Testing dell'applicativo}
+\subsection*{Introduzione}
+Il testing riguarderà strettamente le funzionalità legate al codice sorgente scritto in Java.
+
+Nelle pagine a seguire, andremo ad indicare, con precisione, ciò di cui si compone il sistema
+affinché si abbia una buona panoramica riguardo a come sia stato effettuato il testing; in particolare
+tutte le componenti logiche, quindi fondamentali al funzionamento. Infine, allegheremo anche
+alcuni snippet\footnote{Snippet: piccola porzione di codice sorgente autoesplicativa.} che
+possano aiutare, quanto più possibile, nella comprensione.
+
+\begin{info}[Snippet a scopo dimostrativo]
+	Gli snippet di codice sorgente degli unit-test che seguono sono da considerarsi aggiornati
+	all'ultima versione release del progetto, è comunque possibile che vi siano 
+	alcune differenze con il codice illustrato e il codice sorgente attualmente distribuito; pertanto
+	invitiamo i futuri lettori a consultare il codice sorgente direttamente sulla repository github
+	% TODO: Linka repository github
+	fornita.
+	\par\vspace{3mm}
+	Inoltre, ricordiamo che, sempre negli snippet, verranno omessi i dovuti \texttt{import}
+	per trattarne solo ed esclusivamente la logica e saranno.
+\end{info}
+%
+\begin{warn}[Interazione con Mockito]
+	Come già detto in precedenza, non verranno introdotte nuove classi che si sostituiscano
+	al codice sorgente sviluppato, reintroducendo il concetto di classe validatore, 
+	in quanto potrebbero omettere dettagli implementativi o risultare obsolete 
+	in seguito ad un dovuto cambiamento.
+	\par\vspace{3mm}
+	In particolare, si vuol evitare che si ricada nella stesura di codice ripetuto (ridondanza),
+	osservando quindi il \textbf{D.R.Y.}\footnotemark.
+	\par\vspace{3mm}
+	Come già spiegato in precedenza, tutto questo è possibile attraverso l'utilizzo di \textbf{Mockito}
+	che appunto si sostituisce a determinate dipendenze, quali ad esempio il database, permettendo
+	esecuzioni su dati, contenitori \textit{mock}, risultando in modifiche non permanenti del sistema.
+\end{warn}
+
+\footnotetext{Don't repeat yourself, il codice dev'essere scritto una e una
+sola volta all'interno della code base.}
+
+\newpage
+\subsection*{Funzionalita' idonee al testing}
+In seguito ad un'analisi approfondita del codice sorgente, abbiamo individuato,
+tra le funzionalità disponibili, alcune particolarmente \textit{a rischio}, sia
+per frequenza di utilizzo che per importanza e complessità.
+
+\begin{enumerate}
+	\item Registrazione di un nuovo dipendente; necessaria la verifica dei dati inseriti 
+	dall'amministratore durante la creazione; è da considerarsi un test critico in quanto
+	l'inserimento di dati non validi può sicché impedirne l'utilizzo dell'account e 
+	l'immissione manuale dei dati la rende particolarmente prona ad errori.
+
+	\item Cambiamento della password; strettamente correlata alla funzionalità precedente,
+	il dipendente appena registrato nel sistema è obbligato, in seguito al primo login
+	ad aggiornare la password; l'inserimento di una password \textit{valida} è importante
+	pena l'inagibilità dell'account.
+
+	\item Controllo delle transazioni; nello specifico ne tratteremo il completamento
+	all'interno del sistema a cui quindi ne affidiamo l'integrità; come si può intuire,
+	tale funzionalità è di critica importanza in quanto il sistema dev'essere in grado,
+	in ogni momento, di non incappare in error state, pena il blocco o il crash del sistema.
+
+	\item Aggiornamento delle pietanze nel menù; tale funzionalità permette all'amministrazione
+	di aggiornare le specifiche di una pietanza in un secondo momento dopo l'immissione
+	nel sistema; la funzionalità è caratterizzata da numerosi parametri il cui dominio
+	è non banale.
+
+	\item Aggiornamento degli ordini nel sistema; la funzionalità è responsabile dell'accettazione,
+	del riarrangiamento e il rilascio degli ordini dei cuochi. La funzionalità è responsabile
+	della maggior parte della logica della cucina.
+\end{enumerate}
+
+\newpage\begingroup
+
+\NewDocumentEnvironment{eqpart}{mO{\thesection} +b}{
+	\begin{description}[leftmargin=!, labelwidth=\widthof{\texttt{#1›}}, font=\color{ddchaptercolor!70!black}\texttt]
+		\let\tmpitem\item
+		\def\item[##1]{\tmpitem[##1›]\label{eqclass:#2##1}}
+		% Content (items)
+		#3
+	\end{description}
+}
+
+\NewDocumentEnvironment{eqtest}{O{\thesection} +b}{
+	\begin{enumerate}
+		\def\eqclass##1{\hyperref[eqclass:#1##1]{##1}}
+		\def\fun##1{\item \inline{java}{##1()}}
+		% Content (items)
+		#2
+	\end{enumerate}
+}
+
+\section{Registrazione dipendente}
+\subsection{Descrizione del metodo}[Contesto di riferimento]
+Il metodo \inline{java}{registerNewUserAccount} è una componente della \textbf{REST API} utilizzata
+al fine di creazione, nonchè inserimento di un nuovo dipendente all'interno del sistema.
+
+\begin{elsrc}{registerNewUserAccount}
+	\begin{minted}{java}
+		public String registerNewUserAccount(String username, Role selectedRole) {
+			if (employeeRepository.existsByUsername(username))
+				throw new EmployeeAlreadyExistsException();
+			if (selectedRole == null || !roleRepository.existsById(selectedRole.getIdRole()))
+				throw new RoleNotFoundException();
+			final String token = RandomString.AlphaNumeric(8);
+
+			// Autogenerate password
+			Employee employee = new Employee(username, token, selectedRole);
+			saveAndValidate(employee);
+			return token;
+		}
+	\end{minted}
+\end{elsrc}
+
+Per completezza, ne riportiamo anche il metodo \inline{java}{RandomString.AlphaNumeric} che,
+come suggerito dal \textit{commento in-line}, risulta fondamentale nella descrizione 
+di \autoref{elsrc:registerNewUserAccount}.
+
+\begin{elsrc}{RandomString.AlphaNumeric}
+	\begin{minted}{java}
+		public class RandomString {
+			static final String charset 
+				= "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+			static SecureRandom rnd = new SecureRandom();
+
+			/**
+			* Generate a random, alphanumeric string of length `length`
+			*
+			* @param length 
+			*/
+			public static String AlphaNumeric(int length) {
+				StringBuilder sb = new StringBuilder(length);
+
+				for (int i = 0; i < length; i++)
+					sb.append(charset.charAt(rnd.nextInt(charset.length())));
+				if(!sb.toString().matches("^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?!.* ).{4,255}$")){
+					sb.append(charset.charAt(rnd.nextInt(0,9))).append(charset.charAt(rnd.nextInt(10,35))).append(charset.charAt(rnd.nextInt(36, charset.length())));
+				}
+				return sb.toString();
+			}
+		}
+	\end{minted}
+\end{elsrc}
+
+In sostanza, con \autoref{elsrc:RandomString.AlphaNumeric} andiamo a generare un token di lunghezza arbitraria che fungerà
+da password di primo accesso, come indicato da requisito del sistema.
+\par\vspace{3mm}
+Il tentativo di creazione dell'account utente è preceduto da alcuni controlli che ne prevengono
+le più comuni situazioni d'errore:
+\begin{enumerate}
+	\item Verifichiamo e quindi escludiamo l'esistenza di un account utente avente lo stesso identico username.
+	\item Dunque verifichiamo che il ruolo utente indicato esista (tra quelli individuati nella fase di analisi).
+\end{enumerate}
+
+\newpage
+
+\subsection{Designazione di unit-test per il metodo}[Equivalence Partitioning]
+Individuiamo, quindi, utilizzando la metodologia black-box\footnote{Black-box testing: il testing
+sarà descritto in modo incondizionato rispetto al codice descritto da \hyperref[elsrc:registerNewUserAccount]{registerNewUserAccount}
+come se non se ne sapessero le specifiche di implementazione e, piuttosto, limitandone l'interazione tramite testing ai soli
+parametri di input e ai loro boundaries.} equivalence partitioning\footnote{Equivalence Partitioning, attraverso i parametri 
+di input sono descritte delle \textit{partizioni} che andranno ad indicare quali classi di input, date dal dominio dei possibili
+valori, ci si aspetta essere valide e quali no.} le seguenti classi di equivalenza:
+\begin{eqpart}{CER1}
+	\item[CEU1] Parametro username valido;
+	\item[CEU2] Parametro username eccede lunghezza massima consentita;
+	\item[CEU3] Parametro username troppo corto;
+	\item[CEU4] Parametro username con stringa vuota;
+	\item[CEU5] Parametro username null;
+	\item[CER1] Parametro selectedRole valido;
+	\item[CER2] Parametro selectedRole con un ruolo inesistente;
+	\item[CER3] Parametro selectedRole null;
+\end{eqpart}
+
+
+Seguiremo il criterio \textbf{WECT}\footnote{Weak Equivalence Class Testing, 
+essenzialmente per ogni \textit{test}, soltanto un parametro delle classi di equivalenza individuate è in difetto.} nella
+definizione di unit-test, cui prevede le seguenti:
+\begin{eqtest}
+	\fun{testValidRegistration} che verifichi contemporaneamente la validità delle classi \eqclass{CEU1} e \eqclass{CER1};
+	\fun{testMoreThanTwentyCharactersUsername} che verifichi unicamente la validità della classe \eqclass{CEU2};
+	\fun{testLessThanThreeCharactersUsername} che verifichi unicamente la validità della classe \eqclass{CEU3};
+	\fun{testBlankUsername} che verifichi unicamente la validità della classe \eqclass{CEU4};
+	\fun{testNullUsername} che verifichi unicamente la validità della classe \eqclass{CEU5};
+	\fun{testInvalidRole} che verifichi unicamente la validità della classe \eqclass{CER2};
+	\fun{testNullRole} che verifichi unicamente la validità della classe \eqclass{CER3};
+\end{eqtest}
+
+\newpage
+\subsection{Descrizione unit-test}[Sorgente Java]
+Andiamo quindi a descrivere i \texttt{\color{ddchaptercolor!80!black}\theenumi\ unit-test} individuati
+con il seguente file Java sorgente.
+
+\begin{warn}[Semplificazione]
+	Nel file che segue sono presenti ulteriori test relativi ad un'altra funzionalità appartenente allo stesso servizio
+	che vedremo nella prossima sezione. 
+
+	\par\vspace{3mm}
+	Per semplificarne la visualizzazione, ci atterremo dunque ai soli test di equivalenza indicati pocanzi.
+\end{warn}
+
+\label{elsrc:EmployeeServiceTestregisterNewUserAccount}
+\begin{minted}{java}
+	class EmployeeServiceTest {
+		Role role;
+		Employee employee;
+
+		PasswordEncoder pswEncoder = new BCryptPasswordEncoder();
+
+		ChangePasswordModel changePasswordModel;
+
+		@Mock
+		RoleRepository roleRepository;
+
+		@Mock
+		PasswordEncoder passwordEncoder;
+		@Mock
+		EmployeeRepository employeeRepository;
+
+		@InjectMocks
+		private EmployeeService employeeService;
+
+		@BeforeEach
+		void setup ()
+		{
+			role = new Role(1L, EmployeeRole.ROLE_ADMIN);
+			employee = new Employee( "username", "password", role);
+			changePasswordModel = new ChangePasswordModel();
+			changePasswordModel.setCurrentpw("password");
+			changePasswordModel.setNewpw("Password2");
+		}
+
+		@Test
+		@DisplayName("Test with valid parameters")
+		void testValidRegistration() {
+			when(roleRepository.existsById(role.getIdRole())).thenReturn(true);
+			boolean result = assertDoesNotThrow(() -> { 		employeeService.registerNewUserAccount("username",  role);
+				return true; } );
+			assertTrue( result);
+		}
+
+		@Test
+		@DisplayName("Test registerNewUserAccount with a null username")
+		void testNullUsername() {
+			when(roleRepository.existsById(any())).thenReturn(true);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> employeeService.registerNewUserAccount(null, role));
+			assertEquals(EMPLOYEE_USERNAME_IS_NULL+" " ,exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test registerNewUserAccount with a blank username")
+		void testBlankUsername() {
+			when(roleRepository.existsById(any())).thenReturn(true);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> employeeService.registerNewUserAccount(" ".repeat(5), role));
+			assertEquals(EMPLOYEE_USERNAME_IS_NULL+" " ,exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test registerNewUserAccount with a username whose length is less than 3 chars")
+		void testLessThanThreeCharactersUsername() {
+			when(roleRepository.existsById(any())).thenReturn(true);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> employeeService.registerNewUserAccount("u".repeat(2), role));
+			assertEquals(EMPLOYEE_USERNAME_LENGTH+" " ,exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test registerNewUserAccount with a username whose length is more than 20 chars")
+		void testMoreThanTwentyCharactersUsername() {
+			when(roleRepository.existsById(any())).thenReturn(true);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> employeeService.registerNewUserAccount("u".repeat(21),
+					role));
+			assertEquals(EMPLOYEE_USERNAME_LENGTH+" ",exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test registerNewUserAccount with a null role parameter")
+		void testNullRole() {
+			Exception exception = assertThrows(RoleNotFoundException.class, () -> employeeService.registerNewUserAccount("username",
+					null));
+			assertEquals("errors.role.notFound", exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test registerNewUserAccount with a role that does not exist")
+		void testInvalidRole() {
+			Exception exception = assertThrows(RoleNotFoundException.class, () -> employeeService.registerNewUserAccount("username",
+					new Role(5L, EmployeeRole.ROLE_ADMIN)));
+			assertEquals(ROLE_NOT_FOUND, exception.getMessage());
+
+		}
+
+		@Test
+		@DisplayName("Test registerNewUserAccount with a username that already exists")
+		void testUsernameAlreadyExists() {
+			when(employeeRepository.existsByUsername(any())).thenReturn(true);
+			Exception exception = assertThrows(EmployeeAlreadyExistsException.class, () -> employeeService.registerNewUserAccount(null, role));
+			assertEquals(EMPLOYEE_ALREADY_EXISTS ,exception.getMessage());
+		}
+
+		// #\dots Continua con changePassword \dots#
+	}
+\end{minted}
+\captionof{snippet}{EmployeeServiceTest: registerNewUserAccount}
+
+\section{Cambiamento password}
+\subsection{Descrizione del metodo}[Contesto di riferimento]
+Il metodo \inline{java}{changePassword} è una componente della \textbf{REST API} utilizzata per effettuare
+il cambiamento della password; è strettamente correlata alla funzionalità di registrazione di nuovi
+dipendenti vista in \autoref{elsrc:registerNewUserAccount} in quanto, al nuovo utente e al primo accesso,
+si richiede di aggiornare la propria password affinché il suo account venga attivato.
+
+\begin{elsrc}{changePassword}
+	\begin{minted}{java}
+		public Employee changePassword(String username, ChangePasswordModel changePasswordModel) {
+			Employee employee = employeeRepository.findEmployeeByUsername(username);
+			if (!passwordEncoder.matches(changePasswordModel.getCurrentpw(), employee.getPassword()))
+				throw new PasswordMismatchException();
+
+			// Check if the current password is equal to the new password
+			if (passwordEncoder.matches(changePasswordModel.getNewpw(), employee.getPassword()))
+				throw new PasswordMatchException();
+
+			if (changePasswordModel.getNewpw().length() > 20 ) {
+				throw new IllegalArgumentException(EMPLOYEE_PASSWORD_LENGTH);
+			}
+			employee.setPassword(changePasswordModel.getNewpw());
+			String errors = validate(employee);
+			if(!errors.isBlank()){
+				throw new IllegalArgumentException(errors);
+			}
+
+			// New password is set, employee is activated
+			employee.setPassword(passwordEncoder.encode(changePasswordModel.getNewpw()));
+			employee.setPasswordResetted(true);
+			return saveAndValidate(employee);
+		}
+	\end{minted}
+\end{elsrc}
+
+Il parametro \inline{java}{ChangePasswordModel} è un tipo di dato aggregato che riporta
+i seguenti campi.
+\begin{elsrc}{ChangePasswordModel}
+	\begin{minted}{java}
+		@Data
+		public class ChangePasswordModel {
+			private String currentpw;
+
+			@NotBlank
+			private String newpw;
+		}
+	\end{minted}
+\end{elsrc}
+
+Il metodo dapprima effettua alcuni controlli preliminari:
+\begin{enumerate}
+	\item Ne si verifica l'esistenza dell'utente passatogli in input;
+	\item Ne si verifica che la password associata a quell'utente combaci con quella fornita come \inline{java}{currentpw} in input; 
+	\item Alcuni controlli sul formato della nuova password fornita come \inline{java}{newpw} in input, in particolare
+	ne si controlla la lunghezza e il pattern, descritto nel requisito non funzionale Policy Utente;
+\end{enumerate}
+
+Dunque, il metodo procede con l'installazione della nuova password nonché l'attivazione dell'account (nel caso questi non sia già attivo).
+
+\newpage
+\subsection{Designazione di unit-test per il metodo}[Equivalence Partitioning]
+Individuiamo, quindi, utilizzando la metodologia black-box equivalence partitioning le seguenti classi di equivalenza:
+
+\begin{eqpart}{CECP1}
+	\item[CEU1]	Parametro username valido;
+	\item[CEU2] Parametro username non valido (con username inesistente);
+	\item[CEU3] Parametro username null;
+	\item[CECP1] Parametro currentpw del modello \inline{java}{ChangePasswordModel} valido (corrisponde a quella dell'utente);
+	\item[CECP2] Parametro currentpw del modello \inline{java}{ChangePasswordModel} non valido (non corrisponde a quella dell'utente);
+	\item[CECP3] Parametro currentpw del modello \inline{java}{ChangePasswordModel} null;
+	\item[CENP1] Parametro newpw del modello \inline{java}{ChangePasswordModel} valido;
+	\item[CENP2] Parametro newpw del modello \inline{java}{ChangePasswordModel} composta dai soli caratteri di spaziatura (whitespaces);
+	\item[CENP3] Parametro newpw del modello \inline{java}{ChangePasswordModel} eccede la lunghezza massima consentita;
+	\item[CENP4] Parametro newpw del modello \inline{java}{ChangePasswordModel} inferiore alla lunghezza minima consentita;
+	\item[CENP5] Parametro newpw del modello \inline{java}{ChangePasswordModel} incompatibile con il pattern descritto;
+	\item[CENP6] Parametro newpw del modello \inline{java}{ChangePasswordModel} null;
+	\item[CEX1]	Parametri currentpw e newpw del modello \inline{java}{ChangePasswordModel} diverse;
+	\item[CEX2]	Parametri currentpw e newpw del modello \inline{java}{ChangePasswordModel} che combaciano;
+\end{eqpart}
+
+Seguiremo il criterio \textbf{WECT} nella definizione di unit-test, che prevede le seguenti:
+\begin{eqtest}
+	\fun{testChangePassword} che verifichi contemporaneamente la validità delle classi \eqclass{CEU1}, 
+		\eqclass{CECP1}, \eqclass{CENP1}, \eqclass{CEX1}.
+
+	\fun{testMismatchingPasswords} che verifichi unicamente la validità della classe \eqclass{CECP2};
+	\fun{testCurrentPasswordIsNull} che verifichi unicamente la validità della classe \eqclass{CECP3};
+
+	\fun{testNewPasswordIsBlank} che verifichi unicamente la validità della classe \eqclass{CENP2};
+	\fun{testNewPasswordLengthIsMoreThanTwentyChars} che verifichi unicamente la validità della classe \eqclass{CENP3};
+	\fun{testNewPasswordLengthIsLessThanSevenChars} che verifichi unicamente la validità della classe \eqclass{CENP4};
+	\fun{testNewPasswordDoesNotMatchPattern} che verifichi unicamente la validità della classe \eqclass{CENP5};
+	\fun{testNewPasswordIsNull} che verifichi unicamente la validità della classe \eqclass{CENP6};
+
+	\fun{testNewPasswordMatchesCurrent} che verifichi unicamente la validità della classe \eqclass{CEX2};
+\end{eqtest}
+
+\newpage
+\subsection{Descrizione unit-test}[Sorgente Java]
+Andiamo quindi a descrivere i \texttt{\color{ddchaptercolor!80!black}\theenumi\ unit-test} individuati
+con il seguente file Java sorgente.
+
+\begin{warn}[Semplificazione]
+	Nel file che segue sono presenti ulteriori test relativi ad un'altra funzionalità appartenente allo stesso servizio
+	che abbiamo già visto nella sezione precedente. 
+	\par\vspace{3mm}
+	Per semplificarne la visualizzazione, ci atterremo dunque ai soli test di equivalenza indicati
+	pocanzi.
+\end{warn}
+
+\label{elsrc:EmployeeServiceTestchangePassword}
+\begin{minted}{java}
+	class EmployeeServiceTest {
+		Role role;
+		Employee employee;
+
+		PasswordEncoder pswEncoder = new BCryptPasswordEncoder();
+
+		ChangePasswordModel changePasswordModel;
+
+		@Mock
+		RoleRepository roleRepository;
+
+		@Mock
+		PasswordEncoder passwordEncoder;
+		@Mock
+		EmployeeRepository employeeRepository;
+
+		@InjectMocks
+		private EmployeeService employeeService;
+
+		@BeforeEach
+		void setup ()
+		{
+			role = new Role(1L, EmployeeRole.ROLE_ADMIN);
+			employee = new Employee( "username", "password", role);
+			changePasswordModel = new ChangePasswordModel();
+			changePasswordModel.setCurrentpw("password");
+			changePasswordModel.setNewpw("Password2");
+		}
+
+		// #\dots Continua da registerNewUserAccount \dots#
+
+		@Test
+		@DisplayName("Test changePassword with valid parameters")
+		void testChangePassword() {
+			when(employeeRepository.findEmployeeByUsername(any())).thenReturn(employee);
+			when(passwordEncoder.matches(changePasswordModel.getCurrentpw(), employee.getPassword())).thenReturn(true);
+			when(passwordEncoder.matches(changePasswordModel.getNewpw(), employee.getPassword())).thenReturn(false);
+			when(passwordEncoder.encode(changePasswordModel.getNewpw())).thenReturn((pswEncoder.encode(changePasswordModel.getNewpw())));
+			boolean result = assertDoesNotThrow(() -> { 		employeeService.changePassword("username",  changePasswordModel);
+					return true; } );
+			assertTrue( result);
+		}
+
+		@Test
+		@DisplayName("Test changePassword with mismatching passwords")
+		void testMismatchingPasswords() {
+			when(employeeRepository.findEmployeeByUsername(any())).thenReturn(employee);
+			Exception exception = assertThrows(PasswordMismatchException.class, () -> employeeService.changePassword("username",  changePasswordModel));
+			assertEquals(PASSWORD_MISMATCH, exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test changePassword with current password set to null")
+		void testCurrentPasswordIsNull() {
+			changePasswordModel.setCurrentpw(null);
+			when(employeeRepository.findEmployeeByUsername(any())).thenReturn(employee);
+			Exception exception = assertThrows(PasswordMismatchException.class, () -> employeeService.changePassword("username",  changePasswordModel));
+			assertEquals(PASSWORD_MISMATCH, exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test changePassword with blank new password ")
+		void testNewPasswordIsBlank() {
+			changePasswordModel.setNewpw(" ".repeat(15));
+			when(employeeRepository.findEmployeeByUsername(any())).thenReturn(employee);
+			when(passwordEncoder.matches(changePasswordModel.getCurrentpw(), employee.getPassword())).thenReturn(true);
+			when(passwordEncoder.matches(changePasswordModel.getNewpw(), employee.getPassword())).thenReturn(false);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> employeeService.changePassword("username",  changePasswordModel));
+			assertNotNull(exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test changePassword with nullnew password ")
+		void testNewPasswordIsNull() {
+			changePasswordModel.setNewpw(null);
+			when(employeeRepository.findEmployeeByUsername(any())).thenReturn(employee);
+			when(passwordEncoder.matches(changePasswordModel.getCurrentpw(), employee.getPassword())).thenReturn(true);
+			when(passwordEncoder.matches(changePasswordModel.getNewpw(), employee.getPassword())).thenReturn(false);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> employeeService.changePassword("username",  changePasswordModel));
+			assertNotNull(exception.getMessage());
+		}
+
+
+		@Test
+		@DisplayName("Test changePassword with new password length is more than 20 chars")
+		void testNewPasswordLengthIsMoreThanTwentyChars() {
+			changePasswordModel.setNewpw("INGSWArchLinuxUser2023");
+			when(employeeRepository.findEmployeeByUsername(any())).thenReturn(employee);
+			when(passwordEncoder.matches(changePasswordModel.getCurrentpw(), employee.getPassword())).thenReturn(true);
+			when(passwordEncoder.matches(changePasswordModel.getNewpw(), employee.getPassword())).thenReturn(false);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> employeeService.changePassword("username",  changePasswordModel));
+			assertEquals(EMPLOYEE_PASSWORD_LENGTH, exception.getMessage());
+		}
+
+		@Test
+			@DisplayName("Test changePassword with new password is less than 7 chars")
+			void testNewPasswordLengthIsLessThanSevenChars() {
+				changePasswordModel.setNewpw("Psw523");
+				when(employeeRepository.findEmployeeByUsername(any())).thenReturn(employee);
+				when(passwordEncoder.matches(changePasswordModel.getCurrentpw(), employee.getPassword())).thenReturn(true);
+				when(passwordEncoder.matches(changePasswordModel.getNewpw(), employee.getPassword())).thenReturn(false);
+				Exception exception = assertThrows(IllegalArgumentException.class, () -> employeeService.changePassword("username",  changePasswordModel));
+				assertEquals(EMPLOYEE_PASSWORD_LENGTH+" ", exception.getMessage());
+			}
+
+		@Test
+		@DisplayName("Test changePassword with password not respecting pattern")
+		void testNewPasswordDoesNotMatchPattern() {
+			changePasswordModel.setNewpw("p".repeat(15));
+			when(employeeRepository.findEmployeeByUsername(any())).thenReturn(employee);
+			when(passwordEncoder.matches(changePasswordModel.getCurrentpw(), employee.getPassword())).thenReturn(true);
+			when(passwordEncoder.matches(changePasswordModel.getNewpw(), employee.getPassword())).thenReturn(false);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> employeeService.changePassword("username",  changePasswordModel));
+			assertEquals(EMPLOYEE_PASSWORD_PATTERN+" ", exception.getMessage());
+		}
+
+
+		@Test
+		@DisplayName("Test changePassword with new and current password matching")
+		void testNewPasswordMatchesCurrent() {
+			when(employeeRepository.findEmployeeByUsername(any())).thenReturn(employee);
+			when(passwordEncoder.matches(changePasswordModel.getCurrentpw(), employee.getPassword())).thenReturn(true);
+			when(passwordEncoder.matches(changePasswordModel.getNewpw(), employee.getPassword())).thenReturn(true);
+			Exception exception = assertThrows(PasswordMatchException.class, () -> employeeService.changePassword("username",  changePasswordModel));
+			assertEquals(PASSWORD_MATCH, exception.getMessage());
+		}
+	}
+\end{minted}
+\captionof{snippet}{EmployeeServiceTest: changePassword}
+
+\section{Controllo transazioni}
+\subsection{Descrizione del metodo}[Contesto di riferimento]
+Il metodo completeTransaction è una componente della \textbf{REST API} che viene utilizzata
+per il completamento della transazione (che, nel sistema, identifica l'aggregato degli ordini
+effettuati ad un determinato tavolo).
+
+\begin{elsrc}{completeTransaction}
+	\begin{minted}{java}
+		@Transactional
+		public OrderTransaction completeTransaction(OrderTransaction transaction, Boolean abortUnarrivedOrders) throws TransactionNotFoundException {
+			if (transaction == null || !trepository.existsById(transaction.getIdTransaction()))
+				throw new TransactionNotFoundException();
+			if(transaction.isCompleted())
+				throw new TransactionAlreadyCompletedException();
+			if(abortUnarrivedOrders == null){
+				abortUnarrivedOrders = false;
+			}
+			if(abortUnarrivedOrders){
+				List<ItemOrderList> unarrived = itemOrderListRepository.unarrivedDishes(transaction.getIdTransaction());
+				int index = 0;
+				for (ItemOrderList item : unarrived){
+					item.setStatus(StatusEnum.CANCELLED);
+					unarrived.set(index++, item);
+				}
+				itemOrderListService.saveAllAndValidate(unarrived);
+			}
+			ClientTable clientTable = transaction.getClientTable();
+			transaction.setCompleted(true);
+			clientTable.setOccupied(false);
+			clientTableRepository.save(clientTable);
+
+			return saveAndValidate(transaction);
+		}
+	\end{minted}
+\end{elsrc}
+
+Sostanzialmente vi sono alcuni controlli preventivi prima di procedere con il corpo della funzione
+\begin{enumerate}
+	\item Se la transaction indicata non dovesse esistere, il metodo fallisce.
+	\item Nel caso la transaction indicata risulti già completa, il metodo fallisce.
+\end{enumerate}
+
+Quindi il metodo effettuerà le seguenti
+\begin{enumerate}
+	\item Il tavolo occupato viene liberato (quindi pronto ad accogliere una nuova transaction).
+	\item Nel caso il secondo parametro \inline{java}{abortUnarrivedOrders} sia settato a \inline{java}{true}, tutti gli oggetti alimentari che 
+		risultano non consegnati al tavolo verranno \textit{cancellati} (non spariranno dal sistema, piuttosto saranno impostati in uno stato che ne previene la visualizzazione o il completamento).
+	\item La transaction verrà conclusa.
+\end{enumerate}
+
+\subsection{Designazione di unit-test per il metodo}[Equivalence Partitioning]
+\newpage
+Individuiamo, quindi, utilizzando la metodologia black-box equivalence partitioning le seguenti classi di equivalenza:
+\begin{eqpart}{CET1}
+	\item[CET1] Parametro transaction valido;
+	\item[CET2] Parametro transaction che presenta una transaction inesistente;
+	\item[CET3] Parametro transaction che presenta una transaction già completata;
+	\item[CET4] Parametro transaction null;
+	\item[CEA1] Paramatro abortUnarrivedOrders valido;
+	\item[CEA2] Parametro abortUnarrivedOrders null;
+\end{eqpart}
+
+Seguiremo il criterio \textbf{WECT} nella definizione di unit-test, cui prevede le seguenti:
+\begin{eqtest}
+	\fun{testValidCompleteTransaction} che verifichi contemporaneamente la validità delle classi \eqclass{CET1} e \eqclass{CEA1};
+	\fun{testInvalidTransaction} che verifichi unicamente la validità della classe \eqclass{CET2};
+	\fun{testCompletedTransaction} che verifichi unicamente la validità della classe \eqclass{CET3};
+	\fun{testNullTransaction} che verifichi unicamente la validità della classe \eqclass{CET4};
+	\fun{testAbortNull} che verifichi unicamente la validità della classe \eqclass{CEA2};
+\end{eqtest}
+
+\newpage
+\subsection{Descrizione unit-test}[Sorgente Java]
+Andiamo quindi a descrivere i \texttt{\color{ddchaptercolor!80!black}\theenumi\ unit-test} individuati
+con il seguente file Java sorgente.
+
+\label{elsrc:OrderTransactionServiceTest}
+\begin{minted}{java}
+	class OrderTransactionServiceTest {
+		OrderTransaction orderTransaction;
+		ClientTable clientTable;
+
+		@Mock
+		ItemOrderListRepository itemOrderListRepository;
+		@Mock
+		ItemOrderListService itemOrderListService;
+		@Mock
+		OrderTransactionRepository orderTransactionRepository;
+		@Mock
+		ClientTableRepository clientTableRepository;
+
+		@InjectMocks
+		private OrderTransactionService orderTransactionService;
+
+		@BeforeEach
+		void setup() {
+			clientTable = new ClientTable(
+					1);
+			orderTransaction = new OrderTransaction(1, false, new Date(0), clientTable, null);
+		}
+
+		@Test
+		@DisplayName("Test valid method parameters")
+		void testValidCompleteTransaction() {
+			when(orderTransactionRepository.existsById(anyLong())).thenReturn(true);
+			boolean result = assertDoesNotThrow(() -> {
+				orderTransactionService.completeTransaction(orderTransaction, anyBoolean());
+				return true;
+			});
+			assertTrue(result);
+		}
+
+		@Test
+		@DisplayName("Test valid method parameters")
+		void testValidCompleteTransactionWithAbortUnarrivedOrdersTrue() {
+			when(orderTransactionRepository.existsById(anyLong())).thenReturn(true);
+			boolean result = assertDoesNotThrow(() -> {
+				orderTransactionService.completeTransaction(orderTransaction, true);
+				return true;
+			});
+			assertTrue(result);
+		}
+		@Test
+		@DisplayName("Test completeTransaction with a wrong transaction id")
+
+		void testInvalidTransaction() {
+			when(orderTransactionRepository.existsById(anyLong())).thenReturn(false);
+			Exception exception = assertThrows(TransactionNotFoundException.class, () -> orderTransactionService.completeTransaction(orderTransaction,  anyBoolean()));
+			assertEquals(TRANSACTION_NOT_FOUND, exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test completedTransaction where passed transaction has already been completed")
+		void testCompletedTransaction() {
+			when(orderTransactionRepository.existsById(anyLong())).thenReturn(true);
+			orderTransaction.setCompleted(true);
+			Exception exception = assertThrows(TransactionAlreadyCompletedException.class, () -> orderTransactionService.completeTransaction(orderTransaction,  anyBoolean()));
+			assertEquals(TRANSACTION_ALREADY_COMPLETED, exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test completeTransaction with a null transaction parameter")
+		void testNullTransaction() {
+			Exception exception = assertThrows(TransactionNotFoundException.class, () -> orderTransactionService.completeTransaction(null, true));
+			assertEquals(TRANSACTION_NOT_FOUND, exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test completeTransaction with a null abortUnarrivedOrders parameter")
+		void testNullAbortUnarrivedOrders() {
+			when(orderTransactionRepository.existsById(anyLong())).thenReturn(true);
+			boolean result = assertDoesNotThrow(() -> {
+				orderTransactionService.completeTransaction(orderTransaction, null);
+				return true;
+			});
+			assertTrue(result);
+		}
+	}
+\end{minted}
+\captionof{snippet}{OrderTransactionServiceTest}
+
+\section{Aggiornamento pietanze}
+\begin{info}[Numero dei parametri]
+	Nonostante sia richiesto \textit{espressamente} che il i metodi da testare
+	abbiano almeno due o più parametri, per motivi di leggibilità e affidabilità del codice, 
+	il metodo che segue riporta un unico parametro che consiste di un modello aggregato.
+	\par\vspace{3mm}
+	La classe, che definiremo payload\footnotemark, presenta tutti i campi che compongono l'entity Dish. 
+\end{info}
+
+
+
+\footnotetext{Payload: termine che prende origine dal carico trasportato da un camion, essenzialmente il \textbf{mezzo} di
+trasmissione ddi informazioni; in questo specifico caso si fa riferimento al modello \inline{java}{dishModel} che si comporta
+da aggregatore.}
+
+\subsection{Descrizione del metodo}[Contesto di riferimento]
+Il metodo \inline{java}{updateDish} è una componente della \textbf{REST API} che viene utilizzata per l'aggiornamento
+delle informazioni di una data pietanza già presente nel sistema.
+
+\begin{elsrc}{updateDish}
+	\begin{minted}{java}
+		public Dish updateDish(UpdateDishModel dishModel) {
+			Category category = categoryRepository.findCategoryByCategoryType(dishModel.getCategoryType());
+			if (category == null) {
+				throw new CategoryNotFoundException();
+			}
+			Dish selectedDish = trepository.findDishByIdDish(dishModel.getIdDish());
+			if (selectedDish == null) {
+				throw new DishNotFoundException();
+			}
+			selectedDish.setDishName(dishModel.getDishName());
+			selectedDish.setDishDescription(dishModel.getDishDescription());
+			if(dishModel.getIndex() > 0){
+				selectedDish.setIndex(dishModel.getIndex());
+			}else{
+				selectedDish.setIndex(trepository.findMaxIndex(category.getIdCategory()));
+			}
+			selectedDish.setAllergens(dishModel.getAllergens());
+			selectedDish.setPrice(dishModel.getPrice());
+			selectedDish.setCategory(category);
+			selectedDish.setOnSale(dishModel.isOnSale());
+			return saveAndValidate(selectedDish);
+		}
+	\end{minted}
+\end{elsrc}
+
+L'unico parametro che riporta la funzione, \inline{java}{UpdateDishModel}, è un tipo di dato aggregato che riporta i seguenti campi.
+
+\begin{elsrc}{UpdateDishModel}
+	\begin{minted}{java}
+		@Data
+		public class UpdateDishModel {
+			String dishName;
+			String dishDescription;
+			String categoryType;
+			String allergens;
+			BigDecimal price;
+			long index;
+			long idDish;
+			boolean onSale;
+		}
+	\end{minted}
+\end{elsrc}
+
+Una volta aggiunta una pietanza al sistema, si vuol dare la possibilità di aggiornarne le specfiche
+in qualsiasi momento; si supponga ad esempio di volerne aumentare il prezzo, modificarne
+la posizione nel menù o volerne aggiungere degli allergeni, in caso di una precedente dimenticanza.
+
+Nello specifico verranno alcuni controlli preventivi prima di procedere all'installazione
+della pietanza nel sistema:
+\begin{enumerate}
+	\item Vi è una verifica di esistenza sulla categoria indicata nel payload \autoref{elrc:UpdateDishModel};
+	\item Vi è una verifica di esistenza sulla pietanza indicata nel payload \autoref{elrc:UpdateDishModel};
+\end{enumerate}
+
+\newpage
+\subsection{Designazione di unit-test per il metodo}[Equivalence Partitioning]
+Individuiamo quindi, utilizzando la metodologia equivalence partitioning le seguenti classi di equivalenza.
+\begin{eqpart}{CECID1}
+	\item[CECID1] Categoria indicata nel payload valida;
+	\item[CECID2] Categoria indicata nel payload non valida;
+	\item[CEPID1] Pietanza indicata nel payload valida;
+	\item[CEPID2] Pietanza indicata nel payload inesistente;
+	\item[CEN1] Il nuovo nome della pietanza indicata nel payload valida;
+	\item[CEN2] Il nuovo nome della pietanza indicata nel payload eccede la lunghezza massima consentita;
+	\item[CEN3] Il nuovo nome della pietanza indicata nel payload inferiore alla lunghezza minima consentita;
+	\item[CEN4] Il nuovo nome della pietanza indicata nel payload composta dai soli caratteri di spaziatura (whitespaces);
+	\item[CEN5] Il nuovo nome della pietanza indicata nel payload null;
+	\item[CED1] La nuova descrizione della pietanza indicata nel payload valida;
+	\item[CED2] La nuova descrizione della pietanza indicata nel payload eccede la lunghezza massima consentita;
+	\item[CED3] La nuova descrizione della pietanza indicata nel payload inferiore alla lunghezza minima consentita;
+	\item[CED4] La nuova descrizione della pietanza indicata nel payload composta dai soli caratteri di spaziatura (whitespaces);
+	\item[CED5] La nuova descrizione della pietanza indicata nel payload null;
+	\item[CEA1] I nuovi allergeni specificati per la pietanza nel payload validi;
+	\item[CEA2] I nuovi allergeni specificati per la pietanza nel payload eccedono la lunghezza massima consentita;
+	\item[CEA3] I nuovi allergeni specificati per la pietanza nel payload null;
+	\item[CEP1] Il nuovo prezzo della pietanza indicata nel payload valido;
+	\item[CEP2] Il nuovo prezzo della pietanza indicata nel payload negativo;
+	\item[CEP3] Il nuovo prezzo della pietanza indicata nel payload zero;
+	\item[CEP4] Il nuovo prezzo della pietanza indicata nel payload null;
+	\item[CEX1] Il nuovo indice della pietanza indicata nel payload è valida;
+	\item[CEX2] Il nuovo indice della pietanza non viene indicata nel payload;
+	\item[CES1] Il campo onSale della pietanza indicata nel payload è valida;
+\end{eqpart}
+
+\newpage
+Seguiremo il criterio \textbf{WECT} nella
+definizione di unit-test, cui prevede le seguenti:
+\begin{eqtest}
+	\fun{testUpdateDish} che verifichi contemporaneamente la validità delle classi \eqclass{CECID1}, \eqclass{CEPID1}, \eqclass{CEN1},
+	\eqclass{CED1}, \eqclass{CEP1}, \eqclass{CEA1}, \eqclass{CEX1}, \eqclass{CES1}.
+	\fun{testUpdateDishNoIndex} che verifichi la validità della classe \eqclass{CEX2}.
+	\fun{testCategoryNotFound} che verifica la validità della classe \eqclass{CECID2}.
+	\fun{testDishNotFound} che verifica la validità della classe \eqclass{CEPID2}.
+	\fun{testLessThanThreeCharactersDishName} che verifica la validità della classe \eqclass{CEN2}.
+	\fun{testMoreThanEightyCharactersDishName} che verifica la validità della classe \eqclass{CEN3}. 
+	\fun{testBlankDishName} che verifica la validità della classe \eqclass{CEN4}.
+	\fun{testNullDishName} che verifica la validità della classe \eqclass{CEN5}.
+	\fun{testMoreThanTwoHundredFiftyFiveCharactersDishDescription} che verifica la validità della classe \eqclass{CED2}.
+	\fun{testLessThanFiveCharactersDishDescription} che verifica la validità della classe \eqclass{CED3}.
+	\fun{testBlankDishDescription} che verifica la validità della classe \eqclass{CED4}.
+	\fun{testNullDishDescription} che verifica la validità della classe \eqclass{CED5}.
+	\fun{testMoreThanTwoHundredFiftyFiveCharactersAllergens} che verifica la validità della classe \eqclass{CEA2}.
+	\fun{testAllergensNull} che verifica la validità della classe \eqclass{CEA3}.
+	\fun{testNegativePrice} che verifica la validità della classe \eqclass{CEP2}.
+	\fun{testZeroPrice} che verifica la validità della classe \eqclass{CEP3}.
+	\fun{testNullPrice} che verifica la validità della classe \eqclass{CEP4}.
+\end{eqtest}
+
+\newpage
+\subsection{Descrizione unit-test}[Sorgente Java]
+Andiamo quindi a descrivere i \texttt{\color{ddchaptercolor!80!black}\theenumi\ unit-test} individuati
+con il seguente file Java sorgente.
+
+\label{elsrc:DishServiceTest}
+\begin{minted}{java}
+	class DishServiceTest {
+		Dish dish;
+		Category category;
+
+		UpdateDishModel updateDishModel;
+
+
+		@Mock
+		CategoryRepository categoryRepository;
+		@Mock
+		DishRepository dishRepository;
+
+
+		@InjectMocks
+		private DishService dishService;
+
+		@BeforeEach
+		void setup() {
+			category = new Category("Category", 1);
+			category.setIdCategory(1L);
+			dish = new Dish();
+			updateDishModel = new UpdateDishModel();
+			dish.setIdDish(1);
+			dish.setDishDescription("Description");
+			dish.setDishName("Name");
+			dish.setIndex(1);
+			dish.setAllergens("");
+			dish.setCategory(category);
+			dish.setOnSale(true);
+			dish.setPrice(BigDecimal.valueOf(10));
+			updateDishModel.setIdDish(1);
+			updateDishModel.setDishDescription("Description");
+			updateDishModel.setDishName("Name");
+			updateDishModel.setIndex(1);
+			updateDishModel.setAllergens("");
+			updateDishModel.setCategoryType(category.getCategoryType());
+			updateDishModel.setOnSale(true);
+			updateDishModel.setPrice(BigDecimal.valueOf(10));
+		}
+
+		@Test
+		@DisplayName("Test updateDish with valid parameters")
+		void testUpdateDish() {
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			boolean result = assertDoesNotThrow(() -> {
+				dishService.updateDish(updateDishModel);
+				return true;
+			});
+			assertTrue(result);
+		}
+		@Test
+		@DisplayName("Test updateDish with valid parameters")
+		void testUpdateDishNoIndex() {
+			updateDishModel.setIndex(-1);
+			when(dishRepository.findMaxIndex(anyLong())).thenReturn(1);
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			boolean result = assertDoesNotThrow(() -> {
+				dishService.updateDish(updateDishModel);
+				return true;
+			});
+			assertTrue(result);
+		}
+
+		@Test
+		@DisplayName("Test updateDish with a category that does not exist")
+		void testCategoryNotFound() {
+			Exception exception = assertThrows(CategoryNotFoundException.class, () -> dishService.updateDish(updateDishModel));
+			assertEquals(CATEGORY_NOT_FOUND, exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateDish with a dish that does not exist")
+		void testDishNotFound() {
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			Exception exception = assertThrows(DishNotFoundException.class, () -> dishService.updateDish(updateDishModel));
+			assertEquals(DISH_NOT_FOUND, exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateDish with a dish whose name is less than 3 chars")
+		void testLessThanThreeCharactersDishName() {
+			updateDishModel.setDishName("a".repeat(2));
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> dishService.updateDish(updateDishModel));
+			assertEquals(DISH_NAME_LENGTH + " ", exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateDish with a dish whose name is more than 80 chars")
+		void testMoreThanEightyCharactersDishName() {
+			updateDishModel.setDishName("a".repeat(81));
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> dishService.updateDish(updateDishModel));
+			assertEquals(DISH_NAME_LENGTH + " ", exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateDish with a dish whose name is blank")
+		void testBlankDishName() {
+			updateDishModel.setDishName(" ".repeat(55));
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> dishService.updateDish(updateDishModel));
+			assertEquals(DISH_NAME_IS_NULL + " ", exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateDish with a dish whose name is null")
+		void testNullDishName() {
+			updateDishModel.setDishName(null);
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> dishService.updateDish(updateDishModel));
+			assertEquals(DISH_NAME_IS_NULL+ " ", exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateDish with a dish whose description is less than 5 chars")
+		void testLessThanFiveCharactersDishDescription() {
+			updateDishModel.setDishDescription("a".repeat(4));
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> dishService.updateDish(updateDishModel));
+			assertEquals(DISH_DESCRIPTION_LENGTH + " ", exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateDish with a dish whose description is more than 255 chars")
+		void testMoreThanTwoHundredFiftyFiveCharactersDishDescription() {
+			updateDishModel.setDishDescription("a".repeat(256));
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> dishService.updateDish(updateDishModel));
+			assertEquals(DISH_DESCRIPTION_LENGTH + " ", exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateDish with a dish whose description is blank")
+		void testBlankDishDescription() {
+			updateDishModel.setDishDescription(" ".repeat(55));
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> dishService.updateDish(updateDishModel));
+			assertEquals(DISH_DESCRIPTION_IS_NULL + " ", exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateDish with a dish whose description is null")
+		void testNullDishDescription() {
+			updateDishModel.setDishDescription(null);
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> dishService.updateDish(updateDishModel));
+			assertEquals(DISH_DESCRIPTION_IS_NULL + " ", exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateDish with a dish whose allergens are null")
+		void testAllergensNull() {
+			updateDishModel.setAllergens(null);
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			boolean result = assertDoesNotThrow(() -> {
+				dishService.updateDish(updateDishModel);
+				return true;
+			});
+			assertTrue(result);
+		}
+
+		@Test
+		@DisplayName("Test updateDish with a dish whose allergens is more than 255 chars")
+		void testMoreThanTwoHundredFiftyFiveCharactersAllergens() {
+			updateDishModel.setAllergens("a".repeat(256));
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> dishService.updateDish(updateDishModel));
+			assertEquals(DISH_ALLERGENS_LENGTH + " ", exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateDish with a dish whose price is negative (-1)")
+		void testNegativePrice() {
+			updateDishModel.setPrice(BigDecimal.valueOf(-1));
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> dishService.updateDish(updateDishModel));
+			assertEquals(DISH_PRICE_POSITIVE + " ", exception.getMessage());
+		}
+
+
+		@Test
+		@DisplayName("Test updateDish with a dish whose price is zero (0)")
+		void testZeroPrice() {
+			updateDishModel.setPrice(BigDecimal.valueOf(0));
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> dishService.updateDish(updateDishModel));
+			assertEquals(DISH_PRICE_POSITIVE + " ", exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateDish with a dish whose price is null")
+		void testNullPrice() {
+			updateDishModel.setPrice(null);
+			when(categoryRepository.findCategoryByCategoryType(any())).thenReturn(category);
+			when(dishRepository.findDishByIdDish(anyLong())).thenReturn(dish);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> dishService.updateDish(updateDishModel));
+			assertEquals(DISH_PRICE_IS_NULL + " ", exception.getMessage());
+		}
+	}
+\end{minted}
+\captionof{snippet}{DishServiceTest}
+
+\section{Unit-Test facoltativi: Aggiornamento ordini}<Aggiornamento ordini>
+\begin{info}
+	Gli unit-test che seguono sono stati ideati ed inseriti a prescindere
+	dalle richieste di documento.
+	\par\vspace{3mm}
+	Seppur non seguendo una strategia ben specifica, 
+	tende a fornire un testing \textit{adeguato} (e limitato)
+	della funzionailtà; la si è preferita inserire nel documento
+	per motivi di completezza.
+\end{info}
+
+\subsection{Descrizione del metodo}[Contesto di riferimento]
+Il metodo \inline{java}{updateOrder} è una componente della \textbf{REST API} utilizzata nell'aggiornamento
+dello stato di un dato ordine all'interno del sistema.
+
+Il metodo è responsabile dell'accettazione, del riarrangiamento e della scomposizione in sotto ordini (per quantità 
+dei prodotti indicati inferiori al totale presentato dall'ordine iniziale), nonchèé il rilascio dello stesso (quindi
+delle rispettive quantità proposte).
+
+\begin{elsrc}{updateOrder}
+	\begin{minted}{java}
+		@Transactional
+		public ItemOrderList updateOrder (long id, StatusEnum status, String username, int quantity){
+			Employee employee = employeeRepository.findEmployeeByUsername(username);
+			ItemOrderList itemOrderList = itemOrderListRepository.findItemOrderListByIdItem(id);
+			validateItemOrderList(status, employee, itemOrderList);
+			splitOrder(status, quantity, itemOrderList);
+			itemOrderList.setStatus(status);
+			itemOrderList.setEmployee(employee);
+			return saveAndValidate(itemOrderList);
+		}
+	\end{minted}
+\end{elsrc}
+
+Saranno effettuati alcuni controlli prevenivi prima di procedere all'esecuzione del corpo della funzione.
+\begin{enumerate}
+	\item Verrà verificata l'esistenza del dipendente prima, dell'ordine poi.
+	\item Verrà verificato che il nuovo stato dell'ordine da assegnare sia effettivamente valido.
+\end{enumerate}
+
+Verrà quindi instanziato un nuovo ordine nel caso la quantità che si è andata a specificare
+non dovesse concidere con la quantità totale indicata nell'ordine, infine vengono aggiornate le 
+caratteristiche (stato, dipedente che ha accettato l'ordine).
+
+\newpage
+\subsection{Designazione di unit-test per il metodo}[Equivalence Partitioning]
+Individuiamo quindi, utilizzando la metodologia equivalence partitioning le seguenti classi di equivalenza.
+\begin{eqpart}{CEID1}
+	\item[CEID1] Parametro id valido;
+	\item[CEID2] Parametro id appartenente ad un ordine inesistente;
+	\item[CES1] Parametro status valido;
+	\item[CES2] Parametro status null o non corrispondente a nessuno degli stati esistenti disponibili;
+	\item[CEU1] Parametro username valido;
+	\item[CEU2] Parametro username null o non valido (account inesistente) con status non valido per l'ordine;
+\end{eqpart}
+
+Il parametro quantity è sempre da considerarsi valido, qualsiasi sia il suo valore.
+\par\vspace{3mm}
+
+Seguono quindi gli unit-test, utilizzanti strategia black-box che 
+verranno poi descritti attraverso il codice sorgente nelle pagine che seguono.
+
+\begin{eqtest}
+	\fun{testUpdateOrder} e \inline{java}{testUpdateOrderWithQuantityBetweenMaxAndMinAndStatusInProgress()} che
+	verificano contemporaneamente la validità delle classi \eqclass{CEID1}, \eqclass{CES1} e \eqclass{CEU1}.
+	\fun{testUpdateOrderItemOrderListDoesNotExistsWithGivenId} che verifica la validità della classe \eqclass{CEID2}.
+	\fun{testUpdateOrderStatusNull} che verifica la validità della \eqclass{CES2}.
+	\fun{testUpdateOrderEmployeeNullWithStatusWaitingItemOrderListStatusInProgress} e 
+	\inline{java}{testUpdateOrderEmployeeNullAndStatusNotWaiting} che verificano la validità
+	della classe \eqclass{CEU2}.
+\end{eqtest}
+
+\newpage
+\subsection{Descrizione unit-test}[Sorgente Java]
+Andiamo quindi a descrivere i \texttt{\color{ddchaptercolor!80!black}\theenumi\ unit-test} individuati
+con il seguente file Java sorgente.
+
+\label{elsrc:ItemOrderListServiceTest}
+\begin{minted}{java}
+	class ItemOrderListServiceTest {
+		Employee employee;
+		ClientOrder clientOrder;
+		Role role;
+		Dish dish;
+
+		ItemOrderList itemOrderList;
+
+		@Mock
+		EmployeeRepository employeeRepository;
+		@Mock
+		ItemOrderListRepository itemOrderListRepository;
+		@Mock
+		OrderTransactionRepository orderTransactionRepository;
+
+
+		@InjectMocks
+		private ItemOrderListService itemOrderListService;
+
+
+		@BeforeEach
+		void setup() {
+			role = new Role(1L, EmployeeRole.ROLE_ADMIN);
+			employee = new Employee("username", "password", role);
+			itemOrderList = new ItemOrderList(1L, "Notes", 1, StatusEnum.WAITING, dish, employee, clientOrder);
+		}
+
+		@Test
+		@DisplayName("Test updateOrder with valid arguments")
+		void testUpdateOrder() {
+			when(itemOrderListRepository.findItemOrderListByIdItem(anyLong())).thenReturn(itemOrderList);
+			when(employeeRepository.findEmployeeByUsername(anyString())).thenReturn(employee);
+
+			boolean result = assertDoesNotThrow(() -> {
+				itemOrderListService.updateOrder(1L, StatusEnum.IN_PROGRESS, "username", 255);
+				return true;
+			});
+			assertTrue(result);
+
+		}
+
+		@Test
+		@DisplayName("Test updateOrder with valid arguments")
+		void testUpdateOrderWithQuantityBetweenMaxAndMinAndStatusInProgress() {
+			itemOrderList.setQuantity(3);
+			when(itemOrderListRepository.findItemOrderListByIdItem(anyLong())).thenReturn(itemOrderList);
+			when(employeeRepository.findEmployeeByUsername(anyString())).thenReturn(employee);
+
+			boolean result = assertDoesNotThrow(() -> {
+				itemOrderListService.updateOrder(1L, StatusEnum.IN_PROGRESS, "username", 2);
+				return true;
+			});
+			assertTrue(result);
+
+		}
+
+		@Test
+		@DisplayName("Test updateOrder with a wrong ItemOrderList id")
+		void testUpdateOrderItemOrderListDoesNotExistsWithGivenID() {
+			Exception exception = assertThrows(ItemOrderListNotFoundException.class, () -> itemOrderListService.updateOrder(5, StatusEnum.WAITING, "username", -1));
+			assertEquals("errors.itemOrderList.notFound", exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateOrder with order status null")
+		void testUpdateOrderStatusNull() {
+			when(itemOrderListRepository.findItemOrderListByIdItem(anyLong())).thenReturn(itemOrderList);
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> itemOrderListService.updateOrder(1, null, "username", -1));
+			assertNull(exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateOrder with parameters employee null and orderStatus is WAITING, while ItemOrderList status is IN_PROGRESS")
+		void testUpdateOrderEmployeeNullWithStatusWaitingItemOrderListStatusInProgress() {
+			itemOrderList.setStatus(StatusEnum.IN_PROGRESS);
+			when(itemOrderListRepository.findItemOrderListByIdItem(anyLong())).thenReturn(itemOrderList);
+			boolean result = assertDoesNotThrow(() -> {
+				itemOrderListService.updateOrder(1, StatusEnum.WAITING, null, -1);
+				return true;
+			});
+			assertTrue(result);
+		}
+
+		@Test
+		@DisplayName("Test updateOrder with parameters employee null and orderStatus is WAITING, while ItemOrderList status is not IN_PROGRESS")
+		void testUpdateOrderEmployeeNullWithStatusWaitingItemOrderListStatusNotInProgress() {
+			itemOrderList.setStatus(StatusEnum.READY);
+			when(itemOrderListRepository.findItemOrderListByIdItem(anyLong())).thenReturn(itemOrderList);
+
+			Exception exception = assertThrows(IllegalArgumentException.class, () -> itemOrderListService.updateOrder(1, StatusEnum.WAITING, null, -1));
+			assertNull(exception.getMessage());
+		}
+
+		@Test
+		@DisplayName("Test updateOrder with parameters employee null and orderStatus is not WAITING")
+		void testUpdateOrderEmployeeNullAndStatusNotWaiting() {
+			when(itemOrderListRepository.findItemOrderListByIdItem(anyLong())).thenReturn(itemOrderList);
+			Exception exception = assertThrows(EmployeeNotFoundException.class, () -> itemOrderListService.updateOrder(1, StatusEnum.READY, null, -1));
+			assertEquals("errors.employee.notFound", exception.getMessage());
+		}
+	}
+\end{minted}
+\captionof{snippet}{ItemOrderListServiceTest}
+
+

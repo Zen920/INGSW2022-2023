@@ -1,0 +1,41 @@
+
+@startuml
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|sv| Addetto alla cucina
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|sv|
+start
+Note left
+	L'addetto alla cucina è **autenticato**
+	e vi è almeno un ordine nello stato __wait__
+	assegnatogli
+end Note
+
+:Si collega al pannello di gestione della cucina;
+
+|fe|
+:Restituisce il pannello di gestione della cucina\nche indica lo stato degli ordini;
+
+|sv|
+repeat
+:Seleziona uno tra gli ordini nello stato __wait__ disponibili e ne\nrichiede il congedo dalla preparazione;
+
+	|fe|
+	:Richiede conferma di cancellazione all'addetto di cucina;
+
+	|sv|
+repeat while (L'addetto alla cucina conferma la cancellazione?) is (No) Not (Si)
+
+|be|
+:L'ordine (e tutte le sue pietanze) assumono lo stato di __pending__;
+
+|fe|
+:Informa, con un messaggio, che l'addetto alla sala\nè stato sollevato dall'incarico, quindi aggiorna l'interfaccia;
+
+stop
+
+@enduml

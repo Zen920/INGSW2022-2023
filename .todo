@@ -1,0 +1,55 @@
+### Documentation
+## Preparations
+# [x] TeX/Lua integration
+# [x] Colors
+# [x] Picture support
+# [x] Support multiple geometry
+# [x] Fonts
+# [ ] Spacings
+# [ ] URLs/Refs
+
+## Stylize these documentation elements
+# [ ] Cover page
+# [x] Chapter page
+# [x] Abstract page
+# [x] Section
+# [i] Subsection
+# [i] Paragraph
+# [x] Itemize List
+# [x] Enumerate List
+# [x] Descriptive List (\item[desc])
+# [x] Background (frame)
+# [x] Footer
+# [x] Tables
+# [x] Table of Content
+# [ ] Source image(s)
+# [ ] Source code
+# [ ] Contributors, Thanks and Reference page
+
+## Chapter(s)
+# [ ] Revisioni (w/ major-minor versioning style)
+# [ ] Documento dei Requisiti
+# [ ] Documento di Design del Sistema
+# [ ] Codice Sorgente (link, breve descrizione, dettagli sulla licenza)
+# [ ] Piano di Testing
+# [ ] Valutazione Usabilità
+# [ ] Analisi sul tempo di Sviluppo
+# [ ] Contributori
+# [ ] Ringraziamenti e Riferimenti 
+	# [ ] Valentino Bocchetti nei ringraziamenti
+
+### Code
+## Development
+# [x] Pick a client-side language: Java 
+# [x] Pick a server-side language: Java w/ Spring, built with Gradle
+
+## Deployment
+# [x] Oracle free tier machine
+# [x] Docker
+# [x] Deploy application
+
+>> Legend
+>> [x] done
+>> [o] in progress
+>> [i] idea is there, no progress tho
+>> [ ] no progress whatsoever

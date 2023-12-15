@@ -1,0 +1,89 @@
+{
+  "name": "frontend",
+  "license": "UNLICENSED",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@babel/core": "7.23.5",
+    "@babel/plugin-syntax-flow": "7.23.3",
+    "@babel/plugin-transform-react-jsx": "7.23.4",
+    "@emotion/react": "11.11.1",
+    "@emotion/styled": "11.11.0",
+    "@hookform/error-message": "2.0.1",
+    "@mui/base": "5.0.0-beta.25",
+    "@mui/icons-material": "5.14.19",
+    "@mui/material": "5.14.19",
+    "@mui/system": "5.14.19",
+    "@mui/utils": "5.14.19",
+    "@mui/x-date-pickers": "5.0.20",
+    "@nivo/bar": "0.80.0",
+    "@nivo/core": "0.80.0",
+    "@nivo/line": "0.80.0",
+    "@nivo/pie": "0.80.0",
+    "@nivo/tooltip": "0.80.0",
+    "@reduxjs/toolkit": "1.9.7",
+    "@stomp/stompjs": "7.0.0",
+    "@typescript-eslint/utils": "5.62.0",
+    "axios": "1.6.2",
+    "browserslist": "4.22.1",
+    "dayjs": "1.11.10",
+    "depcheck": "1.4.7",
+    "eslint": "8.55.0",
+    "eslint-config-react-app": "7.0.1",
+    "i18next": "22.5.1",
+    "i18next-browser-languagedetector": "7.2.0",
+    "i18next-http-backend": "2.4.2",
+    "moment": "2.29.4",
+    "postcss-normalize": "10.0.1",
+    "prop-types": "15.8.1",
+    "react": "18.2.0",
+    "react-country-flag": "3.1.0",
+    "react-dom": "18.2.0",
+    "react-hook-form": "7.48.2",
+    "react-i18next": "12.3.1",
+    "react-is": "18.2.0",
+    "react-number-format": "5.3.1",
+    "react-router-dom": "6.20.1",
+    "react-scripts": "5.0.1",
+    "react-stomp": "5.1.0",
+    "serve": "14.2.1",
+    "socket.io-client": "4.7.2",
+    "sockjs-client": "1.6.1",
+    "stompjs": "2.3.3",
+    "typescript": "4.9.5",
+    "web-vitals": "2.1.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "jest",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.jsx?$": "babel-jest"
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version",
+      "ie 11"
+    ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "7.21.11"
+  }
+}

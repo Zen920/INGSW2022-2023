@@ -1,0 +1,59 @@
+@startuml
+
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|adm| Membro di amministrazione (admin, supervisor)
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|fe|
+partition #LightPink/White Messaggio di **errore** {
+	#Pink:(E)
+	:Visualizza un messaggio di errore inerente\nalla problematica che vi si è presentata;
+	stop
+}
+
+|adm|
+start
+Note left
+	Il membro dell'amministrazione
+	(admin, supervisor) è autenticato 
+end Note
+
+:Si collega al pannello di amministrazione\nquindi richiede la pagina di visualizzazione\nrendimento dei dipendenti-cuoco;
+
+|fe|
+:Restituisce il pannello di amministrazione\nper la visualizzazione rendimento dei dipendenti;
+
+|adm|
+repeat
+	:Seleziona uno o due dipendenti-cuoco di cui visualizzarne il\nrendimento e ne indica il periodo (da/a data);
+
+|be|
+	:Validazione sulla disponibilità del dipendente inserito\n(o dei dipendenti inseriti);
+
+	if (Il dipendente selezionato esiste ed è valido?) then (No)
+		#Pink:(E)
+	endif
+
+	if (Un secondo dipendente è stato seleezionato) then (Si)
+		if (Il secondo dipendente selezionato esiste ed è valido?) then (No)
+			#Pink:(E)
+		endif
+	endif
+
+	if (Il periodo di tempo selezionato è valido?) then (No)
+		#Pink:(E)
+	endif
+
+repeat while (La validazione ha riportato esito positivo?) is (No) Not (Si)
+
+|be|
+:Produce un **report**, attraverso una query, delle\nstatistiche di rendimento del dipendente inserito\n(o dei dipendenti inseriti);
+
+|fe|
+:Illustra le statistiche del dipendente inserito\n (o dei dipendenti inseriti) attraverso l'uso di grafici;
+
+stop
+@enduml

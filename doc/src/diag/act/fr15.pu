@@ -1,0 +1,32 @@
+@startuml
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|dp| Dipendente
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|dp|
+start
+Note left
+	Il dipendente è **autenticato** e 
+	sono presenti nuove notifiche
+	non lette nel sistema
+end Note
+
+:Si collega al sistema;
+
+|fe|
+:L'interfaccia indica la presenza di una o più notifiche nel sistema;
+
+|dp|
+:L'utente seleziona una notifica, quindi la legge e decide di nasconderla;
+
+|be|
+:La notifica viene nascosta per l'utente;
+
+|fe|
+:La notifica è nascosta quindi non\npiù visualizzata dall'utente;
+
+stop
+@enduml

@@ -1,0 +1,98 @@
+- [x] Intro page
+	- [x] Table of contents
+
+- [x] Analisi dei Requisiti 
+	- [x] Glossario
+	- [x] Modellazione dei casi d'uso
+	- [x] Tabelle di cockburn per quattro casi d'uso significativi (autenticazione
+		esclusa)
+		- [x] Creazione nuovi dipendenti
+		- [x] Gestione completamento dell'ordine
+		- [x] Inserimento pietanze menu' culinario
+		- [x] Aggiungere ordini
+
+- [o] Mockup per tutti i casi d'uso
+	- [x] Sezione introduttiva
+		- [x] Adaptive design
+		- [x] Palette
+	- [o] Mockup widescreen
+	- [o] Mockup mobile
+
+- [ ] Specifica dei Requisiti
+	- [x] Classi, oggetti e relazioni d'analisi (C.o.R.A)
+		- [x] RATATO_FR		Registrazione dipendente
+		- [x] RATATO_FR		Disattivazione dipendenti
+		- [x] RATATO_FR		Visualizzazione del rendimento (statistiche)
+		- [x] RATATO_FR		Aggiunta pietanze al menù culinario
+		- [x] RATATO_FR		Rimozione delle pietanze dal menù culinario
+		- [x] RATATO_FR		Visualizzazione e modifica delle pietanze nel menù culinario	
+		- [x] RATATO_FR		Aggiunta delle Categorie alimentari
+		- [x] RATATO_FR		Rimozione delle Categorie alimentari
+		- [x] RATATO_FR   Modifica delle Categorie alimentari
+		- [x] RATATO_FR		Aggiunta tavoli
+		- [x] RATATO_FR		Rimozione tavoli
+		- [x] RATATO_FR		Inserimento degli avvisi nel sistema
+		- [x] RATATO_FR		Autenticazione
+		- [x] RATATO_FR		Aggiornamento delle credenziali	
+		- [x] RATATO_FR		Nascondere Avvisi	
+		- [x] RATATO_FR		Registrare nuovi ordini 
+		- [x] RATATO_FR		Completa transazione
+		- [x] RATATO_FR		Accettare ordini
+		- [x] RATATO_FR		Rilasciare ordini
+		- [x] RATATO_FR		Notifica il completamento dell'ordine
+	- [x] Diagrammi di sequenza di analisi per i quattro casi d'uso significativi indicati in
+		precedenza
+			- [x] Inserimento pietanze menu' culinario.
+	- [x] Statechart di analisi
+
+- [ ] Documento di Design del Sistema
+	- [x] Analisi dell'architettura con esplicita definizione dei criteri di
+		design
+	- [x] Descrizione e motivazione delle tecnologie adottate
+	- [x] Diagramma delle classi di Design
+	- [x] Diagrammi di sequenza di design per i casi d'uso significativi indicati
+		in precedenza
+	- [ ] Diagrammi di stato di design, ove non banali
+		- [ ] RATATO_FR		Registrazione dipendente
+		- [ ] RATATO_FR		Disattivazione dipendenti
+		- [ ] RATATO_FR		Visualizzazione del rendimento (statistiche)
+		- [ ] RATATO_FR		Aggiunta pietanze al menù culinario
+		- [ ] RATATO_FR		Rimozione delle pietanze dal menù culinario
+		- [ ] RATATO_FR		Visualizzazione e modifica delle pietanze nel menù culinario	
+		- [ ] RATATO_FR		Aggiunta delle Categorie alimentari
+		- [ ] RATATO_FR		Rimozione delle Categorie alimentari
+		- [ ] RATATO_FR   Modifica delle Categorie alimentari
+		- [ ] RATATO_FR		Aggiunta tavoli
+		- [ ] RATATO_FR		Rimozione tavoli
+		- [ ] RATATO_FR		Inserimento degli avvisi nel sistema
+		- [ ] RATATO_FR		Autenticazione
+		- [ ] RATATO_FR		Aggiornamento delle credenziali	
+		- [ ] RATATO_FR		Nascondere Avvisi	
+		- [ ] RATATO_FR		Registrare nuovi ordini 
+		- [ ] RATATO_FR		Completa transazione
+		- [ ] RATATO_FR		Accettare ordini
+		- [ ] RATATO_FR		Rilasciare ordini
+		- [ ] RATATO_FR		Notifica il completamento dell'ordine
+
+TODO: Aggiornare testing a documentazione finita 
+- [x] Testing
+	- [x] Introduzione
+	- [x] Test plan per i System Testing
+	- [x] Codice xUnit per unit testing di quattro metodi non banali con almeno due
+		parametri
+		- [x] OrderTransactionServiceTest
+		- [x] ItemOrderListServiceTest
+		- [x] EmoployeeServiceTest
+		- [x] DishServiceTest
+	- [x] Descrivere strategie adottate per la progettazione dei test
+
+- [x] Codice sorgente sviluppato
+	- [x] Licenza 
+	- [x] Repository
+	- [x] Installazione
+
+- [ ] To-Update
+	- [ ] Mockup desktop (stacked)
+	- [ ] Spell check document
+	- [ ] Colorscheme della documentazione, imho gradient tra due colori
+		(blu-verde?)

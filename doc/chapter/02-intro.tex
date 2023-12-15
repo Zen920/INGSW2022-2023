@@ -1,0 +1,135 @@
+\chapter{Introduzione}(midpoint-2)<La società SoftEngUniNA ha l'obbiettivo di commercializzare diversi sistemi informatici. In questo capitolo discuteremo, nello specifico, quale sistema ci è stato assegnato e quali sono state le nostre scelte implementative.>
+
+\section{Il progetto}
+Ratatouille23 è un sistema finalizzato al supporto, alla gestione di attività di ristorazione. 
+
+L'applicazione richiesta dovrà garantire ideali di performance nonché di affidabilità i cui utenti
+potranno usufruire delle funzionalità in modo intuitivo e piacevole.
+
+\subsection{Oggetto della richiesta di Implementazione}
+Nello specifico, si richiederà l'implementazione \textit{almeno} delle seguenti
+funzionalità:
+
+\begin{chapterbox}
+	Le funzionalità riportate sono state assegnate personalmente al \textbf{gruppo}.
+\end{chapterbox}
+
+\begin{enumerate}
+	\item Un amministratore può creare utenze per i propri dipendenti (sia addetti alla sala, che addetti
+alla cucina, che supervisori). Al primo accesso, ogni utente deve re-impostare la password
+inserita dall’amministratore, scegliendo una password diversa. 
+	\item Un amministratore (o un supervisore) può personalizzare il menù dell’attività di ristorazione. In
+particolare, l’utente può creare e/o eliminare elementi dal menù. Ciascun elemento è
+caratterizzato da un nome, un costo, una descrizione, e un elenco di allergeni comuni. Inoltre,
+è possibile organizzare gli elementi del menù in categorie personalizzabili (e.g.: primi, dessert,
+primi di pesce, bibite, etc.), e definire l’ordine con cui gli elementi compaiono nel menù. In fase
+di inserimento, è richiesto l’auto completamento di alcuni prodotti (e.g.: bibite o preconfezionati)
+utilizzando open data come quelli disponibili in \href{https://it.openfoodfacts.org}{OpenFoodFacts}
+	\item Un addetto alla sala può registrare ordinazioni indicando l’identificativo del tavolo e gli elementi del menù desiderati.
+	\item Un addetto alla cucina può visualizzare le ordinazioni in tempo reale, procedere alla
+preparazione dei piatti, e tenere traccia delle ordinazioni già evase.
+	\item Un supervisore o un amministratore può inserire nel sistema degli avvisi, che vengono
+visualizzati da tutti i dipendenti. Ciascun dipendente può marcare un avviso come “visualizzato” e nasconderlo.
+	\item Un amministratore può visualizzare statistiche dettagliate sulla produttività del personale
+addetto alla cucina. In particolare, in un lasso di tempo personalizzabile, deve essere possibile
+visualizzare almeno quanti ordini ciascun addetto alla cucina ha evaso. È apprezzata la presenza
+di grafici interattivi.
+\end{enumerate}
+
+\pagebreak
+\subsection{Funzionalita' richieste}
+Dalle funzionalità \emdashme{oggetto di richiesta} ne ricaviamo quali effettivamente saranno le richieste del progetto. In particolare si fornisce un elenco, più o meno dettagliato, di quali siano le necessità implementative riconosciute.
+
+\begin{enumerate}
+	\item Una \textit{gerarchia} di dipendenti, con diverse necessità e quindi permessi.
+	\begin{enumerate}
+		\item L'amministratore può creare, rimuovere dipendenti o visualizzarne il rendimento, in termini di prestazioni lavorative. Può inoltre modificare il menù.
+		\item Il supervisore aggiunge avvisi relativi alla cucina e, come l'amministratore, può modificare il menù.
+		\item L'addetto di sala, ha il compito di registrare nuove ordinazioni, si suppone ci possano essere più dipendenti che ricoprano questo ruolo;
+		\item L'addetto alla cucina prepara le pietanze, quindi, evade i nuovi ordini; anche in questo caso si suppone esserci più dipendenti in tale ruolo.
+	\end{enumerate}
+
+	\item La registrazione del menù, quindi delle pietanze disponibili, tramite un'interfaccia dedicata che faccia uso dell'API \href{https://it.openfoodfacts.org}{OpenFoodFacts}.
+
+	\item La creazione, rimozione e monitoraggio dei dipendenti attraverso interfacce ad hoc ad uso amministrativo.
+
+	\item Un sistema di notifiche interno che permette ad amministratori e supervisori di comunicare in tempo reale avvisi e necessità i cui messaggi, una volta visualizzati, possano essere nascosti.
+
+	\item La totale gestione delle ordinazioni: l'inserimento, la rimozione, quindi l'incarico e infine l'evasione dell'ordine sono compiti assai diversi; pertanto richiederanno metodologie di visualizzazione altrettanto diverse.
+\end{enumerate}
+
+\section{Proposta implementativa}
+Fatte le dovute analisi, si giunge quindi alla conclusione che saranno necessari diverse componenti affinché il sistema risulti \textbf{sicuro} ed \textbf{efficiente} in un'ambiente che ne richiede il funzionamento multiutente.
+
+\begin{chapterbox}[Disambiguazione]
+	Nella sezione che segue non verranno affatto citate le tecnologie utilizzate, piuttosto il modus operandi adattato nonché la strategia e la suddivisione delle componenti.
+	
+	\vspace{0.25cm}
+	Se si è più interessati al prodotto finale, piuttosto, passare all'argomento corrispondente.
+	% TODO: Add label
+\end{chapterbox}
+
+Nello specifico, i requisiti fanno sì che la soluzione proposta debba essere esposta ad un pubblico piuttosto ridotto, in quanto i soli dipendenti abilitati potranno fare uso del sistema informativo richiesto.
+
+Inoltre dai requisiti è necessario che tale applicazione sia di facile utilizzo e che quindi basse siano le capacità richieste nell'utilizzo, risultando adatte a novizi.
+
+\subsection{Applicazione: Struttura dinamica}
+L'applicazione proposta segue i principi di usabilità, dell'immediatezza e delle guidelines utente facendo uso di tecnologie front-end specifiche per renderla multipiattaforma.
+
+In quanto si presuppone che l'utilizzo dell'applicazione sia riservato ai soli dipendenti dell'attuale attività di ristorazione, la welcome page \textbf{richiede} espressamente che venga effettuato il login affinché possano esserne utilizzate le funzionalità. Inoltre, data la presenza di diverse tipologie di utenti \emdashme{i così detti ruoli} sarà il login stesso a \textit{smistare} il dipendente nella sezione apposita.
+
+Ogni dipendente avrà quindi un'interfaccia dinamica a seconda del ruolo loro assegnato.
+
+\subsection{Applicazione: Menu amministrativo}
+L'amministratore, in quanto tale, avrà un'interfaccia più o meno complicata (per numero di azioni).
+
+Non sarà presente un'interfaccia di registrazione di dominio \textit{pubblico}, in quanto compito degli amministratori registrare nuovi dipendenti e quindi fornire i dati di accesso.
+
+Gli amministratori sono inoltre abilitati all'inserimento, alla cancellazione e alla modifica di nuove pietanze all'interno del menù tramite interfaccia apposita.
+
+L'amministratore può, inoltre, propagare nuovi avvisi attraverso il sistema affinché raggiunga tutto il personale impiegato.
+
+Infine, gli amministratori possono verificare l'andamento e il rendimento dei dipendenti impiegati nell'attività ristorativa nel ruolo di \textit{addetti alla cucina}.
+
+\pagebreak
+\subsection{Applicazione: Supervisor}
+Il supervisore è una figura che nella gerarchia lavorativa si colloca esattamente tra l'amministrazione e la classe dipendente \emdashme{addetta al lavoro}, figura quindi di amministrazione secondaria.
+
+La loro interfaccia utente è riassumibile come un sottoinsieme di funzionalità dell'amministrazione, più precisamente consiste delle funzionalità di gestione del menù di sala (quindi dell'inserimento, della cancellazione e della modifica delle pietanze) e nella gestione di avvisi nel sistema.
+
+\subsection{Applicazione: Addetto alla sala}
+L'addetto alla sala è colui che si occupa di gestire le ordinazioni, nello specifico è stato interpretato come la figura che si pone tra i clienti dell'attività e gli addetti alla cucina. In ottica funzionale, il suo ruolo è ben delimitato al solo inserimento delle ordinazioni all'interno del sistema che provvederà per quanto concerne la notificazione al personale addetto alla cucina.
+
+\subsection{Applicazione: Addetto alla cucina}
+L'addetto alla cucina identifica esattamente un membro dell'attività il cui compito ultimo è la preparazione delle pietanze. In una visione applicativa, egli riceve dal sistema una o più istanze di ordine e sarà compito suo accettare, quindi preparare e notificare nuovamente il sistema che suddetto ordine sia pronto per essere servito.
+
+\section{Ufficializzazione del progetto}
+Il presente documento descrive quanto richiesto dalla società Contraente, SoftEngUniNA, ai Contraenti Amato Ciro e Vincenzo Lombardi, per la realizzazione del sistema informativo Ratatouille23.
+
+Il committente ha richiesto una piattaforma informativa, sicura e di facile utilizzo, che permetta la gestione di attività di ristorazione. Sono previste le seguenti componenti e/o tecnologie per la sua realizzazione:
+\begin{enumerate}
+	\item Front-end, un applicativo multipiattaforma che permetta ai soli dipendenti dell'attività di svolgerne le attività; sono previste aree diverse, quindi interfacce dedicate, per ognuno dei ruoli.
+
+	\item Back-end, un sistema che risiede su un elaboratore remoto, cui si interfaccia il front-end per l'inserimento o la ricezione di informazioni. Tale sistema risulta inaccessibile se non fisicamente tramite l'ausilio di strumenti terzi da parte di un amministratore. A sua volta, il back-end fa uso delle seguenti tecnologie
+	\begin{enumerate}
+		\item Database, che raccoglie tutte le informazioni necessarie al funzionamento del back-end.
+		\item Docker, atto a semplificarne il processo di deployment e quindi la distribuzione.
+	\end{enumerate}
+\end{enumerate}
+
+Le diverse aree riservate previste, caratterizzate per ruolo, sono le seguenti:
+\begin{itemize}
+	\item Amministrazione, nello specifico:
+	\begin{enumerate}
+		\item Aggiunta (registrazione) e Rimozione (disattivazione) dei dipendenti.
+		\item Aggiunta e rimozione di alimenti nel menù culinario.
+		\item Notificare (aggiunta di avvisi) l'intero personale-dipendente dell'attività.
+		\item Visualizzare statistiche dettagliate sulle prestazioni e l'andamento degli addetti alla cucina.
+	\end{enumerate}
+
+	\item Inserimento di nuove ordinazioni all'interno del sistema informativo a carico di Addetti di Sala.
+	\item Preparazione delle pietanze di suddette ordinazioni a carico di Addetti alla cucina.
+\end{itemize}
+
+Le pagine a seguire si preoccuperanno di descrivere nel dettaglio le scelte progettuali-implementative al fine di realizzare quanto descritto.
+ 

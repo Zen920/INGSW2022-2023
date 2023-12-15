@@ -1,0 +1,25 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state form as "Visualizza Avviso" #Gold
+form: entry/VisualizzaAvviso
+
+state val as "Validazione" #LightGreen
+state failhnd as "Error Handling" #LightPink 
+
+
+[*]		-[hidden]d-> failmsg
+[*]			--> form
+form		--> val: CliccaNascondiAvviso()
+val			--> [*]: [OK] / NascondiAvviso()
+note right on link
+	L'avviso è  **nascosto** solo
+	per il dipendente stesso
+end note
+
+val			-l-> failhnd: [Error]
+failhnd -u-> form
+
+@enduml

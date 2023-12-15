@@ -1,0 +1,39 @@
+@startuml
+
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|adm| Membro di amministrazione (admin, supervisor)
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|fe|
+partition #LightPink/White Messaggio di **errore** {
+	#Pink:(E)
+	:Visualizza un messaggio di errore inerente\nalla problematica che vi si è presentata;
+	stop
+}
+
+|adm|
+start
+Note left
+	Il membro dell'amministrazione
+	(admin, supervisor) è autenticato 
+end Note
+
+:Si collega al pannello di amministrazione\nquindi richiede la pagina di inserimento\ntavoli nel sistema;
+
+|fe|
+:Restituisce il pannello di amministrazione\nper l'inserimento di tavoli nel sistema;
+
+|adm|
+:Richiede l'inserimento di uno o più tavoli;
+
+|be|
+:Avviene l'inserimento di tavoli nel sistema;
+
+|fe|
+:Segnala l'avvenuto inserimento nel sistema;
+
+stop
+@enduml

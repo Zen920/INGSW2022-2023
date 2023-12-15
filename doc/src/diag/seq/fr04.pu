@@ -1,0 +1,79 @@
+@startuml
+
+!include ../style.default.plantuml
+!include seqstyle.plantuml
+
+' Entities
+actor "AdministrationMember:Employee" as adm #orange
+control Frontend as fe
+box "Backend Layer" #Lightgreen
+	entity Backend as be
+	database Database as db
+end box
+
+== Indirizzamento dinamico ==
+
+adm -> fe++: Richiedi controllo per inserimento pietanze
+fe --> adm--: Restituisce un form di inserimento pietanze
+
+== Compilazione del form ==
+
+group#Gold #LightYellow Inserimento dati obbligatori
+	adm -> fe ++: Inserisce nome della pietanza
+	fe --> adm: Validazione preliminare campo nome
+	note right 
+		La validazione è un rapido controllo
+		front-end che verifica la correttezza
+		dei campi seguendo le guidelines
+		descritte precedentemente
+	end note
+
+	adm -> fe: Inserisce descrizione della pietanza
+	fe --> adm: Validazione preliminare campo descrizione
+
+	adm -> fe: Inserisce prezzo della pietanza
+	fe --> adm: Validazione preliminare prezzo pietanza
+
+	adm -> fe: Richiede le categorie disponibili
+	fe -> be ++: Ottieni le categorie alimentari disponibili
+	be -> db ++: Effettua query per ottenerne le categorie
+	db --> be --: Riporta l'elenco delle categorie disponibili
+	be --> fe --: Ritorna le categorie disponibili all'inserimento
+	fe -> fe: Popola lista di categorie
+	fe --> adm: Visualizza categorie
+
+	adm -> fe: Seleziona categoria pietanza dalla lista
+	fe --> adm: Validazione preliminare categoria pietanza
+end
+
+group#Gold #LightYellow Inserimento dati facoltativi
+	adm -> fe: Inserisce allergeni della pietanza
+	fe --> adm: Validazione preliminare allergeni pietanza
+
+	adm -> fe: Inserisce la posizione di\nindicizzazzione della pietanza
+	fe --> adm: Validazione preliminare indice pietanza
+end
+
+== Richiesta e finalizzazione dell'inserimento ==
+
+adm -> fe: Pressione del pulsante di conferma di creazione
+fe -> be ++: Ne richiede l'inserimento
+be -> be: Validazione della richiesta 
+be -> db ++: Inserimento nuova pietanza
+
+alt#Gold #Lightblue Inserimento avvenuto con successo
+	db --> be--: Inserimento avvenuto correttamente
+	be --> fe--: Riporta esito positivo nell'inserimento
+	fe --> adm--: Segnala l'avvenuto inserimento
+	fe-[hidden]->fe
+else #Pink Errore generico nell'inserimento
+	activate db
+	activate be
+	activate fe
+
+	db --> be --: Non è stato possibile completare l'operazione
+	be --> fe --: Riporta esito negativo nell'inserimento
+	fe --> adm: Segnala il mancato inserimento
+end
+
+@enduml

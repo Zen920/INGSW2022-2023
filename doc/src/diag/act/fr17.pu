@@ -1,0 +1,39 @@
+@startuml
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|sv| Addetto alla sala
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|sv|
+start
+Note left
+	L'addetto alla sala è **autenticato**
+	e vi è una transazione in corso
+end Note
+
+:Si collega al pannello di gestione della sala;
+
+|fe|
+:Restituisce il pannello di gestione della sala\nche indica quali tavoli sono disponibili;
+
+|sv|
+repeat
+	:Seleziona un tavolo tra quelli disponibili\ne che attualmente presenta una transazione in corso\nquindi decide di terminare la transazione;
+
+	|fe|
+	:Richiede conferma all'addetto di sala;
+
+	|sv|
+repeat while (L'addetto alla sala conferma?) is (No) Not (Si)
+
+|be|
+:La transazione viene segnalata come completata\nquindi il tavolo liberato e tutti gli ordini incompleti\n**cancellati**;
+
+|fe|
+:Informa, con un messaggio, che la transazione\nè stata completata, quindi aggiorna l'interfaccia;
+
+stop
+
+@enduml

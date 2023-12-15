@@ -1,0 +1,74 @@
+@startuml
+
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|adm| Membro di amministrazione (admin, supervisor)
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|fe|
+partition #LightPink/White Messaggio di **errore** {
+	#Pink:(E)
+	:Visualizza un messaggio di errore inerente\nalla problematica che vi si è presentata;
+	stop
+}
+
+|adm|
+start
+Note left
+	Il membro dell'amministrazione
+	(admin, supervisor) è autenticato 
+end Note
+
+:Si collega al pannello di amministrazione\nquindi richiede la pagina di aggiornamento\npietanze nel sistema;
+
+|fe|
+:Restituisce il pannello di amministrazione\nper l'aggiornamento delle pietanze nel sistema;
+
+|adm|
+:Seleziona una delle pietanze presenti nel sistema;
+
+repeat
+	:Modifica uno o più campi della pietanza proposti (nome, descrizione,\ncosto, categoria, ordine, allergeni, disponibilità);
+
+	|fe|
+		:Controllo preliminare dei dati inseriti;
+
+		if (I campi obbligatori (nome, descrizione, categoria, costo) sono compilati?) then (No)
+			#Pink:(E)
+		endif
+
+		if (I campi compilati rispettano il dominio?) then (No)
+			#Pink:(E)
+		endif
+
+	|be|
+		:Validazione sui dati inseriti;
+
+		if (Il nome selezionato per la pietanza è valido?) then (No)
+			#Pink:(E)
+		endif
+
+		if (La descrizione indicata è valida?) then (No)
+			#Pink:(E)
+		endif
+
+		if (Il costo indicato è valido?) then (No)
+			#Pink:(E)
+		endif
+
+		if (La categoria indicata è valida?) then (No)
+			#Pink:(E)
+		endif
+
+repeat while (La validazione ha riportato esito positivo?) is (No) Not (Si)
+
+|be|
+:Avviene l'aggiornamento della pietanza nel sistema\nrispettando l'input fornito;
+
+|fe|
+:Segnala l'avvenuto aggiornamento della pietanza nel sistema;
+
+stop
+@enduml

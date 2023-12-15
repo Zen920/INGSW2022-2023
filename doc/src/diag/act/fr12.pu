@@ -1,0 +1,58 @@
+@startuml
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|adm| Membro di amministrazione (admin, supervisor)
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|fe|
+partition #LightPink/White Messaggio di **errore** {
+	#Pink:(E)
+	:Visualizza un messaggio di errore inerente\nalla problematica che vi si è presentata;
+	stop
+}
+
+|adm|
+start
+Note left
+	Il membro dell'amministrazione
+	(admin, supervisor) è autenticato 
+end Note
+
+:Si collega al pannello di amministrazione\nquindi richiede la pagina di cancellazione\ndei tavoli dal sistema;
+
+|fe|
+:Restituisce il pannello di amministrazione\nper la cancellazione dei tavoli dal sistema;
+
+|adm|
+repeat
+	:Inserisce un nuovo avviso nel sistema\ncomposto da titolo e corpo;
+
+	|fe|
+		:Controllo preliminare dei dati inseriti;
+
+		if (I campi compilati rispettano il dominio?) then (No)
+			#Pink:(E)
+		endif
+
+	|be|
+		:Validazione sui dati inseriti;
+
+		if (Il titolo della notifica è valido?) then (No)
+			#Pink:(E)
+		endif
+
+		if (Il corpo della notifica è valido?) then (No)
+			#Pink:(E)
+		endif
+repeat while (La validazione ha riportato esito positivo?) is (No) Not (Si)
+
+|be|
+:Avviene l'inserimento della notifica nel sistema;
+
+|fe|
+:Segnala l'avvenuto inserimento della notifica nel sistema;
+stop
+
+@enduml

@@ -1,0 +1,46 @@
+@startuml
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|sv| Addetto alla cucina
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|sv|
+start
+Note left
+	L'addetto alla cucina è **autenticato**
+	e vi è almeno un ordine nello stato __pending__ 
+end Note
+
+:Si collega al pannello di gestione della cucina;
+
+|fe|
+:Restituisce il pannello di gestione della cucina\nche indica lo stato degli ordini;
+
+|sv|
+repeat
+	:Seleziona una tra gli ordini __pending__ disponibili\nquindi seleziona le quantità per pietanza che è\nintenzionato a preparare;
+
+	|fe|
+	:Richiede conferma all'addetto di cucina;
+
+	|sv|
+repeat while (L'addetto alla cucina conferma?) is (No) Not (Si)
+
+|be|
+
+if (Tutte le pietanze dell'ordine\nsono state confermate alla preparazione?) then (No)
+	:Viene generato un sotto ordine composto\ndalle sole pietanze in preparazione;
+else (Si)
+endif
+
+:L'ordine (e tutte le sue pietanze) assume lo stato di __wait__;
+
+|fe|
+:Informa, con un messaggio, che l'ordine è stato accettato\nquindi aggiorna l'interfaccia;
+
+
+stop
+
+@enduml

@@ -1,0 +1,86 @@
+volumes:
+  postgres_data:
+
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
+
+services:
+  # Java spring container
+  backend:
+    hostname: backend
+    container_name: backend
+    image: backend
+    pull_policy: build
+    build:
+      context: "../src/"
+      dockerfile: ${PWD}/backend.dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - 8081:8081
+    environment:
+      - RATATO_IP=${RATATO_IP?Env Variable not set}
+    networks:
+      backend:
+      frontend:
+
+  # React application
+  frontend:
+    hostname: frontend
+    image: frontend
+    container_name: frontend
+    pull_policy: build
+    build:
+      context: "../src/frontend/"
+      dockerfile: ${PWD}/frontend-nginx.dockerfile
+    depends_on:
+      - backend
+      - postgres
+    ports:
+      - 80:80
+    networks:
+      - frontend
+      
+  # database
+  # is it required for the application
+  # postgres
+  postgres:
+    hostname: postgres
+    container_name: postgres
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ratato
+      POSTGRES_PASSWORD: ratato
+      POSTGRES_DB: ratato
+    volumes:
+      # Create tables
+      - ./sql/sql_data.sql:/docker-entrypoint-initdb.d/10-schema.sql:ro
+      # Populate tables
+      - ./sql/sql_inserts.sql:/docker-entrypoint-initdb.d/20-data.sql:ro
+      # Create volume
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - backend
+    # TODO: Do not expose database extenrally
+    ports:
+      - 5432:5432
+
+  # phpmyadmin lookalike
+  # may disable for deployment
+  #  entry-point
+  adminer:
+    hostname: adminer
+    container_name: adminer
+    image: adminer
+    depends_on:
+      - postgres
+    restart: always
+    ports:
+      - 8080:8080
+    networks:
+      - backend
+

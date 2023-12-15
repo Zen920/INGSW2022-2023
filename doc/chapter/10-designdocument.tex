@@ -1,0 +1,480 @@
+\chapter[Documento di]{Design del sistema}(midpoint-6)
+
+\section{Architettura del sistema}
+	\subsection{Tecnologie utilizzate}
+	Dando assoluta priorità alle principali funzionalità richiesteci e agli interessi dei consumatori finali dell'applicazione, ossia i dipendenti dell'attività
+	di ristorazione, abbiamo optato per le seguenti tecnologie, per ognuna delle quali verrà fornita una descrizione dettagliata e il corrispondente movente.
+
+	\begin{itemize}
+		\item Il framework Java di maggior successo \href{https://spring.io/}{Spring Boot} che facilita nello sviluppo di un servizio \textbf{REST API}%
+		\footnote{Restful API: interfaccia di programmazione che consente l'interazione con servizi web Restful che comunicano tramite richieste HTTP.}%
+		\footnote{Application Interface: un insieme di definizioni e protocolli atti alla creazione e all'integrazione di software applicativi.}.%
+		\item La libreria \href{https://reactjs.org/}{React} per lo sviluppo di un front-end con un'interfaccia semplice ed efficace.
+		\item \href{https://www.docker.com/}{Docker} per il totale isolamento dei suddetti servizi (web-server con nginx, back-end con Spring Boot, database),
+		nonché permettere il deployment indipendentemente dall'architettura della macchina host scelta, tramite virtualizzazione%
+		\footnote{Virtualizzazione: Fondamentalmente si riferisce alla possibilità di astrarre dalle componenti hardware, creando uno o più sistemi \textit{virtuali}, non fisici, al fine di eseguire software
+		ideato per il tipo di sistema virtuale.}.
+	\end{itemize}
+
+	\begin{info}[Configurazione Docker]
+		In quanto la configurazione dei container docker utilizzati non è banale segue, una sintesi di quali container siano configurati.
+		
+		\begin{itemize}
+			\item \textbf{Front-end} che si espone su di una porta di accesso (\textit{configurabile}); tale contenitore è autorizzato al collegamento
+			al Back-end tramite una rete virtuale interna, che rende inaccessibile il back-end da accessi non autorizzati.
+			\item \textbf{Back-end} che risulta esposto soltanto \textit{internamente} (cioè, solo sulla macchina con docker in esecuzione);
+			tale container condivide una rete virtuale on il Front-end e una rete virtuale con il container del Database.
+			\item \textbf{Database} anch'esso esposto soltanto \textit{internamente}; si interfaccia al back-end tramite una rete virtuale.
+		\end{itemize}
+	\end{info}
+
+	\begin{itemize}[resume]
+		\item \href{https://www.nginx.com/}{Nginx} per la creazione del Web Server atto alla gestione delle richieste front-end, 
+		che reindirizza automaticamente e internamente le richieste al back-end; con tale scelta assicurata la \newline scalabilità
+		\footnote{Scalabilità: capacità di un sistema informatico di aumentare o diminuirne la scala in funzione delle necessità e delle disponibilità.}.
+		\item \href{https://www.postgresql.org/}{DBMS PostgreSQL}\footnote{DBMS: acronimo di Database Management System, ossia un sistema software progetto per la creazione, la manipolazione e l'interrogazione efficiente di database.}, 
+		sistema di gestione di base di dati relazionale, open source, che presenta API dedicate in molteplici linguaggi di programmazione.
+		% TODO:Aggiungi nome completo
+		\item \href{https://cloud.google.com}{Google Cloud} per il deployment su macchina virtuale remota.
+	\end{itemize}
+
+	\newpage
+	\subsection{Scelta dei linguaggi}
+	Nel back-end, la scelta è ricaduta su \textbf{Java (JDK17)} che, tramite le apposite tecnologie sopracitate (cui framework Spring Boot e Gradle), ne ha facilitato
+	e velocizzato lo sviluppo, soprattutto per quanto concerne l'autorizzazione e il \textbf{request-response} pattern\footnotemark, caratteristico delle \textbf{Rest API}.
+
+	\footnotetext{Il request-response è una metodologia di comunicazione che prevede lo scambio di messaggi tra un computer che effettua una richiesta (request)
+	e un altro che vi risponde con delle informazioni inerenti (response). Tale pattern è caratteristico dei servizi web HTTP.}
+
+	Per il front-end si è optato sin da subito per tecnologie multipiattaforma affinché i fruitori di suddetta applicazione non risultino obbligati all'uso
+	di certi determinati dispositivi; la scelta è dunque ricaduta sull'utilizzo dei linguaggi del web, in particolare \textbf{ReactJS (Javascript)}, \textbf{HTML}, \textbf{CSS}.
+
+	La documentazione, questo documento, è interamente scritta in \textbf{LaTeX}, precisamente la scelta è ricaduta sull'engine \textbf{LuaLatex}, che estende
+	ulteriormente il linguaggio, integrandolo a vero e proprio linguaggio di programmazione (\href{https://www.lua.org/}{Lua}), permettendo un ampio range di modifiche.
+
+	La maggior parte dei diagrammi UML qui presenti sono stati descritti \textit{manualmente} tramite l'utilizzo di appositi librerie \textbf{\LaTeX}
+	quali \href{https://perso.ensta-paris.fr/~kielbasi/tikzuml/index.php}{tikz-uml} e strumenti esterni \href{https://plantuml.com/}{plantuml}.
+
+	Infine si è fatto ampio uso di \textbf{Python} scripting per procedure automatizzate di testing di autenticazione, nonché di
+	altre operazioni dal back-end, e di \textbf{Bash} scripting per la configurazione, l'abilitazione e l'installazione on-the-fly dei sopracitati contenitori 
+	docker richiesti.
+
+	\subsection{Strumenti utilizzati}
+	Nella scrittura del codice sorgente la scelta è ricaduta su \textit{svariati} strumenti di sviluppo, in particolare l'utilizzo di diversi
+	IDE\footnotemark{IDE: acronimo di Integrated Development Environment, in italiano \textbf{Ambienti di Sviluppo}, indica una particolare suite di software
+	che aumenta la produttività del programmatore mettendo a disposizione strumenti di profiling, testing e modifica, semplificandone il lavoro.}
+	e editor di testo quali \textbf{IntelliJ Idea} e \textbf{Neovim}\footnote{Sebbene non sia \textit{un vero e proprio IDE}, con la giusta configurazione può essere utilizzato come tale}.
+	
+	Inoltre, lo sviluppo è stato caratterizzato dall'intenso utilizzo delle seguenti
+	\begin{itemize}
+		\item \href{https://gradle.org/}{Gradle} per l'automazione del processo di \textbf{build}, \textbf{packaging}, \textbf{deployment}.
+		\item \href{https://www.postman.com/}{Postman} per la costruzione, dunque il testing di request http da inoltrare al back-end.
+		\item \href{https://nodejs.org/en/}{NodeJS} per costruire rapidamente il front-end indipendentemente dall'esistenza del back-end per ottimizzarne i tempi di sviluppo.
+	\end{itemize}
+
+	\section{Macrofunzionalita'}
+	Di seguito esplicitato, per ogni macro funzionalità, le specifiche di implementazione.
+
+
+	\subsection{Registrazione e Autenticazione}
+	Per la gestione di autenticazione di dipendenti in Ratatouille23 si è fatto uso di \textbf{Bearer Token}, conformi allo standard \textbf{OAuth2}\footnotemark,
+	che permettono la gestione di sessioni di autenticazione.
+
+	\footnotetext{OAuth2: acronimo di Open Authorization, uno standard di permanenza all'autenticazione di accesso alle risorse.}
+
+	I dipendenti, registrati da un amministratore, saranno dunque salvati sul DBMS PostgreSQL nell'apposita tabella, che presenta vincoli comuni ad un sistema
+	di autenticazione (lunghezza minima della password, nomi utenti univoci, \dots) e, alla corretta autenticazione tramite apposito form sul front-end, potranno
+	dunque accedere alle funzionalità presenti. La sessione sarà terminata non appena il dipendente avrà scelto di effettuarne il logout\footnotemark.
+
+	\footnotetext{Il logout è la procedura di uscita da un sistema informatico; in questo specifico caso corrisponde alla revoca della validità dell'authorization token.}
+
+	Il processo di autenticazione è componente comune a tutti i dipendenti dell'attività, amministratori e non, i quali sono differenziati durante la loro creazione (e cioè all'inserimento
+	nel sistema): per una migliore manutenibilità del codice si è infatti preferito accorpare le due funzionalità, soprattutto considerando che la \textbf{Security through obscurity}%
+	\footnote{La sicurezza tramite segretezza è una metodologia che prevede di mantenere la sicurezza di un sistema tenendone \textit{segreto} il funzionamento; è spesso pratica scoraggiata e non raccomandata.}
+	non corrisponde esattamente ad una soluzione adeguata e, inoltre, i campi richiesti alla procedura di registrazione e di autenticazione sono solo il minimo indispensabile\footnote{In quanto
+	la registrazione è compito dell'amministratore, non è richiesto alcun tipo di controllo antispam o di riconferma dell'account tramite email o numero di telefono, ad esempio.}.
+	
+	\subsection{Statistiche dipendente}
+	Durante l'utilizzo dell'applicazione da parte dei dipendenti categorizzati come \textbf{Addetti alla cucina}, saranno
+	raccolte, nel database, alcune statistiche che espliciteranno, all'amministratore che ne fa richiesta, il rendimento
+	del lavoratore preso in considerazione.
+
+	Per la raccolta dei dati ci si è totalmente affidati al DBMS PostgreSQL mentre per la visualizzazione si è fatto ampiamente uso
+	della libreria ReactJS \href{https://nivo.rocks}{Nivo}.
+
+	\newpage
+	\subsection{Amministrazione del Menu'}
+	Il salvataggio delle pietanze nel menù è affidato al DBMS PostgreSQL, per la visualizzazione delle pietanze nella composizione dell'ordine si è fatto uso
+	di componenti nativi\footnotemark ReactJS che permettano velocemente agli \textbf{Addetti alla sala} di adempiere al loro lavoro.
+	
+	\footnotetext{In questo caso per componente nativo s'intende una qualche implementazione built-in nel framework React.}
+
+	Inoltre, tramite l'API Open Source\footnote{Open Source: spesso abbreviato in OS, indica un qualsiasi prodotto software 
+	in cui ci è data la possibilità di visionare liberamente documentazione e codice sorgente del prodotto stesso.} OpenFoodFacts, sarà data
+	la possibilità di autocompletare\footnote{Una feature che prevede \textit{tramite un algoritmo} le intenzioni dell'utente, nel nostro caso specifico,
+	digitando alcune lettere e selezionando un alimento, verranno aggiunti alcune informazioni su di esso in automatico.} gli inserimenti, semplificandone il processo.
+
+	\subsection{Gestione delle ordinazioni}
+	I dipendenti della categoria \textit{Addetti alla Sala} saranno incaricati di aggiungere, nel sistema, le ordinazioni attraverso
+	il software front-end Ratatouille23.
+
+	Il sistema terrà conto, tramite il DBMS PostgreSQL e il Backend Spring Boot, quali ordini risultino incompleti, in preparazione o completati.
+
+	\section{Design Pattern}
+	\subsection{Back-end}[Architettura implementativa]
+	Il back-end trae ispirazione dal modello \textbf{Microservices Architecture} che, in sintesi, permette ad un'applicazione
+	completa di essere segmentata in tante parti indipendenti, ognuna caratterizzata da delle responsabilità: ogni componente
+	del sistema è quindi mantenibile, scalabile nonché testabile e riutilizzabile come standalone\footnote{Standalone: capace di funzionare in totale autonomia dalle altre componenti.} qual'ora ce ne fosse la necessità.
+
+	\begin{figure}[h]
+		\begin{minipage}[t]{.25\textwidth}\vspace{0pt}
+			\begin{tikzpicture}[remember picture]
+				% Icon
+				\node[inner sep=0pt] (root) at (0,0)
+					{\color{\ddchaptercolor}\Materialaccounttree};
+				\node[inner sep=0pt, anchor=west] (root-lbl) at ([xshift=3mm] root.east)
+					{\small\texttt{backend/src/main}};
+
+				% Subfolders
+				\foreach \package[remember=\package as \lastp (initially root)] in {database,openfoodfacts,ratatouille23,utility}{
+					\node[inner sep=0pt, anchor=north west] (\package) 
+						at ([yshift=-2mm] \lastp.south west -| root-lbl.south west) {\color{\ddchaptercolor}\Materialfolder};
+					\node[inner sep=0pt, anchor=west] (\package-lbl) at ([xshift=3mm] \package)
+						{\small\texttt{\package}};
+					\path[draw=\ddchaptercolor, line width=0.25pt] 
+						(root.south) 
+						-- (root.south |- \package.west)
+						-- (\package.west);
+				}
+			\end{tikzpicture}
+		\end{minipage}
+		\hfill
+		\begin{minipage}[t]{0.70\textwidth}\vspace{0pt}
+			Vi è una forte separazione delle componenti logiche-amministrative proprie (cioè, da noi sviluppate), racchiudendole
+			nel loro specifico Java package\footnotemark, dalle
+			componenti secondarie riguardanti il DBMS PostgreSQL e l'integrazione dell'API OpenFoodFacts. 
+			Inoltre, per tutte le funzionalità non categorizzabili, si è preferito l'utilizzo di
+			un package dedicato.
+		\end{minipage}\hfill\null
+	\end{figure}
+
+	\footnotetext{Terminologia propria di Java che sta ad indicare un raggruppamento logico di classi, allo scopo di contestualizzarle.}
+
+	\subsection{Implementazione del back-end}[Model-View-Controller]
+	L'implementazione è avvenuta rispettando il Model-View-Controller pattern, tipico delle applicazioni
+	Java Spring Boot che prevede la separazione delle componenti ai fini di semplificarne lo sviluppo.
+
+	Nel dettaglio riportiamo, al momento della stesura di \textit{questo} documento, lo stato del progetto
+	nonché la logica implementativa.
+
+	\vfill\begin{figure}[!b]
+		\centering\begin{tikzpicture}
+			% Coordinate system
+			\coordinate		(constraint-uleft) at (0, 0);
+			\coordinate 	(constraint-dright) at (\textwidth, 0);
+
+			\begin{pgfonlayer}{background}
+				\fill[\ddchaptercolor!10!white]	(constraint-uleft) rectangle ([yshift=0cm] constraint-dright);
+			\end{pgfonlayer}
+
+			\begin{scope}[remember picture, shift=({constraint-uleft}), x={(constraint-uleft -| constraint-dright)}, y={(constraint-uleft |- constraint-dright)}, mcomp/.style={nosep, fill=ddchaptercolor!20!white, draw=ddchaptercolor!60!black, minimum width=4cm, minimum height=0.75cm}, unidir/.style={draw=ddchaptercolor!80!black, line width=1.25pt, >=triangle 45, ->}]
+				\node[mcomp] 
+					(model) at (0.5,0)																		{Model};
+				\node[mcomp] 
+					(view) at ([yshift=-3cm] 0.25,0 |- model)							{View};
+				\node[mcomp] 
+					(controller) at ([yshift=-3cm] 0.75,0 |- model)				{Controller};
+
+				\path[unidir] (view.east)
+					-- ([xshift=-0.75cm] view.east -| model.south)
+					-- ([xshift=-0.75cm] model.south);
+
+				\path[unidir] (controller.west)
+					-- ([xshift=0.75cm] controller.west -| model.south)
+					-- ([xshift=0.75cm] model.south);
+
+				\path[unidir] (model.west)
+					-- (model.west -| view.north)
+					-- (view.north);
+
+				\path[unidir] (model.east)
+					-- (model.east -| controller.north)
+					-- (controller.north);
+			\end{scope}
+		\end{tikzpicture}
+		\caption{Rappresentazione grafica del pattern Model-View-Controller.}
+	\end{figure}
+
+
+	\newpage\begin{figure}[h]
+		\begin{minipage}[t]{.25\textwidth}\vspace{0pt}
+			\begin{tikzpicture}[remember picture]
+				% Icon
+				\node[inner sep=0pt] (root) at (0,0)
+				{\color{\ddchaptercolor}\Materialaccounttree};
+				\node[inner sep=0pt, anchor=west] (root-lbl) at ([xshift=3mm] root.east)
+				{\small\texttt{b/s/main/ratatouille23}};
+
+				% Subfolders
+				\foreach \package/\ext/\icon[remember=\package as \lastp (initially root)] in {
+					Configuration//\Materialfolder,
+					Controllers//\Materialfolder,
+					Entities//\Materialfolder,
+					Repositories//\Materialfolder,
+					Security//\Materialfolder,
+					Service//\Materialfolder,
+					Utilities//\Materialfolder,
+					App/.java/\Brandsjava
+				}{
+					\node[inner sep=0pt, anchor=north west] (\package) 
+					at ([yshift=-2mm] \lastp.south west -| root-lbl.south west) {\color{\ddchaptercolor}\icon};
+					\node[inner sep=0pt, anchor=west] (\package-lbl) at ([xshift=3mm] \package)
+					{\small\texttt{\package\ext}};
+					\path[draw=\ddchaptercolor, line width=0.25pt] 
+					(root.south) 
+					-- (root.south |- \package.west)
+					-- (\package.west);
+				}
+
+			\end{tikzpicture}
+		\end{minipage}
+		\hfill
+		\begin{minipage}[t]{0.70\textwidth}\vspace{0pt}
+			\def\sepline{\begingroup\color{\ddchaptercolor}\vspace{6pt}\hrule height 1pt depth 0pt width \textwidth\relax\vspace{6pt}\endgroup}
+			\begin{description}[leftmargin=!,labelwidth=\widthof{\bfseries Configuration},font=\color{ddchaptercolor!70!black}]
+				\item[Configuration] Package costituito dalle classi di configurazione riguardanti Java Spring Boot.
+					\sepline
+				\item[Controllers] Package costituito delle routes (rotte) 
+					per le chiamate HTTP effettuate dal client (front-end) affinché sia effettuabile la 
+					comunicazione tramite request-response.
+					\sepline
+				\item[Entities] Package per la gestione dei modelli di trasmissione dati necessari affinché i controllers
+					possano comunicare con il client.
+					\sepline
+				\item[Security] Package della gestione del modello di autenticazione tramite \textbf{OAuth2} Token, quindi quali routes
+					siano accessibili tramite le HTTP requests e con quali permessi.
+					\sepline
+				\item[Repositories] Package contenente la logica di messa a disposizione di Java Spring Boot
+					e il DBMS PostgreSQL per il salvataggio (quindi l'inserimento), l'aggiornamento, la cancellazione
+					e la selezione (query) dei dati.
+					\sepline
+				\item[Service] Package contenente la logica di gestione delle classi Controllers.
+					\sepline
+				\item[Utilities] Package contenente configurazioni e funzionalità aggiuntive non riguardanti alcuna classe nello specifico, come ad esempio Java Exception personalizzate, Data-Validators aggiuntivi e costruzione, quindi segnalazione, di richieste ill-formed.
+					\sepline
+				\item[App.java] Corrisponde all'entry point dell'applicazione, eseguirà l'istanza di
+					Java Spring Boot come da noi configurata.
+			\end{description}
+		\end{minipage}\hfill\null
+	\end{figure}
+
+	\newpage
+	\subsection{Implementazione del Front-end}[Flux Pattern]
+	Per l'applicazione front-end multipiattaforma, in quanto pattern tipico di ReactJS,
+	l'implementazione è avvenuta rispettando il Flux pattern.
+
+	In ReactJS è infatti preferibile \textit{passare} le informazioni da componente (padre) in componente (figlio):
+	l'idea principale è che le informazioni viaggino in una sola direzione.
+
+	\vspace{1cm}\begin{figure}[!b]
+		\centering\begin{tikzpicture}
+			% Coordinate system
+			\coordinate		(constraint-uleft) at (0, 0);
+			\coordinate 	(constraint-dright) at (\textwidth, 0);
+
+			\begin{pgfonlayer}{background}
+				\fill[\ddchaptercolor!10!white]	(constraint-uleft) rectangle ([yshift=0cm] constraint-dright);
+			\end{pgfonlayer}
+
+			\begin{scope}[remember picture, shift=({constraint-uleft}), x={(constraint-uleft -| constraint-dright)}, y={(constraint-uleft |- constraint-dright)}, mcomp/.style={nosep, fill=ddchaptercolor!20!white, draw=ddchaptercolor!60!black, minimum width=4cm, minimum height=0.75cm}, unidir/.style={draw=ddchaptercolor!80!black, line width=1.25pt, >=triangle 45, ->}]
+				\node[mcomp] 
+					(action) at (0.1,0)																		{Action};
+				\node[mcomp] 
+					(dispatcher) at (0.375,0)															{Dispatcher};
+				\node[mcomp] 
+					(store) at (0.625,0)																	{Store};
+				\node[mcomp] 
+					(view) at (0.9,0)																			{View};
+				\node[mcomp]
+					(action-two) at ([yshift=2cm] store)						{Action};
+
+				\path[unidir] (action.east) -- (dispatcher.west);
+				\path[unidir] (dispatcher.east) -- (store.west);
+				\path[unidir] (store.east) -- (view.west);
+				\path[unidir, -] (view.north) -- (view.north |- action-two.east) -- (action-two.east);
+				\path[unidir] (action-two.west) -- (dispatcher.north |- action-two.west) -- (dispatcher.north);
+			\end{scope}
+		\end{tikzpicture}
+		\caption{Rappresentazione grafica del Flux pattern.}
+	\end{figure}\vfill
+
+	\begin{figure}[h]
+		\begin{minipage}[t]{.25\textwidth}\vspace{0pt}
+			\begin{tikzpicture}[remember picture]
+				% Icon
+				\node[inner sep=0pt] (root) at (0,0)
+				{\color{\ddchaptercolor}\Materialaccounttree};
+				\node[inner sep=0pt, anchor=west] (root-lbl) at ([xshift=3mm] root.east)
+				{\small\texttt{frontend/src}};
+
+				% Subfolders
+				\foreach \package/\ext/\icon[remember=\package as \lastp (initially root)] in {
+					components//\Materialfolder,
+					config//\Materialfolder,
+					containers//\Materialfolder,
+					hooks//\Materialfolder,
+					images//\Materialfolder,
+					routes//\Materialfolder,
+					services//\Materialfolder,
+					utilities//\Materialfolder,
+					App/.css/\Brandscss,
+					App/.js/\Brandsjavascript,
+					i18n/.js/\Brandsjavascript,
+					index/.js/\Brandsjavascript,
+					index/.css/\Brandscss,
+					logo/.svg/\Brandssvg
+				}{
+					\node[inner sep=0pt, anchor=north west] (\package) 
+					at ([yshift=-2mm] \lastp.south west -| root-lbl.south west) {\color{\ddchaptercolor}\icon};
+					\node[inner sep=0pt, anchor=west] (\package-lbl) at ([xshift=3mm] \package)
+					{\small\texttt{\package\ext}};
+					\path[draw=\ddchaptercolor, line width=0.25pt] 
+					(root.south) 
+					-- (root.south |- \package.west)
+					-- (\package.west);
+				}
+
+			\end{tikzpicture}
+		\end{minipage}
+		\hfill
+		\begin{minipage}[t]{0.70\textwidth}\vspace{0pt}
+			\def\sepline{\begingroup\color{\ddchaptercolor}\vspace{6pt}\hrule height 1pt depth 0pt width \textwidth\relax\vspace{6pt}\endgroup}
+			\begin{description}[leftmargin=!,labelwidth=\widthof{\bfseries components},font=\color{ddchaptercolor!70!black}]
+				\item[components] Tale directory è costituita dalle componenti visive che formeranno, tramite programmazione
+					per composizione\footnotemark tutte le pagine visualizzabili del front-end. 
+
+					In particolare non ne decide la logica, ma soltanto come verranno impostati e posizionati (layout) tali componenti.
+					\sepline
+				\item[config] La directory comprende le configurazioni necessarie affinchè il front-end sia utilizzabile
+					a seconda dell'ambiente (dev, prod).
+					\sepline
+				\item[containers] Nella directory sono presenti \textit{contenitori}, che aggregano componenti e logica.
+					\sepline
+				\item[hooks] La directory conterrà gli hooks dell'applicativo: un \textbf{hook}	(dall'Inglese uncino) modifica il comporamento di alcune delle funzionalità
+				andando ad intercettarne il funzionamento originale, quindi aggiungendo chiamate a funzioni addizionali.
+					\sepline
+				\item[images] La directory contiene, per l'appunto, \textit{alcune} immagini che mirano a migliorare
+				l'esperienza utente, fornendo al front-end un po' più di leggerezza.
+					\sepline
+				\item[routes] Le routes configurano la navigazione utente all'interno dell'applicazione ReactJS: a seconda
+				del livello di autorizzazione ottenuto (e.g. non autorizzato, amministratore, addetto alla sala, \dots),
+				l'utente avrà la possibilità di navigare in più o meno servizi (cioè, pagine) dell'applicativo front-end.
+					\sepline
+				\item[services] La directory si compone di tutta l'effettiva logica dell'applicazione ReactJS, tra cui
+				le chiamate effettive alla REST API, nonchè l'autenticazione e la connessione al servizio.
+					\sepline
+				\item[utilities] La directory contiene principalmente script ri-utilizzabili in diversi ambienti 
+				dell'applicativo; in particolare si è preferito centralizzare (cioè, raccogliere in files comuni)
+				gli URL delle richieste alla REST API e alcuni messaggi.
+					\sepline
+				\item[App.css, Index.css] Fogli di stile con le proprietà inerenti all'entrypoint dell'applicazione.
+				\item[App.js, Index.js] Configurazione dell'applicazione frontend ReactJS; costituiscono l'entrypoint logico dell'applicazione.
+					\sepline
+				\item[i18n.js] Script di configurazione della localizzazione a carico di \href{https://www.i18next.com/}{i18next}.
+					\sepline
+				\item[logo.svg] Icona visualizzata nel tab del browser per l'applicazione (favicon).
+			\end{description}
+		\end{minipage}\hfill\null
+	\end{figure}
+	
+	\footnotetext{Composition: La programmazione per composizione è una metodologia di programmazione il cui principio
+	assomiglia al polimorfismo ma, piuttosto che costruire in maniera incrementale, si \textbf{compone} dei diversi
+	componenti, garantendo un certo livello di riutilizzabilità del codice e nel complesso anche una migliore \textit{pulizia del codice}}
+
+
+	\section{Activity Diagrams}
+	\subsection{Registrazione dipendente}[Inerente al requisito funzionale \ref{reqsf:register}]
+	\svg{./src/diag/act/fr01}
+
+	\newpage\subsection{Disattivazione dei dipendenti}[Inerente al requisito funzionale \ref{reqsf:unregister}]
+	\svg{./src/diag/act/fr02}
+
+	\newpage\subsection{Visualizzazione del rendimento}[Inerente al requisito funzionale \ref{reqsf:stats}]
+	\svg{./src/diag/act/fr03}
+
+	\newpage\subsection{Inserimento pietanze nel menù culinario}[Inerente al requisito funzionale \ref{reqsf:addmenu}]
+	\svg{./src/diag/act/fr04}
+
+	\newpage\subsection{Rimozione pietanze dal menù culinario}[Inerente al requisito funzionale \ref{reqsf:delmenu}]
+	\svg{./src/diag/act/fr05}
+
+	\newpage\subsection{Aggiornamento del menù culinario}[Inerente al requisito funzionale \ref{reqsf:chgmenu}]
+	\svg{./src/diag/act/fr06}
+
+	\newpage\subsection{Inserimento di nuove categorie alimentari}[Inerente al requisito funzionale \ref{reqsf:addcat}]
+	\svg{./src/diag/act/fr07}
+
+	\newpage\subsection{Cancellazione delle categorie alimentari esistenti}[Inerente al requisito funzionale \ref{reqsf:delcat}]
+	\svg{./src/diag/act/fr08}
+
+	\newpage\subsection{Aggiornamento delle categorie alimentari}[Inerente al requisito funzionale \ref{reqsf:chgcat}]
+	\svg{./src/diag/act/fr09}
+
+	\newpage\subsection{Aggiunta dei tavoli}[Inerente al requisito funzionale \ref{reqsf:addtbl}]
+	\svg{./src/diag/act/fr10}
+
+	\newpage\subsection{Rimozione dei tavoli}[Inerente al requisito funzionale \ref{reqsf:deltbl}]
+	\svg{./src/diag/act/fr11}
+
+	\newpage\subsection{Rimozione dei Inserimento avvisi nel sistema}[Inerente al requisito funzionale \ref{reqsf:addntf}]
+	\svg{./src/diag/act/fr12}
+
+	\newpage\subsection{Autenticazione}[Inerente al requisito funzionale \ref{reqsf:authlogin}]
+	\svg{./src/diag/act/fr13}
+
+	\newpage\subsection{Aggiornamento delle credenziali d'accesso alla prima autenticazione}[Inerente al requisito funzionale \ref{reqsf:authupdate}]
+	\svg{./src/diag/act/fr14}
+
+	\newpage\subsection{Nascondere avvisi}[Inerente al requisito funzionale \ref{reqsf:hidentf}]
+	\svg{./src/diag/act/fr15}
+
+	\newpage\subsection{Registrare ordini}[Inerente al requisito funzionale \ref{reqsf:addorder}]
+	\svg{./src/diag/act/fr16}
+
+	\newpage\subsection{Completa transazione}[Inerente al requisito funzionale \ref{reqsf:termorder}]
+	\svg{./src/diag/act/fr17}
+
+	\newpage\subsection{Accetta ordine}[Inerente al requisito funzionale \ref{reqsf:acptorder}]
+	\svg{./src/diag/act/fr18}
+
+	\newpage\subsection{Completa ordine}[Inerente al requisito funzionale \ref{reqsf:cmporder}]
+	\svg{./src/diag/act/fr19}
+
+	\newpage\subsection{Rilascia ordine}[Inerente al requisito funzionale \ref{reqsf:abrtorder}]
+	\svg{./src/diag/act/fr20}
+
+	\section{Design Sequence Diagrams}
+	\subsection{Inserimento pietanze nel menu' culinario}[Inerente al requisito funzionale \ref{reqsf:register}]
+	\svg{./src/diag/seq-design/fr04}
+
+	\subsection{Inserimento dipendenti nel sistema}[Inerente al requisito funzionale \ref{reqsf:addmenu}]
+	\svg{./src/diag/seq-design/fr01}
+
+	\subsection{Registrazione nuovi ordini}[Inerente al requisito funzionale \ref{reqsf:addorder}]
+	\svg{./src/diag/seq-design/fr16}
+
+	\subsection{Completamento e Rilasciamento degli ordini}[Inerente ai requisiti funzionale \ref{reqsf:cmporder}, \ref{reqsf:abrtorder}]
+	\svg{./src/diag/seq-design/fr19-20}
+
+	\section{State Design Diagrams}
+	\subsection{Registrazione dipendente}[Inerente al requisito funzionale \ref{reqsf:register}]
+	\svg[0.7\measurepage]{./src/diag/st-design/fr01}
+
+	\subsection{Autenticazione}[Inerente al requisito funzionale \ref{reqsf:authlogin}]
+	\svg[0.7\measurepage]{./src/diag/st-design/fr13}
+
+	\subsection{Registrazione nuovi ordini e completamento transazioni}[Inerente ai requisiti funzionali \ref{reqsf:addorder},\ref{reqsf:termorder}]
+	\svg[0.7\measurepage]{./src/diag/st-design/fr16-17}
+
+	\subsection{Completamento e Rilascio ordini}[Inerente ai requisiti funzionali \ref{reqsf:cmporder}, \ref{reqsf:abrtorder}]
+	\svg[0.7\measurepage]{./src/diag/st-design/fr19-20}*

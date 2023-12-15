@@ -1,0 +1,29 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state form as "Form\nAggiorna-Password" #Gold
+form: entry/VisualizzaFormAggiornaPassword
+state val as "Validazione" #LightGreen
+state failhnd as "Error Handling" #LightPink 
+
+
+[*]		-r-> form
+note on link
+	Si presuppone che il dipendente abbia
+	appena completato  **l'autenticazione**,
+	inserendo password e token d'accesso 
+	fornitogli da un amministratore
+end note
+
+[*]		-[hidden]d-> failmsg
+form	-d-> val: CliccaAggiornaPassword()
+val		-d-> [*]: [OK, PasswordValida] / AggiornaPasswordDipendente()\l  AttivaAccountDipendente()
+val		-l-> failhnd: [Error, Password attuale non corrispondente]
+val		-l-> failhnd: [Error, Nuova password non rispetta policy utente]
+val		-l-> failhnd: [Error, Generico]
+failhnd -u-> form
+
+
+@enduml

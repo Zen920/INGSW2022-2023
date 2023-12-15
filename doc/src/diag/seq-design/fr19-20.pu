@@ -1,0 +1,155 @@
+@startuml
+
+!include ../style.default.plantuml
+!include set-designstyle.plantuml
+
+' Entities
+actor "Cook:Employee" as cook #orange
+box "Frontend Layer" #E6EFE6
+	control "ReactJS-Router" as router
+	control "CookComponent" as ckcomp
+	control "ReactJS-Validator" as val
+end box
+box "Backend Layer" #Lightgreen
+	entity "Spring-Router" as be
+
+	control "TransactionController" as tc
+	entity "TransactionService" as ts
+
+	control "CookController" as cc
+	entity "CookService" as cs
+
+	database "PostgresDB" as db
+end box
+
+== Indirizzamento dinamico ==
+cook -> router ++: http GET request host:port/
+router --> cook --: returns CookRoute:CookComponent
+
+== Ottieni, ordina e visualizza ordini ==
+group#Gold #LightBlue Popolamento ordini ("PENDING", "READY", "ACCEPTED")
+
+	activate ckcomp
+	ckcomp -> be ++: fetchEmployeeOrders(StatusEnum.PENDING)
+	note left
+		Gli ordini in stato "PENDING" sono gli ordini
+		inseriti nel sistema che aspettano di essere selezionati
+	end note
+
+	be -> tc ++: getAcceptedOrders(StatusEnum.PENDING)
+	tc -> ts ++: getTables(StatusEnum.PENDING)
+	ts -> db ++: findCookTableWhereEmployeeIsNullAndStatusIsWaiting
+	db --> ts --: return List<CookTable>
+	ts --> tc --: return ResponseEntity.ok { List<CookTable> }
+	tc --> be --:
+	be --> ckcomp --: return List<CookTable>
+
+	ckcomp -> be ++: fetchEmployeeOrders(StatusEnum.ACCEPTED)
+	note left
+		Gli ordini in stato "ACCEPTED" sono gli ordini
+		precedentemente accettati dal cuoco
+		che aspettano di essere completati (o rilasciati)
+	end note
+
+	be -> tc ++: getAcceptedOrders(StatusEnum.ACCEPTED)
+	tc -> ts ++: getTables(StatusEnum.ACCEPTED)
+	ts -> db ++: findCookTableWhereStatusIsAndEmployeeIs(StatusEnum.READY, cook)
+	db --> ts --: return List<CookTable>
+	ts --> tc --: return ResponseEntity.ok { List<CookTable> }
+	tc --> be --:
+	be --> ckcomp --: return List<CookTable>
+
+	ckcomp -> be ++: fetchEmployeeOrders(StatusEnum.READY)
+	note left
+		Gli ordini in stato "READY" sono gli ordini
+		precedentemente evasi dal cuoco
+	end note
+
+	be -> tc ++: getAcceptedOrders(StatusEnum.READY)
+	tc -> ts ++: getTables(StatusEnum.READY)
+	ts -> db ++: findCookTableWhereStatusIsAndEmployeeIs(StatusEnum.READY, cook)
+	db --> ts --: return List<CookTable>
+	ts --> tc --: return ResponseEntity.ok { List<CookTable> }
+	tc --> be --:
+	be --> ckcomp --: return List<CookTable>
+
+	ckcomp --> ckcomp: setPendingOrders
+	ckcomp --> ckcomp: setAcceptedOrders
+	ckcomp --> ckcomp: setCompletedOrders
+	ckcomp --> ckcomp: setMode("PENDING")
+	note left
+		Di default è selezionato il tab che presenta
+		gli ordini in che aspettano di essere selezionati
+	end note
+end
+
+== Esecuzione di un'azione ==
+cook -> ckcomp: Visualizza gli ordini "ACCEPTED"\nin attesa di essere completati (o rilasciati)
+ckcomp --> ckcomp: setMode("ACCEPTED")
+
+alt#Gold #Lightblue Il cuoco conferma il completamento dell'ordine
+	cook -> ckcomp: Segnala il completamento dell'ordine\nUtilizzando l'apposito controllo "confirm"
+	ckcomp -> ckcomp: handleUpdateOrder
+	ckcomp -> be ++: updateOrderStatus(transactionid, "READY")
+	be -> cc ++: acceptOrders(transactionid, "READY")
+	cc -> cs ++: updateOrder(transactionid, "READY")
+	cs -> cs: validate
+	cs -> db ++: trySave(status, cook)
+
+	deactivate ckcomp
+	deactivate be
+	deactivate cc
+	deactivate cs
+	deactivate db
+
+else #Pink Il cuoco richiede che l'ordine venga rilasciato al sistema
+	db-[hidden]->db
+	activate ckcomp
+	cook -> ckcomp: Richiede il rilascio dell'ordine\nUtilizzando l'apposito controllo "release"
+	ckcomp -> ckcomp: handelRelaseOrder
+	ckcomp -> be ++: releaseOrder(transactionid)
+	be -> cc ++: releaseOrder(transactionid)
+	cc -> cs ++: updateOrder(transactionid, "WAITING")
+	cs -> cs: validate
+	cs -> db ++: trySave(status, cook)
+
+	deactivate ckcomp
+	deactivate be
+	deactivate cc
+	deactivate cs
+	deactivate db
+end
+
+
+alt#Gold #Lightblue Successo
+	db-[hidden]->db
+	activate db
+	activate cs
+	activate cc
+	activate be
+	activate ckcomp
+	db --> cs --: return true
+	cs --> cc --: return true
+	cc --> be --: return ResponseEntity.ok { true }
+	be --> ckcomp --: 
+	ckcomp --> ckcomp: setPending
+	ckcomp --> cook --:
+
+
+else #Pink Errore generico
+	db-[hidden]->db
+	activate db
+	activate cs
+	activate cc
+	activate be
+	activate ckcomp
+
+	db --> cs --: return exception
+	cs --> cc --: return exception
+	cc --> be --: return ResponseEntity.except { exception }
+	be --> ckcomp --: 
+	ckcomp --> ckcomp: toast(exception) 
+	ckcomp --> cook --:
+end
+
+@enduml

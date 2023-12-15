@@ -1,0 +1,20 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state formSel as "Form Visualizza\nOrdini Disponibili" #Gold
+formSel: entry/OttieniOrdiniDisponibili
+formSel: entry/VisualizzaFormOrdiniDisponibili
+
+state valSel as "Validazione Selezione" #LightGreen
+state failhnd as "Error Handling" #LightPink 
+
+[*]				-r-> formSel
+formSel		-d-> valSel: AccettaOrdine()
+valSel		-l-> failhnd: [Error]
+valSel		-d-> [*]: [OK] / AssegnaOrdineAlDipendenteCuoco()\l  AggiornaStatoOrdine()
+failhnd -u-> formSel
+
+@enduml
+

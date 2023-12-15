@@ -1,0 +1,33 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+
+state formSelection as "Form Selezione\nDipendente" #Gold
+formSelection: entry/VisualizzaFormSelezioneDipendente
+
+state formState			as "Form Configura\nDipendente" #Gold
+formState: entry/VisualizzaFormConfigurazione
+
+state valext as "Validazione\nEsistenza" #LightGreen
+state valop as "Validazione\nOperazione" #LightGreen
+
+state failhnd1 as "Error Handling" #LightPink
+state failhnd2 as "Error Handling" #LightPink
+
+
+[*]		-[hidden]d-> failmsg
+[*]							-d-> formSelection
+formSelection		-d-> valext: SelezionaDipendente()
+valext					-d-> formState: [OK] / OttieniInformazioniDipendente\n  AggiornaInterfaccia()
+valext					-l-> failhnd1: [Error]
+failhnd1				-u-> formSelection
+
+formState				-d-> valop: AggiornaStatoDipendente()
+valop						-d-> [*]: [OK] / AggiornaDipendente()
+valop						-l-> failhnd2: [Error]
+failhnd2 -u-> formState
+
+@enduml
+

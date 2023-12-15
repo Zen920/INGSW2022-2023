@@ -1,0 +1,58 @@
+@startuml
+
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|adm| Membro di amministrazione (admin, supervisor)
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|fe|
+partition #LightPink/White Messaggio di **errore** {
+	#Pink:(E)
+	:Visualizza un messaggio di errore inerente\nalla problematica che vi si è presentata;
+	stop
+}
+
+|adm|
+start
+Note left
+	Il membro dell'amministrazione
+	(admin, supervisor) è autenticato 
+end Note
+
+:Si collega al pannello di amministrazione\nquindi richiede la pagina di aggiornamento\ndelle categorie pietanze del sistema;
+
+|fe|
+:Restituisce il pannello di amministrazione\nper l'aggiornamento di categorie di pietanze nel sistema;
+
+|adm|
+:Seleziona la categoria per l'aggiornamento;
+
+repeat
+	:Modifica descrizione od ordine della categoria;
+
+	|fe|
+		:Controllo preliminare dei dati inseriti;
+
+		if (I campi compilati rispettano il dominio?) then (No)
+			#Pink:(E)
+		endif
+
+	|be|
+		:Validazione sui dati inseriti;
+
+		if (La descrizione indicata è valida?) then (No)
+			#Pink:(E)
+		endif
+
+repeat while (La validazione ha riportato esito positivo?) is (No) Not (Si)
+
+|be|
+:Avviene l'aggiornamento della categoria di pietanza dal sistema;
+
+|fe|
+:Segnala l'avvenuto aggiornamento della categoria dal sistema;
+
+stop
+@enduml

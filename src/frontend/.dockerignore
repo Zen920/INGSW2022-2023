@@ -1,0 +1,10 @@
+# Project file(s)
+build.gradle.kts
+.dockeriggnore
+.project
+.yarnclean
+yarn.lock
+README.md
+
+# Build artifacts
+node_module

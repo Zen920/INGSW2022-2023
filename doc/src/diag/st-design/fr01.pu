@@ -1,0 +1,52 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state router as "GenericRouter" #Orange {
+	[*] -r-> [*]: [AuthContext, L'utente autenticato non è autorizzato] / NavigateToErrorLandingPage()
+	[*] -r-> [*]: [AuthContext, Richiesto password reset] / NavigateToPasswordReset()
+	[*] -r-> [*]: [AuthContext, L'utente non è autenticato] / NavigateToLoginPage()
+	[*] -r-> [*]: [AuthContext, OK] / NavigateToRequestedPath()
+}
+
+note top of router
+	L'applicazione front-end, sviluppata in   **React-JS**
+	permette una gestione centralizzata delle richieste;
+	in particolare sarà sempre necessario che il
+	dipendente sia autenticato
+end note
+
+state route as "GenericRouter" #Orange
+state err   as "Error Handling" #LightPink
+
+state regcomp as "RegistrationComponent" #Gold 
+regcomp: entry/new RegistrationComponent
+regcomp: entry/popola ruoli utenti disponibili
+
+state validator as "Validator" #LightGreen
+validator: do/Verifica che il nome utente sia unico
+validator: do/Verifica che il nome utente rispetti la policy utente
+validator: do/Verifica ruolo utente
+
+
+[*] -[hidden]u-> router
+[*] -[hidden]u-> failmsg
+[*]		-d-> route
+route -d-> regcomp
+regcomp -d-> validator: RegistraDipendente()
+validator -l-> err: [Error, Generic]
+err -u-> regcomp
+validator -d-> [*]: [OK] / RegistraNuovoUtente()\l  VisualizzaPassword()
+
+' state form						as "RegistrationComponent" #Gold {
+' 	state valusername			as "isUsernameValid" #LightGreen
+' 	state valrole					as "isRoleValid" #LightGreen
+'
+' 	||
+' }
+' state insValidation		as "backendValidation" #Green
+'
+' [*] -> form
+
+@enduml

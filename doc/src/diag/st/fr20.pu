@@ -1,0 +1,24 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state formSel as "Form Visualizza\nOrdini Accettati" #Gold
+formSel: entry/OttieniOrdiniAccettati
+formSel: entry/VisualizzaFormOrdiniAccettati
+
+state valSel as "Validazione Selezione" #LightGreen
+
+state failmsg as "Visualizza\nmessaggio di errore" #LightPink
+failmsg: entry/VisualizzaMessaggio
+state failhnd as "Error Handling" #LightPink 
+
+[*]				-r-> formSel
+formSel		-d-> valSel: CompletaOrdine()
+valSel		-l-> failhnd: [Error]
+valSel		-d-> [*]: [OK] / AggiornaStatoOrdine()\l  SegnalaAvvenutaPreparazioneAiDipendentiCamerieri()
+failhnd -u-> formSel
+
+
+@enduml
+

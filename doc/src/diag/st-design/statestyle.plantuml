@@ -1,0 +1,36 @@
+@startuml
+
+hide empty description
+' skinparam linetype ortho
+top to bottom direction
+skinparam nodesep 30
+skinparam ranksep 80
+skinparam padding 0
+
+<style>
+	stateDiagram {
+		LineColor Black
+		FontColor Black
+		arrow {
+			FontSize 12
+			LineColor Red
+		}
+	}
+</style>
+
+state failmsg as "Error Handling" #LightPink {
+	state msg as "Visualizza\nMessaggio" #LightGreen
+	msg: entry/VisualizzaMessaggioDiErrore
+
+	[*] -d-> msg
+	msg	-d-> [*]: CliccaPulsanteOK()
+}
+
+note top of failmsg
+	L'Error Handling è  **generalizzato**:
+	il contenuto dei messaggi di errore
+	dipenderà dal tipo di eccezione lanciata.
+end note
+
+
+@enduml

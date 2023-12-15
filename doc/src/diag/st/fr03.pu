@@ -1,0 +1,20 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state form as "Form Selezione\nDipendente - Intervallo" #Gold
+form: entry/VisualizzaFormSelezioneDipendente
+
+state val as "Validazione" #LightGreen
+
+state failhnd as "Error Handling" #LightPink 
+
+[*]		-[hidden]d-> failmsg
+[*]							-d-> form
+form						-d-> val: SelezionaDipendente()
+val							-d-> [*]: [OK] / CreaReportStatistiche()
+val							-l-> failhnd: [Error]
+failhnd					-u-> form
+
+@enduml

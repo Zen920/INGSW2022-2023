@@ -1,0 +1,65 @@
+\chapter[Codice]{sorgente}(midpoint-7)
+\section*{Briefing}+\Materialfilecopy+
+\subsection*{Versioning}+\IcoMoongithub+[GitHub]
+Il codice sviluppato, sia per quanto riguarda \textbf{frontend}, \textbf{backend}
+ma anche della presente \textbf{documentazione} \LaTeX, sin da subito, è stato soggetto di versioning.
+
+Il versioning è stato effettuato tramite lo strumento \texttt{git}, utilizzando 
+una repository su di una macchina privata, infine il codice sorgente è stato clonato
+sull'omonimo host \textbf{Microsoft \IcoMoongithub\ GitHub}.
+
+Pertanto, il codice sorgente sviluppato, aggiornato all'ultima versione, sarà disponibile all'indirizzo\newline
+\url{https://github.com/Zen920/INGSW2022-2023/}
+
+\subsection*{Licensing}+\Materialfilecopy+[MIT License]
+Il progetto è da considerarsi open-source con la licenza \textbf{MIT}: 
+si è totalmente liberi di prelevare il codice sorgente, modificarlo a proprio piacimento
+e di ridistribuirlo, a patto che la licenza stessa \textbf{NON} venga
+modificata e che gli autori (n.d.r. I sottoscritti Amato Ciro e Lombardi Vincenzo)
+vengano citati negli altrui progetti.
+
+\begin{minted}[linenos=false, frame=none, xleftmargin=0pt]{text}
+The MIT License (MIT)
+Copyright © 2022-2023 Ciro Amato, Vincenzo Lombardi
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the “Software”), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+\end{minted}
+
+\newpage
+\subsection*{Installazione, esecuzione d'una istanza}+\Brandsdocker+[Docker]
+Il presente progetto è stato sviluppato tenendo in considerazione la suddivisione
+in micro-servizi: all'occorrenza ogni componente può essere separato ed eseguito indipendentemente
+su di una macchina diversa.
+
+Nella sottocartella \texttt{\color{seagreen}docker/}, presente alla radice della repository
+indicata precedentemente, sarà possibile configurare, installare ed eseguire
+rapidamente un'instanza funzionante dei vari micro-servizi necessari: c'è da precisare
+che la tecnologia \Brandsdocker\ docker è dipendenza necessaria sull'host che s'intende
+utilizzare per il deployment!
+
+Sarà sufficiente lanciare il comando \texttt{\color{seagreen}docker compose up -d} dalla cartella
+designata e, automaticamente,\ \Brandsdocker\ docker si preoccuperà di inizializzare tutti
+i micro-servizi: potrebbero essere necessari alcuni minuti, a seconda della velocità 
+della connessione, nonchè dalle prestazioni del dispositivo host utilizzato.
+
+Infine, segue una breve descrizione di tutti i micro-servizi containerizzati attualmente in uso,
+idenficati dall'hostname del contenitore.
+\begin{itemize}
+	\item \textbf{backend}, ossia il micro-servizio Java che esegue il backend, REST API, dell'applicazione.
+	\item \textbf{frontend}, si preoccupa di compilare il codice React in codice statico, nonchè
+	di configurare un'instanza nginx su cui girerà il front-end.
+	\item \textbf{postgres}, è appunto il database cui è collegato il backend.
+\end{itemize}

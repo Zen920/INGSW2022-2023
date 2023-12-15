@@ -1,0 +1,30 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state formSel as "Form Selezione\nCategoria Alimentare" #Gold
+formSel: entry/VisualizzaFormSelezioneCategorieAlimentari
+
+state formUpd as "Form Aggiornamento\nCategoria Alimentare" #Gold
+formUpd: entry/VisualizzaFormAggiornamentoCategorieAlimentare
+
+state valext as "Validazione\nEsistenza" #LightGreen
+state valupd as "Validazione\nOperazione" #LightGreen
+state failhnd1 as "Error Handling" #LightPink 
+state failhnd2 as "Error Handling" #LightPink 
+
+[*]			-d-> formSel
+[*]		-[hidden]d-> failmsg
+formSel -d-> valext: SelezionaCategoriaAlimentare()
+valext	-d-> formUpd: [OK] / OttieniInformazioniCategoriaAlimentare\l  AggiornaInterfaccia() 
+formUpd -d-> valupd: AggiornaInformazioniCategoria()
+valupd	-d-> [*]: [OK] / AggiornaCategoria()
+valext	-l-> failhnd1: [Error]
+valupd	-l-> failhnd2: [Error]
+
+failhnd1 -u-> formSel
+failhnd2 -u-> formUpd
+
+@enduml
+

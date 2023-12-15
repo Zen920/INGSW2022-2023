@@ -1,0 +1,91 @@
+@startuml
+
+!include ../style.default.plantuml
+!include set-designstyle.plantuml
+
+' Entities
+actor "AdministrationMember:Employee" as adm #orange
+box "Frontend Layer" #E6EFE6
+	entity "ReactJS-Router" as fe
+	control "RegistrationComponent-Fragment" as form
+	control "ReactJS-Validator" as val
+end box
+box "Backend Layer" #Lightgreen
+	entity "Spring-Router" as be
+	control "RolesController" as re
+	control "AuthController" as ac
+	entity "EmployeeService" as es
+	database "PostgresDB" as db
+end box
+
+== Indirizzamento dinamico ==
+
+adm -> fe ++: http GET request host:port/admin/register
+fe --> adm --: returns AdminRoute::RegistrationComponent
+
+== Compilazione del form ==
+
+group#Gold #LightYellow Inserimento dati
+	adm -> form ++: Inserisce username utente 
+	form -> val ++: isUsernameValid
+	val --> form --: return isUsernameValid
+	note right
+		La validazione è un rapido controllo
+		front-end che verifica la correttezza
+		dei campi seguendo le guidelines
+		descritte precedentemente
+	end note
+
+	adm -> form: Richiede i ruoli dipendente disponibili
+	form -> be ++: fetchRoles
+	be -> re ++: getRoles
+	re -> db ++: findAllRoles
+
+	db --> re --: return findAllRoles
+	re --> be --: return getRoles
+	be --> form --: return fetchRoles
+	form --> form: setRoles
+
+	adm -> form: Seleziona ruolo
+	form -> val ++: isRoleValid
+	val --> form --: return isRoleValid
+end
+
+== Richiesta e finalizzazione dell'inserimento ==
+group#Gold #LightYellow Registrazione
+	adm -> form: submit()
+	form -> be ++: registerEmployee(username, role)
+	be -> ac ++: register(username, role)
+	ac -> es ++: registerNewUserAccount(username, role)
+	es --> es: generateToken
+	es --> es: validate
+	es -> db ++: trySave
+	alt#Gold #Lightblue Inserimento avvenuto con succeso
+		db --> es --: return true
+		es --> ac --: return token
+		ac --> be --: return ResponseEntity.ok({ token })
+		be --> form --:
+		form --> form: setPassword(token)
+		form --> adm --
+		fe-[hidden]->fe
+
+
+	else #Pink Errore generico nell'inserimento
+
+		activate db
+		activate es
+		activate ac
+		activate be
+		activate form
+		db --> es --: return exception 
+		es --> ac --: return exception
+		ac --> be --: return ResponseEntity.except { exception }
+		be --> form --: 
+		form --> form: toast(exception)
+		form --> adm --
+
+	end
+	
+end group 
+
+@enduml

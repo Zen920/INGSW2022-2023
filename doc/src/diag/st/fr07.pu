@@ -1,0 +1,23 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state form as "Form Inserimento\nCategorie Alimentari" #Gold
+form: entry/VisualizzaFormInserimentoCategorieAlimentari
+
+state val as "Validazione" #LightGreen
+state failmsg as "Visualizza\nmessaggio di errore" #LightPink
+failmsg: entry/VisualizzaMessaggio
+
+state failhnd as "Error Handling" #LightPink 
+
+[*]		-[hidden]d-> failmsg
+[*]		--> form
+form	---> val: InserisciCategoriaAlimentare()
+val		-r-> failhnd: [Error]
+val		--> [*]: [OK] / RegistraNuovaCategoriaAlimentare()
+failhnd -u> form
+
+@enduml
+

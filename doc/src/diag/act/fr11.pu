@@ -1,0 +1,46 @@
+@startuml
+!include ../style.default.plantuml
+!include actstyle.plantuml
+
+|#FEFEFE|adm| Membro di amministrazione (admin, supervisor)
+|#EDDDDD|fe| Front-end
+|#FEFEFE|be| API Back-end
+
+|fe|
+partition #LightPink/White Messaggio di **errore** {
+	#Pink:(E)
+	:Visualizza un messaggio di errore inerente\nalla problematica che vi si è presentata;
+	stop
+}
+
+|adm|
+start
+Note left
+	Il membro dell'amministrazione
+	(admin, supervisor) è autenticato 
+end Note
+
+:Si collega al pannello di amministrazione\nquindi richiede la pagina di cancellazione\ndei tavoli dal sistema;
+
+|fe|
+:Restituisce il pannello di amministrazione\nper la cancellazione dei tavoli dal sistema;
+
+|adm|
+:Richiede la cancellazione di un tavolo;
+
+|fe|
+:Richiede conferma al membro di amministrazione tramite messaggio;
+
+|adm|
+if (Il membro di amministrazione conferma la cancellazione?) then (No)
+	stop
+endif
+
+|be|
+:Avviene la cancellazione del tavolo dal sistema;
+
+|fe|
+:Segnala l'avvenuta rimozione dal sistema;
+
+stop
+@enduml

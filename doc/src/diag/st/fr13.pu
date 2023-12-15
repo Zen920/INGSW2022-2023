@@ -1,0 +1,35 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state page as "Homepage" #Gold
+page: entry/VisualizzaHomepage
+
+state form as "Form Login" #Gold
+form: entry/VisualizzaLoginForm
+
+state val as "Validazione\nDati Immessi" #LightGreen
+
+state failhnd as "Error Handling" #LightPink 
+
+state nextpage as "LandingPageUtente" #Gold
+nextpage: entry/VisualizzaLandingPageUtente
+
+[*]		-[hidden]d-> failmsg
+[*]		-d-> page
+page	-d-> form: CliccaPulsanteLogin()
+form	-d-> val: CliccaPulsanteAccedi()
+val		-d-> nextpage: [OK, Credenziali Corrette] / InizializzaSessioneUtente()
+val		-l-> failhnd: [Error, Credenziali Errate]
+val		-l-> failhnd: [Error, Generico]
+failhnd -u-> form
+
+note left of nextpage
+	La   **Landing Page** dipenderà dal tipo
+	di utente che ne sta effettuando l'accesso
+end note
+
+nextpage -d-> [*]
+
+@enduml

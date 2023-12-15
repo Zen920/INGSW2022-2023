@@ -1,0 +1,20 @@
+' Provide Configuration for sequence diagrams
+@startuml
+
+' Setup alignment
+skinparam sequenceMessageAlign center
+skinparam responseMessageBelowArrow true 
+
+' Setup behavior
+autoactivate off
+hide footbox
+
+' Enhance[!]
+skinparam DefaultFontSize 12
+skinparam Padding 0
+skinparam TabSize 2
+
+skinparam SequenceDividerFontSize 14
+skinparam SequenceDividerBorderThickness 2
+
+@enduml

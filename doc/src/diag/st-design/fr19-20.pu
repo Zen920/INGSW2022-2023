@@ -1,0 +1,44 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+
+state router as "GenericRouter" #Orange {
+	[*] -r-> [*]: [AuthContext, L'utente autenticato non è autorizzato] / NavigateToErrorLandingPage()
+	[*] -r-> [*]: [AuthContext, Richiesto password reset] / NavigateToPasswordReset()
+	[*] -r-> [*]: [AuthContext, L'utente non è autenticato] / NavigateToLoginPage()
+	[*] -r-> [*]: [AuthContext, OK] / NavigateToRequestedPath()
+}
+
+note top of router
+	L'applicazione front-end, sviluppata in   **React-JS**
+	permette una gestione centralizzata delle richieste;
+	in particolare sarà sempre necessario che il
+	dipendente sia autenticato
+end note
+
+state route as "GenericRouter" #Orange
+state orderSelection as "Accepted Orders\nSelection Component" #Gold
+orderSelection: entry/OttieniOrdiniAccettatiDaCuoco
+orderSelection: entry/PopolaInterfacciaOrdiniAccettati
+
+state completeValidator as "Complete Order\n Validator" #Lightgreen
+state abortValidator as "Abort Order\n Validator" #Lightgreen
+
+state err   as "Error Handling" #LightPink
+
+[*] -[hidden]u->  failmsg
+[*] -[hidden]u->  router
+[*]	-d-> route
+route -d-> orderSelection
+orderSelection -r-> completeValidator: CliccaPulsanteCompletaOrdine()
+orderSelection -d-> abortValidator: CliccaPulsateAnnullaOrdine()
+
+completeValidator ----d-> err: [Error, Generic]
+abortValidator -> err: [Error, Generric]
+
+completeValidator -d-> [*]: [OK] / CompletaOrdine()
+abortValidator -d-> [*]: [OK] / RilasciaOrdine()
+
+@enduml

@@ -1,0 +1,22 @@
+# Ignore everything
+*
+
+# Source code only
+!backend
+!backend/src
+!backend/src/**
+!backend/build.gradle.kts
+
+!frontend/
+!frontend/**
+
+# Other allowed files
+!settings.gradle.kts
+!.dockerignore
+!.gitignore
+!.gitattributes
+
+# Ignore these folders
+.idea/
+.vscode/
+.settings/

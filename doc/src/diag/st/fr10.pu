@@ -1,0 +1,19 @@
+@startuml
+
+!include ../style.default.plantuml
+!include statestyle.plantuml
+
+state form as "Form Inserimento\nTavoli" #Gold
+form: entry/VisualizzaFormInserimentoTavoli
+state val as "Validazione\nOperazione" #LightGreen
+state failhnd as "Error Handling" #LightPink 
+
+[*]		-d-> form
+[*]		-[hidden]d-> failmsg
+form	-d-> val: NuovoTavolo()
+val		-l-> failhnd: [Error]
+val		-d-> [*]: [OK] / RegistraNuovoTavolo()
+failhnd -u-> form
+
+@enduml
+

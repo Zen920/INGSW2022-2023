@@ -1,0 +1,8 @@
+' Provide default Configuration
+@startuml
+
+' Setup colorscheme theme
+!theme vibrant
+skinparam backgroundColor white
+
+@enduml
